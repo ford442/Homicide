@@ -1,0 +1,94 @@
+#pragma once
+
+#include <iostream>
+#include <memory>
+#include <SDL2/SDL_gpu.h>
+
+#include "events/Event_handler.hpp"
+#include "world/World.hpp"
+#include "lights/LightImageList.hpp"
+#include "sprites/Animations.hpp"
+
+#include "entity/EntityList.hpp"
+#include "entity/Player.hpp"
+#include "entity/NPC.hpp"
+#include "Camera.hpp"
+#include "weapons/Weapon_list.hpp"
+
+class Game{
+    public:
+        Game();
+        ~Game();
+
+        // initialization
+        bool Init_Window(void);
+        bool Init_TTF(void);
+        bool Init_Mixer(void);
+        bool Init_IMG(void);
+        bool Init_libs(void);
+        bool Init_logs(void);
+
+        void run(void);
+        void quit(void);
+
+        // fps
+        void set_max_fps(int fps);
+
+        // display
+        float get_pixel_size(void) const;
+        SDL_Window* get_window(void) const;
+        GPU_Target* get_target(void) const;
+
+        float get_x(void) const;
+        float get_y(void) const;
+
+        bool load_world(std::string world_path);
+
+    private:
+
+        bool launched;
+
+        GPU_Target* _target;
+        SDL_Window* _window;
+
+        void event(void);
+        void draw(void);
+        void update(void);
+        void delay(void);
+
+        // ticks
+        int start_tick;
+        int delta_tick;
+        int execution_tick;
+        int max_ticks_per_frames;
+        int fps;
+        int fps_counter;
+        int fps_tick;
+
+        // display attributes
+        float _pixel_size;
+        float _x, _y;
+        int window_w, window_h;
+        bool debug_mod;
+
+        std::shared_ptr<event::Handler> _event_handler;
+        std::shared_ptr<world::World> _world;
+        std::shared_ptr<sprite::Animations> _animations;
+        std::shared_ptr<entity::EntityList> _entityList;
+        std::shared_ptr<light::LightImageList> _lightImageList;
+        std::shared_ptr<weapons::Weapon_list> _weapon_list;
+
+        std::shared_ptr<entity::Player> _player;
+
+        std::shared_ptr<Camera> _camera;
+
+        Uint32 blur_vert;
+        Uint32 blur_frag;
+        Uint32 blur_shader;
+
+        GPU_ShaderBlock blur;
+
+        int blur_radius;
+        int blur_resolution;
+        int blur_dir;
+};
