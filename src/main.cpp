@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include "dir.hpp"
-
 int main(int argc, char **argv){
+    
     Game homicide;
 
     if (homicide.Init_libs())
