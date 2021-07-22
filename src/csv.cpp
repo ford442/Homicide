@@ -160,4 +160,3 @@ std::string N::get_value(void) const{
 Doc *N::get_doc(void) const{
     return doc;
 }
-

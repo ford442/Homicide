@@ -14,6 +14,9 @@
 #include "entity/NPC.hpp"
 #include "Camera.hpp"
 #include "weapons/Weapon_list.hpp"
+#include "csv.hpp"
+
+
 
 class Game{
     public:
@@ -27,6 +30,8 @@ class Game{
         bool Init_IMG(void);
         bool Init_libs(void);
         bool Init_logs(void);
+
+        bool Init_with_csv(std::string path);
 
         void run(void);
         void quit(void);
@@ -91,4 +96,66 @@ class Game{
         int blur_radius;
         int blur_resolution;
         int blur_dir;
+
+        CSV::Document settings_file;
+        std::string _version;
+
+        void set_version(std::string version);
 };
+
+#ifndef __GAME__HPP__
+    #define __GAME__HPP__
+
+    #include <iostream>
+    #include <SDL2/SDL_gpu.h>
+
+    #include <SDL/Window.hpp>
+
+    class Game{
+        public:
+            Game();
+            ~Game();
+
+            bool load_setting_xml(std::string path);
+            bool load_setting_csv(std::string path);
+
+            struct Bloom_shared{
+                Uint32 bloom_vert;
+                Uint32 bloom_frag;
+                Uint32 bloom_shader;
+
+                GPU_ShaderBlock bloom_block;
+            };
+        
+        private:
+
+            // SDL
+            SDL::Window *_window;
+
+            world::World _world;
+            event::Handler _event_handler;
+            sprite::Animations _animations;
+            entity::EntityList _entityList;
+            light::LightImageList _lightImageList;
+            weapons::Weapon_list _weapon_list;
+            Camera _camera;
+
+            entity::Player _player;
+
+            Bloom_shared _bloom;
+
+            int start_tick;
+            int delta_tick;
+            int execution_tick;
+            int max_ticks_per_frames;
+            int fps;
+            int fps_counter;
+            int fps_tick;
+
+            // display attributes
+            float _pixel_size;
+            float _x, _y;
+            int window_w, window_h;
+    };
+
+#endif

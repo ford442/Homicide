@@ -4,6 +4,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 #include <filesystem>
+#include "csv.hpp"
 
 using G = Game;
 
@@ -351,4 +352,13 @@ int InitSDL_SUB_Libs(void *ptr){
     if (!g->Init_TTF()) return false;
     if (!g->Init_IMG()) return false;
     return true;
+}
+
+bool G::Init_with_csv(std::string path){
+    if (path[1] != ':') path = RES + path;
+    if (!settings_file.load(path)) return false;
+
+    for (auto a : settings_file.get_nodes()){
+        if (a.get_tag() == "version") 
+    }
 }
