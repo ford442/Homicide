@@ -10,6 +10,8 @@
 #include "world/Collisions.hpp"
 #include "xml.hpp"
 
+namespace world{class World;}
+
 namespace entity{
     class Player : public Entity{
         public:

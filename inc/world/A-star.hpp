@@ -5,7 +5,9 @@
 #include <memory>
 #include <tuple>
 #include <vector>
+#include <list>
 #include <SDL2/SDL_gpu.h>
+#include <SDL2/SDL_thread.h>
 
 #include "world/Collisions.hpp"
 
@@ -13,6 +15,7 @@ namespace world{
 
     struct Astar_nodes_path;
     struct Path_node;
+    struct Astar_update;
 
     class A_star{
         public:
@@ -43,6 +46,15 @@ namespace world{
             int get_h(void) const;
 
             int get_padding(void) const;
+
+            struct Astar_thread_data{
+                std::list<std::shared_ptr<world::Astar_update>> list;
+                bool launched;
+                A_star* astar;
+            };
+
+            
+            Astar_thread_data data;
         
         private:
             int mapWidth, mapHeight;
@@ -59,6 +71,8 @@ namespace world{
             
             std::unique_ptr<PNode[]> _nodes;
             std::shared_ptr<Collisions> _collisions;
+
+            SDL_Thread* thread;
 
             bool is_collision(SDL_Surface* surface, int x, int y);
             bool is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h);

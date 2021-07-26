@@ -4,7 +4,6 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 #include <filesystem>
-#include "csv.hpp"
 
 using G = Game;
 
@@ -26,8 +25,8 @@ G::~Game(){
 
 bool G::Init_Window(void){
     std::cout << "GPU_Init()" << std::endl;
-    window_w = 1080;
-    window_h = 720;
+    window_w = 1920;
+    window_h = 1080;
     _window = SDL_CreateWindow("Homicide", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_w, window_h, SDL_WINDOW_OPENGL);
     
     if (!_window){
@@ -352,13 +351,4 @@ int InitSDL_SUB_Libs(void *ptr){
     if (!g->Init_TTF()) return false;
     if (!g->Init_IMG()) return false;
     return true;
-}
-
-bool G::Init_with_csv(std::string path){
-    if (path[1] != ':') path = RES + path;
-    if (!settings_file.load(path)) return false;
-
-    for (auto a : settings_file.get_nodes()){
-        if (a.get_tag() == "version") 
-    }
 }

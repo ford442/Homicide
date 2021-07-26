@@ -8,6 +8,35 @@
 
 
 // #define DEBUG_DISPLAY_ASTAR
+#define ASTAR_LOGS
+
+#ifdef ASTAR_LOGS
+    #define LOG(msg){std::cout << __func__ << " : " << msg << std::endl;}
+#else
+    #define LOG(msg){std::cout << __func__ << " : " << msg << std::endl;}
+#endif
+
+int astar_loop(void *ptr){
+    world::A_star::Astar_thread_data* a = (world::A_star::Astar_thread_data*)ptr;
+    bool *launched = &a->launched;
+    std::list<std::shared_ptr<world::Astar_update>> *list = &a->list;
+    world::A_star* astar = a->astar;
+
+    while (*launched){
+
+        if (!list->empty()){
+            std::shared_ptr<world::Astar_update> a_upd = list->front();
+            list->pop_front();
+
+            std::cout << "from " << a_upd->sx << " x " << a_upd->sy << " to " << a_upd->ex << " x " << a_upd->ey << std::endl;
+            a_upd->astar->calculate_vec(a_upd->sx, a_upd->sy, a_upd->ex, a_upd->ey, a_upd->nodes, a_upd->visited_table);
+        }
+
+        SDL_Delay(16);
+    }
+    return 0;
+};
+
 
 using A = world::A_star;
 
@@ -31,11 +60,13 @@ bool A::is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h){
 }
 
 A::A_star(float *zoom, float *x, float *y, std::shared_ptr<Collisions> collisions) : _zoom(zoom), _x(x), _y(y), _collisions(collisions){
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: allocating a new A_star path finder instance" << std::endl;
-    #endif
+    
+    LOG("INFO :: allocating a new A_star path finder instance");
+
     _nodeEnd = nullptr;
     _nodeStart = nullptr;
+    data.launched = true;
+    thread = SDL_CreateThread(astar_loop, "Astar loop", &data);
 }
 
 A::~A_star(){
@@ -43,6 +74,10 @@ A::~A_star(){
         std::cout << "INFO :: releasing memory from a A_star instance" << std::endl;
     #endif
     _nodes = nullptr;
+
+    data.launched = false;
+    data.astar = this;
+    SDL_WaitThread(thread, nullptr);
 }
 
 void A::drawMap(GPU_Target *t){
@@ -172,10 +207,9 @@ void A::calculate(const int sx, const int sy, const int ex, const int ey, PNode*
 }
 
 void A::calculate_vec(const int sx, const int sy, const int ex, const int ey, Astar_nodes_path* l, Path_node* nodes){
-
+    LOG("star calculating");
     if (sx > world_w || sy > world_h || ex > world_w || ey > world_h || sx < 0 || sy < 0 || ex < 0 || ey < 0) return;
 
-    l->calculating = true;
     l->list.clear();
     PNode *start{nullptr}, *end{nullptr};
     calculate(sx, sy, ex, ey, &start, &end, nodes);
@@ -335,7 +369,7 @@ int world::calculate_Astar_ptr(void *ptr){
 
 bool world::calculate_Astar(float start_x, float start_y, float end_x, float end_y, world::Astar_nodes_path *l, A_star* a){
     if (l->calculating) return true;
-    world::Astar_update *au = new world::Astar_update;
+    auto au = std::make_shared<world::Astar_update>();
 
     au->sx = start_x;
     au->sy = start_y;
@@ -344,12 +378,13 @@ bool world::calculate_Astar(float start_x, float start_y, float end_x, float end
     au->nodes = l;
     au->astar = a;
     au->visited_table = l->table.get();
+    l->calculating = true;
 
-    std::string name = "Astar" + std::to_string(rand());
 
     std::cout << "INFO :: Astar : calculate astar path multithreaded" << std::endl;
+    // a->calculate_vec(au->sx, au->sy, au->ex, au->ey, au->nodes, au->visited_table);
+    a->data.list.push_back(au);
 
-    SDL_Thread *t = SDL_CreateThread(calculate_Astar_ptr, "Astar", au);
     return true;
 }
 
