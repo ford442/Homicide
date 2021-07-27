@@ -53,7 +53,7 @@ bool S::load(std::string path, std::string files_name, std::string files_extensi
         SDL_Surface* surface = IMG_Load(file.c_str());
 
         if (!surface){
-            std::cerr << "ERROR :: IMG_Load : " << IMG_GetError << ", cannot load \"" << file << "\"" << std::endl;
+            std::cerr << "ERROR :: IMG_Load : " << IMG_GetError()<< ", cannot load \"" << file << "\"" << std::endl;
             continue;
         }
 

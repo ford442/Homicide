@@ -20,7 +20,7 @@ bool T::load(std::string path){
 
     SDL_Surface *surface = IMG_Load(path.c_str());
     if (!surface){
-        std::cerr << "ERROR :: IMG_Load : " << IMG_GetError << " file : \"" << path << "\"" << std::endl;
+        std::cerr << "ERROR :: IMG_Load : " << IMG_GetError()<< " file : \"" << path << "\"" << std::endl;
         return false;
     }
 

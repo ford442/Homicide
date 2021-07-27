@@ -79,6 +79,7 @@ void P::load(XMLNode* node){
                 if (!strcmp(attr.key, "type")){
                     _light = push_light(attr.value);
                     _light->color({255, 255, 255, 255});
+                    _light->set_calculation(light::LightSource::Shadow_pylogon);
                 } else {
                     std::cerr << "WARNING :: cannot reconize  \"" << attr.key << "\" light player attribute" << std::endl;
                 }

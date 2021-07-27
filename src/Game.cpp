@@ -302,7 +302,7 @@ float G::get_y(void) const{
 
 bool G::Init_IMG(void){
     if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP) == 0){
-        std::cerr << "IMG_Init : " << IMG_GetError << std::endl;
+        std::cerr << "IMG_Init : " << IMG_GetError() << std::endl;
         return false;
     }
     return true;
@@ -338,6 +338,7 @@ void G::quit(void){
     Mix_Quit();
     TTF_Quit();
     tick = SDL_GetTicks() - tick;
+    projectile_types.clear();
 
     GPU_Quit();
 

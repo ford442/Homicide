@@ -7,6 +7,8 @@
 #include "dir.hpp"
 using S = world::LightSurface;
 
+#define ERR(msg) std::cerr << __func__ << " : " << msg << std::endl;
+
 inline Uint32 get_pixel32(SDL_Surface *surface, int x, int y){
     Uint32 *pixels = (Uint32*)surface->pixels;
     return pixels[(y * surface->w) + x];
@@ -77,7 +79,7 @@ bool S::load(std::string file){
     SDL_Surface* surface = IMG_Load(file.c_str());
 
     if (!surface){
-        std::cerr << "ERROR :: IMG_Load : " << IMG_GetError << std::endl;
+        std::cerr << "ERROR :: IMG_Load : " << IMG_GetError()<< std::endl;
         return false;
     }
 
@@ -287,30 +289,43 @@ void S::calculateVisibilityPolygon(float ox, float oy, float radius, std::shared
 }
 
 void S::display_light_poly(GPU_Target *t, std::shared_ptr<light::LightSource> light){
-    calculateVisibilityPolygon(light->x(), light->y(), 1, light);
+    switch (light->get_calculation()){
 
+        case light::LightSource::Shadow_pylogon:
+            calculateVisibilityPolygon(light->x(), light->y(), 1, light);
 
-    int x = light->x();
-    int y = light->y();
+            if (light->vecVisibilityPolygonPoints.size() > 1){
 
-    if (light->vecVisibilityPolygonPoints.size() > 1){
+                for (int i=0; i<light->vecVisibilityPolygonPoints.size()-1; i++){
 
-        for (int i=0; i<light->vecVisibilityPolygonPoints.size()-1; i++){
+                    float x1 = std::get<1>(light->vecVisibilityPolygonPoints[i]) * light_poly_resolution; 
+                    float y1 = std::get<2>(light->vecVisibilityPolygonPoints[i]) * light_poly_resolution;
+                    float x2 = std::get<1>(light->vecVisibilityPolygonPoints[i+1]) * light_poly_resolution; 
+                    float y2 = std::get<2>(light->vecVisibilityPolygonPoints[i+1]) * light_poly_resolution; 
 
-            float x1 = std::get<1>(light->vecVisibilityPolygonPoints[i]) * light_poly_resolution; 
-            float y1 = std::get<2>(light->vecVisibilityPolygonPoints[i]) * light_poly_resolution;
-            float x2 = std::get<1>(light->vecVisibilityPolygonPoints[i+1]) * light_poly_resolution; 
-            float y2 = std::get<2>(light->vecVisibilityPolygonPoints[i+1]) * light_poly_resolution; 
+                    GPU_TriFilled(t, light->x() * light_poly_resolution, light->y() * light_poly_resolution, x1, y1, x2, y2, {255, 255, 255, 255});
+                }
 
-            GPU_TriFilled(t, x * light_poly_resolution, y * light_poly_resolution, x1, y1, x2, y2, {255, 255, 255, 255});
-        }
+                float x1 = std::get<1>(light->vecVisibilityPolygonPoints[0]) * light_poly_resolution; 
+                float y1 = std::get<2>(light->vecVisibilityPolygonPoints[0]) * light_poly_resolution; 
+                float x2 = std::get<1>(light->vecVisibilityPolygonPoints[light->vecVisibilityPolygonPoints.size()-1]) * light_poly_resolution;
+                float y2 = std::get<2>(light->vecVisibilityPolygonPoints[light->vecVisibilityPolygonPoints.size()-1]) * light_poly_resolution;
 
-        float x1 = std::get<1>(light->vecVisibilityPolygonPoints[0]) * light_poly_resolution; 
-        float y1 = std::get<2>(light->vecVisibilityPolygonPoints[0]) * light_poly_resolution; 
-        float x2 = std::get<1>(light->vecVisibilityPolygonPoints[light->vecVisibilityPolygonPoints.size()-1]) * light_poly_resolution;
-        float y2 = std::get<2>(light->vecVisibilityPolygonPoints[light->vecVisibilityPolygonPoints.size()-1]) * light_poly_resolution;
+                GPU_TriFilled(t, light->x() * light_poly_resolution, light->y() * light_poly_resolution, x1, y1, x2, y2, {255, 255, 255, 255});
+            }
+            break;
+        
+        case light::LightSource::Shadow_image:
+            if (!light->get_calculation_image()){
+                ERR("cannot draw a null calculation image");
+                break;
+            }
 
-        GPU_TriFilled(t, x * light_poly_resolution, y * light_poly_resolution, x1, y1, x2, y2, {255, 255, 255, 255});
+            light->get_calculation_image()->draw(t, light->x(), light->y(), light->angle());
+            break;
+        
+        default:
+            break;
     }
 }
 

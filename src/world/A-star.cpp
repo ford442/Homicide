@@ -8,12 +8,12 @@
 
 
 // #define DEBUG_DISPLAY_ASTAR
-#define ASTAR_LOGS
+// #define ASTAR_LOGS
 
 #ifdef ASTAR_LOGS
     #define LOG(msg){std::cout << __func__ << " : " << msg << std::endl;}
 #else
-    #define LOG(msg){std::cout << __func__ << " : " << msg << std::endl;}
+    #define LOG(msg){}
 #endif
 
 int astar_loop(void *ptr){

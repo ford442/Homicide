@@ -14,6 +14,7 @@
 #include "entity/NPC.hpp"
 #include "Camera.hpp"
 #include "weapons/Weapon_list.hpp"
+#include "weapons/Projectile_type.hpp"
 
 class Game{
     public:
@@ -77,6 +78,7 @@ class Game{
         std::shared_ptr<entity::EntityList> _entityList;
         std::shared_ptr<light::LightImageList> _lightImageList;
         std::shared_ptr<weapons::Weapon_list> _weapon_list;
+        std::list<std::shared_ptr<Projectile_type>> projectile_types;
 
         std::shared_ptr<entity::Player> _player;
 
