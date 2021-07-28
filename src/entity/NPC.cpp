@@ -67,6 +67,7 @@ void N::OnDraw(GPU_Target* t){
 
 void N::go_to(const float x, const float y){
     if (_A_star == nullptr) return;
+    if (_path.calculating) return;
     // _A_star->calculate_path(get_x() / *_pixel_size, get_y() / *_pixel_size, x, y, &_path);
     world::calculate_Astar(get_x() / *_pixel_size, get_y() / *_pixel_size, x, y, &_path, _A_star.get());
 }

@@ -106,6 +106,13 @@ void Doc::set_custom_Debug(bool errors, bool logs, bool warnings){
     is_printing_warnings = warnings;
 }
 
+std::string Doc::search(std::string tag){
+    for (auto &n : nodes){
+        if (n.get_tag() == tag) return n.get_value();
+    }
+    return "";
+}
+
 std::list<N> Doc::get_nodes(){
     return nodes;
 }

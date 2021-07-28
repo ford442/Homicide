@@ -125,6 +125,8 @@ bool G::Init_libs(void){
 
     std::cout << std::endl << "INFO :: game launched success : " << (launched == true ? "true" : "false") << " ticks : " << SDL_GetTicks() << " milisecond" << std::endl << std::endl;
 
+    if (!load_projectiles("data\\projectiles\\")) return false;
+
     _pixel_size = 1;
     if (!load_world("worlds\\menu_map.xml")) return false;
 
@@ -351,5 +353,26 @@ int InitSDL_SUB_Libs(void *ptr){
     if (!g->Init_Mixer()) return false;
     if (!g->Init_TTF()) return false;
     if (!g->Init_IMG()) return false;
+    return true;
+}
+
+bool Game::load_projectiles(std::string dir_path){
+    if (dir_path[1] != ':') dir_path = RES + dir_path;
+
+    std::vector<std::string> dir_content = dir::content(dir_path);
+
+    if (dir_content.empty()){
+        return false;
+    }
+
+    for (auto &f : dir_content){
+        if (f == ".." || f == ".") continue;
+
+        auto projectile = std::make_shared<Projectile_type>();
+
+        if (projectile->load(dir_path + f, _lightImageList)){
+            projectile_types.push_back(projectile);
+        }
+    }
     return true;
 }

@@ -54,7 +54,7 @@
 
                 bool is_error(void) const;
 
-                Node *search(std::string tag);
+                std::string search(std::string tag);
                 std::list<Node> get_nodes();
 
             private:

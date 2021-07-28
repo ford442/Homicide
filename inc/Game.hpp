@@ -44,6 +44,7 @@ class Game{
         float get_y(void) const;
 
         bool load_world(std::string world_path);
+        bool load_projectiles(std::string dir_path);
 
     private:
 

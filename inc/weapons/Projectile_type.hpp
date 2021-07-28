@@ -6,7 +6,6 @@
 
     #include "lights/LightImage.hpp"
     #include "lights/LightImageList.hpp"
-    #include "xml.hpp"
 
     class Projectile_type{
         public:
@@ -14,8 +13,9 @@
             ~Projectile_type();
 
             GPU_Image *get_image(void) const;
+            std::shared_ptr<light::LightImage> get_light_image(void);
 
-            bool load(XMLNode *node, std::shared_ptr<light::LightImageList> lights);
+            bool load(std::string path, std::shared_ptr<light::LightImageList> lights);
 
         private:
             GPU_Image *image;
