@@ -5,6 +5,30 @@
 #include <SDL2/SDL_image.h>
 #include <filesystem>
 
+#include "csv.hpp"
+
+#define _ERRS
+#define _WARNS
+#define _LOGS
+
+#ifdef _ERRS
+    #define ERR(msg) std::cerr << "ERROR :: " << __func__ << " : " << msg << std::endl;
+#else
+    #define ERR(msg)
+#endif
+
+#ifdef _WARNS
+    #define WARN(msg) std::cerr << "WARNING :: " << __func__ << " : " << msg << std::endl;
+#else
+    #define WARN(msg)
+#endif
+
+#ifdef _LOGS
+    #define LOG(msg) std::cout << "INFO :: " << __func__ << " : " << msg << std::endl;
+#else
+    #define LOG(msg)
+#endif
+
 using G = Game;
 
 int InitSDL_SUB_Libs(void *ptr);
@@ -25,9 +49,9 @@ G::~Game(){
 
 bool G::Init_Window(void){
     std::cout << "GPU_Init()" << std::endl;
-    window_w = 1920;
-    window_h = 1080;
-    _window = SDL_CreateWindow("Homicide", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_w, window_h, SDL_WINDOW_OPENGL);
+    window_w = 920;
+    window_h = 540;
+    _window = SDL_CreateWindow("Homicide", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_w, window_h, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     
     if (!_window){
         std::cerr << "ERROR :: SDL_CreateWindow : " << SDL_GetError() << std::endl;
@@ -125,9 +149,9 @@ bool G::Init_libs(void){
 
     std::cout << std::endl << "INFO :: game launched success : " << (launched == true ? "true" : "false") << " ticks : " << SDL_GetTicks() << " milisecond" << std::endl << std::endl;
 
-    if (!load_projectiles("data\\projectiles\\")) return false;
+    load_settings_file("data\\options.csv");
 
-    _pixel_size = 1;
+    _pixel_size = window_w / 450;
     if (!load_world("worlds\\menu_map.xml")) return false;
 
     if (!_world->get_light()->set_shader(blur_shader)) return false;
@@ -206,6 +230,20 @@ void G::event(void){
             case SDL_QUIT:
                 launched = false;
                 return;
+            
+            case SDL_WINDOWEVENT:
+				switch (e.window.event){
+                    case SDL_WINDOWEVENT_RESIZED:
+                        GPU_SetWindowResolution(e.window.data1, e.window.data2);
+                        _pixel_size = e.window.data1 / 450;
+                        window_w = e.window.data1;
+                        window_h = e.window.data2;
+                        break;
+
+                    default:
+                        break;
+				}
+				break;
             
             default:
                 break;
@@ -375,4 +413,106 @@ bool Game::load_projectiles(std::string dir_path){
         }
     }
     return true;
+}
+
+bool to_bool(std::string var){
+    if (var == "true") return true;
+    if (var == "false") return false;
+
+    WARN("cannot convert \"" + var + "\" into boolean, convert as false");
+    return false;
+}
+
+bool Game::load_settings_file(std::string path){
+    if (path[1] != ':') path = RES + path;
+    CSV::Document doc;
+
+    if (!doc.load(path)) return false;
+
+    set_window_title(doc.search("window_title").c_str());
+
+    try{
+        set_window_width(std::stoi(doc.search("window_width")));
+    } catch (std::exception &e) {
+        ERR("standart exception : " + std::string(e.what()) + "; cannot read the window width, set to 1080");
+        set_window_width(1080);
+    }
+
+    try{
+        set_window_height(std::stoi(doc.search("window_height")));
+    } catch (std::exception &e) {
+        ERR("standart exception : " + std::string(e.what()) + "; cannot read the window height, set to 720");
+        set_window_height(720);
+    }
+
+    bool fullscreen = to_bool(doc.search("window_fullscreen"));
+    
+    if (_window){
+        if (fullscreen){
+            GPU_SetFullscreen(true, false);
+        } else {
+            GPU_SetFullscreen(false, false);
+        }
+
+        SDL_SetWindowPosition(_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    } else {
+        ERR("cannot set the fullscreen state of a null window");
+    }
+
+
+    if (!load_projectiles(doc.search("projectiles"))) return false;
+
+    return true;
+}
+
+void Game::set_window_title(std::string title){
+    if (!_window){
+        ERR("cannot set the title of a null window");
+        return;
+    }
+
+    SDL_SetWindowTitle(_window, title.c_str());
+}
+
+void Game::set_window_width(int w){
+    if (!_window){
+        ERR("cannot set the title of a null window");
+        return;
+    }
+    int h;
+    SDL_GetWindowSize(_window, nullptr, &h);
+    GPU_SetWindowResolution(w, h);
+    window_w = w;
+    window_h = h;
+}
+
+void Game::set_window_height(int h){
+    if (!_window){
+        ERR("cannot set the title of a null window");
+        return;
+    }
+    int w;
+    SDL_GetWindowSize(_window, &w, nullptr);
+    GPU_SetWindowResolution(w, h);
+    window_w = w;
+    window_h = h;
+}
+
+
+void Game::set_window_min_size(int w, int h){
+    if (!_window){
+        ERR("cannot set the minimal size of a null window");
+        return;
+    }
+
+    SDL_SetWindowMinimumSize(_window, w, h);
+}
+
+void Game::set_window_max_size(int w, int h){
+    if (!_window){
+        ERR("cannot set the minimal size of a null window");
+        return;
+    }
+    
+    SDL_SetWindowMaximumSize(_window, w, h);
 }

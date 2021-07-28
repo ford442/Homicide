@@ -43,8 +43,8 @@ class Game{
         float get_x(void) const;
         float get_y(void) const;
 
+        bool load_settings_file(std::string path);
         bool load_world(std::string world_path);
-        bool load_projectiles(std::string dir_path);
 
     private:
 
@@ -57,6 +57,17 @@ class Game{
         void draw(void);
         void update(void);
         void delay(void);
+
+        void set_window_title(std::string title);
+        void set_window_width(int w);
+        void set_window_height(int h);
+        void set_window_min_size(int w, int h);
+        void set_window_max_size(int w, int h);
+        void set_target_width(int w);
+        void set_target_height(int h);
+
+        bool load_lights(std::string dir_path);
+        bool load_projectiles(std::string dir_path);
 
         // ticks
         int start_tick;
