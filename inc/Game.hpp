@@ -68,6 +68,7 @@ class Game{
 
         bool load_lights(std::string dir_path);
         bool load_projectiles(std::string dir_path);
+        bool load_animations(std::string dir_path);
 
         // ticks
         int start_tick;
@@ -90,6 +91,7 @@ class Game{
         std::shared_ptr<entity::EntityList> _entityList;
         std::shared_ptr<light::LightImageList> _lightImageList;
         std::shared_ptr<weapons::Weapon_list> _weapon_list;
+
         std::list<std::shared_ptr<Projectile_type>> projectile_types;
 
         std::shared_ptr<entity::Player> _player;

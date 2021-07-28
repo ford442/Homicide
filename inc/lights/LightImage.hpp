@@ -14,6 +14,7 @@ namespace light{
 
             bool load(std::string path, std::string name);
             bool load(XMLNode* node);
+            bool load_csv(std::string path);
 
             GPU_Image* get_image(void) const;
             std::string get_name(void) const;

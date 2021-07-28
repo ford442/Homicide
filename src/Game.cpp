@@ -80,7 +80,7 @@ bool G::Init_TTF(void){
 bool G::Init_Mixer(void){
     std::cout << "Init_Mixer()" << std::endl;
     if (!Mix_Init(MIX_INIT_MP3 | MIX_INIT_MOD | MIX_INIT_OGG | MIX_INIT_FLAC)){
-        std::cerr << "ERROR :: MIX_Init : " << Mix_GetError << std::endl;
+        std::cerr << "ERROR :: MIX_Init : " << Mix_GetError() << std::endl;
         return false;
     }
     return true;
@@ -400,6 +400,7 @@ bool Game::load_projectiles(std::string dir_path){
     std::vector<std::string> dir_content = dir::content(dir_path);
 
     if (dir_content.empty()){
+        ERR("directory \"" + std::string(dir_path) + "\" not found or empty");
         return false;
     }
 
@@ -459,8 +460,9 @@ bool Game::load_settings_file(std::string path){
         ERR("cannot set the fullscreen state of a null window");
     }
 
-
+    if (!load_lights(doc.search("lights"))) return false;
     if (!load_projectiles(doc.search("projectiles"))) return false;
+    if (!load_animations(doc.search("animations"))) return false;
 
     return true;
 }
@@ -515,4 +517,48 @@ void Game::set_window_max_size(int w, int h){
     }
     
     SDL_SetWindowMaximumSize(_window, w, h);
+}
+
+bool Game::load_lights(std::string dir_path){
+    if (dir_path[1] != ':') dir_path = RES + dir_path;
+
+    std::vector<std::string> dir_content = dir::content(dir_path);
+
+    if (dir_content.empty()){
+        ERR("directory \"" + std::string(dir_path) + "\" not found or empty");
+        return false;
+    }
+
+    for (auto &f : dir_content){
+        if (f == ".." || f == ".") continue;
+
+        auto light = std::make_shared<light::LightImage>(&_pixel_size, &_x, &_y);
+
+        if (light->load_csv(dir_path + f)){
+            _lightImageList->push(light);
+        }
+    }
+    return true;
+}
+
+bool Game::load_animations(std::string dir_path){
+    if (dir_path[1] != ':') dir_path = RES + dir_path;
+
+    std::vector<std::string> dir_content = dir::content(dir_path);
+
+    if (dir_content.empty()){
+        ERR("directory \"" + std::string(dir_path) + "\" not found or empty");
+        return false;
+    }
+
+    for (auto &f : dir_content){
+        if (f == ".." || f == ".") continue;
+
+        auto spriteSheet = std::make_shared<sprite::SpriteSheet>();
+
+        if (spriteSheet->load_csv(dir_path + f)){
+            _animations->push(spriteSheet);
+        }
+    }
+    return true;
 }

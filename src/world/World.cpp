@@ -327,7 +327,6 @@ bool W::load(std::string file, std::shared_ptr<event::Handler> events){
                 if (enemy->load(node)){
                     _entityList->push_back(enemy);
                 }
-
             } else {
                 #ifdef WORLD_ERRS
                     std::cerr << "WARNING :: cannot reconize \"" << node->tag << "\" in \"" << file << "\"" << std::endl;

@@ -1,8 +1,9 @@
 version : 0.5.5-alpha
 window_title : Homicide
-window_width : 1080
-window_height : 720
-window_fullscreen : false
-light : lights\
-projectiles : projectiles\
-weapons : weapons\
+window_width : 1920
+window_height : 1080
+window_fullscreen : true
+lights : data\lights\
+projectiles : data\projectiles\
+weapons : data\weapons\
+animations : data\animations\

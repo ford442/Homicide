@@ -20,6 +20,8 @@ namespace sprite{
             bool load(XMLNode* node);
             void unload(void);
 
+            void push(std::shared_ptr<sprite::SpriteSheet> sprite);
+
         private:
             std::vector<std::shared_ptr<sprite::SpriteSheet>> _sprites;
             

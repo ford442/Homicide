@@ -119,3 +119,7 @@ for (int n=0; n<node->children.size; n++){
     }
     return true;
 }
+
+void A::push(std::shared_ptr<sprite::SpriteSheet> sprite){
+    _sprites.push_back(sprite);
+}

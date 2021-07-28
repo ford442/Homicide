@@ -2,8 +2,9 @@
 #include <string>
 #include "csv.hpp"
 
-#define WARNS
-#define ERRS
+#define WARNS true
+#define ERRS true
+#define LOGS true
 
 #ifdef WARNS
     #define WARN(msg) std::cerr << "WARNING :: " << __func__ << " : " << msg << std::endl;
@@ -15,6 +16,12 @@
     #define ERR(msg) std::cerr << "ERROR :: " << __func__ << " : " << msg << std::endl;
 #else
     #define ERR(msg)
+#endif
+
+#ifdef LOGS
+    #define LOG(msg) std::cout << "INFO :: " << __func__ << " : " << msg << std::endl;
+#else
+    #define LOG(msg)
 #endif
 
 Projectile_type::Projectile_type(){
@@ -34,6 +41,7 @@ GPU_Image *Projectile_type::get_image(void) const{
 bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageList> lights){
     
     CSV::Document doc;
+    doc.
 
     if (!doc.load(path)) return false;
 
@@ -47,7 +55,7 @@ bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageLi
     }
 
     try {
-        speed = std::stoi(doc.search("damages"));
+        speed = std::stoi(doc.search("speed"));
     } catch (std::exception& e){
         ERR("standart exception : " + std::string(e.what()));
         speed = 10;

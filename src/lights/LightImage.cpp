@@ -2,6 +2,32 @@
 #include "dir.hpp"
 #include <SDL2/SDL_image.h>
 #include <cstring>
+#include <csv.hpp>
+
+#define _ERR true
+#define _LOG true
+#define _WARN true
+
+#ifdef _ERR
+    #define ERR(msg) std::cerr << "ERROR :: \"" << __func__ << "\" in \"" << __FILE__ << "\" : " << msg << std::endl;
+#else
+    #define ERR(msg)
+    #define _ERR false
+#endif
+
+#ifdef _LOG
+    #define LOG(msg) std::cout << "INFO :: \"" << __func__ << "\" in \"" << __FILE__ << "\" : " << msg << std::endl;
+#else
+    #define LOG(msg)
+    #define _LOG false
+#endif
+
+#ifdef _WARN
+    #define WARN(msg) std::cerr << "WARNING :: \"" << __func__ << "\" in \"" << __FILE__ << "\" : " << msg << std::endl;
+#else
+    #define WARN(msg)
+    #define _WARN false
+#endif
 
 using L = light::LightImage;
 
@@ -105,4 +131,39 @@ void L::draw(GPU_Target* t, const int x, const int y, const float angle){
     } else {
         GPU_BlitTransform(_image, nullptr, t, x, y, angle, _scale, _scale);
     }
+}
+
+bool L::load_csv(std::string path){
+    CSV::Document doc;
+
+    doc.set_custom_Debug(_ERR, _LOG, _WARN);
+    if (!doc.load(path)) return false;
+
+    _name = doc.search("name");
+    if (_name == ""){
+        ERR("non valid name in \"" + path + "\"");
+        return false;
+    }
+
+    if (!load(doc.search("image"))){
+        ERR("cannot load the image in \"" + path + "\"");
+        return false;
+    }
+
+    if (doc.exist())
+    try {
+        center.x = std::stoi(doc.search("center-x"));
+    } catch (std::exception &e){
+        WARN("standart exception : " + std::string(e.what()));
+        center.x = _image->w / 2;
+    }
+
+    try {
+        center.y = std::stoi(doc.search("center-y"));
+    } catch (std::exception &e){
+        WARN("standart exception : " + std::string(e.what()));
+        center.y = _image->h / 2;
+    }
+
+    return true;
 }

@@ -15,7 +15,6 @@ void ShowConsole(){
 int main(int argc, char **argv){
     
     if (HIDE_TERMINAL) HideConsole();
-
     Game homicide;
 
     if (homicide.Init_libs())

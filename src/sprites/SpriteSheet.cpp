@@ -3,6 +3,7 @@
 #include <SDL2/SDL_gpu.h>
 #include <SDL2/SDL_image.h>
 #include "dir.hpp"
+#include "csv.hpp"
 
 using S = sprite::SpriteSheet;
 
@@ -142,4 +143,21 @@ void S::secure_id(int *id) const{
 
 GPU_Image* S::get_image(int id){
     return _sprites[id];
+}
+
+bool S::load_csv(std::string path){
+    CSV::Document doc;
+
+    if (!doc.load(path)) return false;
+
+    _name = doc.search("name");
+
+    std::string images_path, files_name, files_extension;
+
+    images_path = doc.search("path");
+    files_name = doc.search("file_name");
+    files_extension = doc.search("extension");
+
+    if (!load(images_path, files_name, files_extension)) return false;
+    return true;
 }

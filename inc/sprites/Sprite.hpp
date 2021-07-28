@@ -40,6 +40,7 @@ namespace sprite{
             void set_spriteSheet(std::shared_ptr<sprite::SpriteSheet> spriteSheet);
             bool load_spriteSheet(std::string sprite_type);
             std::shared_ptr<sprite::SpriteSheet> get_spriteSheet(void) const;
+
         
         private:
 

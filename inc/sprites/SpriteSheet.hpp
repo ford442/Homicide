@@ -12,6 +12,7 @@ namespace sprite{
             ~SpriteSheet();
 
             bool load(std::string path, std::string files_name, std::string files_extension);
+            bool load_csv(std::string path);
 
             bool draw(GPU_Target* t, GPU_Rect* src_rect, const SDL_FPoint pos, const int id);
             bool drawScale(GPU_Target* t, GPU_Rect* src_rect, const SDL_FPoint pos, const SDL_FPoint scale, const int id);

@@ -5,26 +5,9 @@
 <floor path="img\maps\menu_map\floor.png"/>
 <top path="img\maps\menu_map\top.png"/>
 <light-collisions path="img\maps\menu_map\light_collisions.png"/>
-
 <collisions path="img\maps\menu_map\collisions.png">
 </collisions>
-
 <Astar path="img\maps\menu_map\collisions.png" nodes-padding="20"/>
-
-<animations>
-    <sprite name="idle legs 1" path="img\sprites\entitys\soldier\legs\idle\" file_name="soldier_legs_idle_" extension=".png"/>
-    <sprite name="walk legs 1" path="img\sprites\entitys\soldier\legs\walk\" file_name="soldier_legs_" extension=".png"/>
-    <sprite name="walk body 1" path="img\sprites\entitys\soldier\walk\" file_name="soldier_walk_" extension=".png"/>
-    <sprite name="idle body 1" path="img\sprites\entitys\soldier\idle\" file_name="soldier_idle_" extension=".png"/>
-    <sprite name="shoot body 1" path="img\sprites\entitys\soldier\shoot\" file_name="soldier_shoot_" extension=".png"/>
-</animations>
-
-<light-images>
-    <light-image path="img\light\projected_large.png" name="large projected" center-x="540" center-y="930" scale="0.5"/>
-    <light-image path="img\light\projected_small.png" name="small projected" center-x="125" center-y="750" scale="0.5"/>
-    <light-image path="img\light\circle_1.png" name="circle" scale="2"/>
-    <light-image path="img\light\red_yellow_projectile.png" name="circle yellow red" scale="20"/>
-</light-images>
 
 <player>
     <key>
@@ -34,9 +17,7 @@
         <right key="D"/>
         <run key="Left Shift"/>
     </key>
-
     <light type="large projected"/>
-
     <animations>
         <legs_walk type="walk legs 1" ticks="35"/>
         <legs_run type="walk legs 1" ticks="15"/>
