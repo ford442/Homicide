@@ -15,6 +15,7 @@
 #include "Camera.hpp"
 #include "weapons/Weapon_list.hpp"
 #include "weapons/Projectile_type.hpp"
+#include "weapons/Projectile.hpp"
 
 class Game{
     public:
@@ -70,6 +71,8 @@ class Game{
         bool load_projectiles(std::string dir_path);
         bool load_animations(std::string dir_path);
 
+        void shoot(int x, int y, int dir);
+
         // ticks
         int start_tick;
         int delta_tick;
@@ -93,6 +96,7 @@ class Game{
         std::shared_ptr<weapons::Weapon_list> _weapon_list;
 
         std::list<std::shared_ptr<Projectile_type>> projectile_types;
+        std::list<std::shared_ptr<Projectile>> projectiles;
 
         std::shared_ptr<entity::Player> _player;
 

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <size w="1024" h="1024"/>
-<ambient-color r="0" g="0" b="0" a="255"/>
+<ambient-color r="255" g="255" b="255" a="255"/>
 <floor path="img\maps\menu_map\floor.png"/>
 <top path="img\maps\menu_map\top.png"/>
 <light-collisions path="img\maps\menu_map\light_collisions.png"/>
-<collisions path="img\maps\menu_map\collisions.png">
-</collisions>
+<collisions path="img\maps\menu_map\collisions.png"/>
 <Astar path="img\maps\menu_map\collisions.png" nodes-padding="20"/>
 
 <player>

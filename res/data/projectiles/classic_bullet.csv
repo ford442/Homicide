@@ -1,3 +1,5 @@
 name : classic bullet
 damages : 10
 speed : 1
+light : circle white 1
+image : img\weapons\bullets\simple 1.png

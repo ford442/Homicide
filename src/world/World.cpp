@@ -50,7 +50,9 @@ void W::draw(GPU_Target *t){
     }
 
     _entityList->draw(enlightened_target);
+}
 
+void W::blit(GPU_Target *t){
     enlightened_image->base_w = enlightened_image->w * *_pixel_size;
     enlightened_image->base_h = enlightened_image->h * *_pixel_size;
     GPU_Rect src = {0, 0, float(enlightened_image->base_w), float(enlightened_image->base_h)};

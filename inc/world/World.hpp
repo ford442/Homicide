@@ -35,6 +35,7 @@ namespace world{
             ~World();
 
             void draw(GPU_Target *t);
+            void blit(GPU_Target *t);
             void draw_light_poly(GPU_Target *t);
             void draw_top(GPU_Target *t, bool debug_mod);
 

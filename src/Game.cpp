@@ -265,12 +265,30 @@ void G::draw(void){
     
     GPU_ActivateShaderProgram(0, nullptr);
 
-    _world->draw(_target);
-    _entityList->OnLightDraw(_world->get_enlightened_target());
+    // _entityList->OnLightDraw(_world->get_enlightened_target());
 
+    
+    _world->draw(_target);
+
+    for (auto p : projectiles){
+        p->draw(_world->get_enlightened_target());
+    }
+
+    _world->blit(_target);
     _world->draw_top(_target, debug_mod);
 
     GPU_Flip(_target);
+}
+
+void Game::shoot(int x, int y, int dir){
+    std::shared_ptr<Projectile> p = std::make_shared<Projectile>();
+
+    p->set_type(projectile_types.front());
+    p->set_x(x);
+    p->set_y(y);
+    p->set_angle(dir);
+
+    projectiles.push_back(p);
 }
 
 void G::update(void){
@@ -284,6 +302,15 @@ void G::update(void){
     if (_event_handler->IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
     
+    
+
+    if (_event_handler->isButtonDown(event::Mouse_button_left)){
+        shoot(_event_handler->mouse_x(), _event_handler->mouse_y(), rand() % 360);
+    }
+
+    for (auto p : projectiles){
+        p->OnTick(delta_tick);
+    }
     
     _world->OnTick(delta_tick);
     _entityList->OnTick(delta_tick);

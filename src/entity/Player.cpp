@@ -169,10 +169,6 @@ void P::OnTick(const float delta){
         set_delay(tick); 
         light_add_angle += delta/1000;
     }
-
-    if (_events->isButtonDown(event::Mouse_button_left)){
-        shoot();
-    }
 }
 
 

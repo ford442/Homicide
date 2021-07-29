@@ -17,7 +17,13 @@
 
             bool load(std::string path, std::shared_ptr<light::LightImageList> lights);
 
+            int get_damages(void) const;
+            float get_speed(void) const;
+
         private:
+
+            bool load_img(std::string path);
+
             GPU_Image *image;
             std::shared_ptr<light::LightImage> light;
 
