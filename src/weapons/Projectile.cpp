@@ -14,7 +14,6 @@ Projectile::Projectile(){
     dir_x = 0;
     dir_y = 0;
     owner = nullptr;
-    light = nullptr;
 }
 
 Projectile::~Projectile(){
@@ -24,35 +23,24 @@ Projectile::~Projectile(){
 void Projectile::set_type(std::shared_ptr<Projectile_type> type){
     _type = type;
     update_dir();
-
-    light = std::make_shared<light::LightSource>();
-    
-    // light->set_image(type->get_light_image());
-    light->set_calculation_image(type->get_light_image());
-    light->set_calculation(light::LightSource::Shadow_image);
-    light->x(x);
-    light->y(y);
 }
 
-void Projectile::draw(GPU_Target *t){
+void Projectile::draw(GPU_Target *t, float x, float y, float zoom){
     if (!_type){
         ERR("cannot draw a non linked projectile");
         return;
     }
 
-    GPU_BlitRotate(_type->get_image(), nullptr, t, x, y, angle);
+    GPU_BlitTransform(_type->get_image(), nullptr, t, this->x * zoom - x , this->y * zoom - y, angle + 90, zoom, zoom);
 }
 
 void Projectile::OnTick(const int delta){
     x += dir_x * delta;
     y += dir_y * delta;
-    light->x(x);
-    light->y(y);
 }
 
 void Projectile::set_angle(const float angle){
     this->angle = angle;
-    light->angle(angle);
     update_dir();
 }
 

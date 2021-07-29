@@ -321,7 +321,8 @@ void S::display_light_poly(GPU_Target *t, std::shared_ptr<light::LightSource> li
                 break;
             }
 
-            light->get_calculation_image()->draw(t, light->x(), light->y(), light->angle());
+            // GPU_CircleFilled(t, light->x() * light_poly_resolution, light->y() * light_poly_resolution, 7, {255, 255, 255, 255});
+            // light->get_calculation_image()->draw(t, light->x(), light->y(), light->angle());
             break;
         
         default:

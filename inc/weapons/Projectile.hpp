@@ -15,7 +15,7 @@
             ~Projectile();
 
             void set_type(std::shared_ptr<Projectile_type> type);
-            void draw(GPU_Target *t);
+            void draw(GPU_Target *t, float x, float y, float zoom);
 
             void OnTick(const int delta);
 
@@ -27,13 +27,9 @@
 
             void set_owner(std::shared_ptr<entity::Entity> owner);
             std::shared_ptr<entity::Entity> get_owner(void);
-
-            void set_light(std::shared_ptr<light::LightImage> light);
-            std::shared_ptr<light::LightSource> get_light(void);
         
         private:
             std::shared_ptr<Projectile_type> _type;
-            std::shared_ptr<light::LightSource> light;
 
             float x, y;
             float dir_x, dir_y;

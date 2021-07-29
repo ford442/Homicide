@@ -267,14 +267,13 @@ void G::draw(void){
 
     // _entityList->OnLightDraw(_world->get_enlightened_target());
 
-    
     _world->draw(_target);
-
+    _world->blit(_target);
+    
     for (auto p : projectiles){
-        p->draw(_world->get_enlightened_target());
+        p->draw(_target, _x, _y, _pixel_size);
     }
 
-    _world->blit(_target);
     _world->draw_top(_target, debug_mod);
 
     GPU_Flip(_target);
@@ -302,8 +301,6 @@ void G::update(void){
     if (_event_handler->IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
     
-    
-
     if (_event_handler->isButtonDown(event::Mouse_button_left)){
         shoot(_event_handler->mouse_x(), _event_handler->mouse_y(), rand() % 360);
     }

@@ -56,7 +56,8 @@ bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageLi
     }
 
     try {
-        speed = std::stoi(doc.search("speed"));
+        speed = std::stof(doc.search("speed"));
+        std::cout << "speed : " << speed << std::endl;
     } catch (std::exception& e){
         ERR("standart exception : " + std::string(e.what()));
         speed = 10;
