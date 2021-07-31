@@ -427,3 +427,7 @@ void E::OnLightDraw(GPU_Target *t){
         shooted = false;
     }
 }
+
+float E:: get_facing(void) const{
+    return _facing_angle;
+}

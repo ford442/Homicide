@@ -32,11 +32,44 @@ void Projectile::draw(GPU_Target *t, float x, float y, float zoom){
     }
 
     GPU_BlitTransform(_type->get_image(), nullptr, t, this->x * zoom - x , this->y * zoom - y, angle + 90, zoom, zoom);
+
+    
 }
 
-void Projectile::OnTick(const int delta){
-    x += dir_x * delta;
-    y += dir_y * delta;
+bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> collisions){
+    
+    if (x > 1024 || x < 0) return false;
+    if (y > 1024 || y < 0) return false;
+
+    if (dir_x > 0.0f){
+        if (collisions->get_dist(x, y, world::Collisions::dir_east, dir_x * delta * 1.5, world::Collisions::Collision_all) >= dir_x * delta){
+            x += dir_x * delta;
+        } else {
+            return false;
+        }
+    } else {
+        if (collisions->get_dist(x, y, world::Collisions::dir_west, dir_x * delta * 1.5, world::Collisions::Collision_all) >= dir_x * delta){
+           x += dir_x * delta;
+        } else {
+            return false;
+        }
+    }
+
+    if (dir_y > 0.0f){
+        if (collisions->get_dist(x, y, world::Collisions::dir_south, dir_y * delta * 1.5, world::Collisions::Collision_all) >= dir_y * delta){
+            y += dir_y * delta;
+        } else {
+            return false;
+        }
+    } else {
+        if (collisions->get_dist(x, y, world::Collisions::dir_north, dir_y * delta * 1.5, world::Collisions::Collision_all) >= dir_y * delta){
+            y += dir_y * delta;
+        } else {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void Projectile::set_angle(const float angle){

@@ -502,8 +502,70 @@ float C::get_dist(const int sx, const int sy, const Direction dir, float distanc
     return dist_max;
 }
 
-float C::cast_ray(float x1, float y1, float x2, float y2){
-    return 0.0f;
+SDL_FPoint C::cast_ray(float x1, float y1, float x2, float y2){
+    float m;
+
+    if (x2 != x1){
+        m = (y2 - y1) / (x2 - x1);
+    }
+
+    int increment = 1;
+    SDL_FPoint contact;
+
+    if (x2 != x1 && std::abs(m) <= 1.0f){
+        
+        if (x1 > x2){
+            increment = -1;
+        }
+
+        const float m = (y2 - y1) / (x2 - x1);
+        const float b = y1 - m * x1;
+
+        if (increment == 1){
+            for (int x = (int)x1; x<(int)x2; x++){
+                const float y = m * (float)x + b;
+                if (is_shoot_collision(get(x, y))){
+                    contact = {float(x), float(y)};
+                    return contact;
+                }
+            }
+        } else {
+            for (int x = (int)x1; x>(int)x2; x--){
+                const float y = m * (float)x + b;
+                if (is_shoot_collision(get(x, y))){
+                    contact = {float(x), float(y)};
+                    return contact;
+                }
+            }
+        }
+    } else {
+        if (y1 > y2){
+            increment = -1;
+        }
+        const float w = (x2 - x1) / (y2 - y1);
+        const float p = x1 - w * y1;
+
+        if (increment == 1){
+            for (int y = (int)y1; y<(int)y2; y++){
+                const float x = w * (float)y + p;
+                if (is_shoot_collision(get(x, y))){
+                    contact = {float(x), float(y)};
+                    return contact;
+                }
+            }
+        } else {
+            for (int y = (int)y1; y>(int)y2; y--){
+                const float x = w * (float)y + p;
+                if (is_shoot_collision(get(x, y))){
+                    contact = {float(x), float(y)};
+                    return contact;
+                }
+            }
+        }
+    }
+
+    contact = {x2, y2};
+    return contact;
 }
 
 float C::cast_ray(const float x, const float y, const float angle){

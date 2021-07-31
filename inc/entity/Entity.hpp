@@ -98,6 +98,8 @@ namespace entity{
 
             void shoot(void);
 
+            float get_facing(void) const;
+
         private:
 
             float _x, _y;

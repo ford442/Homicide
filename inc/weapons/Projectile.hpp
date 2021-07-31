@@ -8,6 +8,7 @@
     #include "weapons/Projectile_type.hpp"
     #include "entity/Entity.hpp"
     #include "lights/LightSource.hpp"
+    #include "world/Collisions.hpp"
 
     class Projectile{
         public:
@@ -17,7 +18,7 @@
             void set_type(std::shared_ptr<Projectile_type> type);
             void draw(GPU_Target *t, float x, float y, float zoom);
 
-            void OnTick(const int delta);
+            bool OnTick(const int delta, std::shared_ptr<world::Collisions> collisions);
 
             void set_angle(const float angle);
             void update_dir(void);

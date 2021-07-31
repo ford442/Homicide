@@ -106,7 +106,7 @@ namespace world{
             Collision_type get_type_from_color(Uint32 color);
             Uint32 get_color_from_type(Collision_type type);
 
-            float cast_ray(float x1, float y1, float x2, float y2);
+            SDL_FPoint cast_ray(float x1, float y1, float x2, float y2);
             float cast_ray(float x, float y, const float angle);
 
         private:

@@ -1,5 +1,5 @@
 name : classic bullet
 damages : 10
-speed : 0.1
+speed : 1.5
 light : red yellow projectile
 image : img\weapons\bullets\simple 1.png

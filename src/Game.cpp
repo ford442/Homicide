@@ -286,7 +286,6 @@ void Game::shoot(int x, int y, int dir){
     p->set_x(x);
     p->set_y(y);
     p->set_angle(dir);
-
     projectiles.push_back(p);
 }
 
@@ -302,11 +301,13 @@ void G::update(void){
         debug_mod = !debug_mod;
     
     if (_event_handler->isButtonDown(event::Mouse_button_left)){
-        shoot(_event_handler->mouse_x(), _event_handler->mouse_y(), rand() % 360);
+        shoot(_player->get_x() / _pixel_size, _player->get_y() / _pixel_size, _player->get_facing());
     }
 
     for (auto p : projectiles){
-        p->OnTick(delta_tick);
+        if (!p->OnTick(delta_tick, _world->get_collisions())){
+            projectiles.remove(p);
+        }
     }
     
     _world->OnTick(delta_tick);
