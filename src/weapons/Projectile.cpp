@@ -42,31 +42,29 @@ bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> coll
     if (y > 1024 || y < 0) return false;
 
     if (dir_x > 0.0f){
-        if (collisions->get_dist(x, y, world::Collisions::dir_east, dir_x * delta * 1.2, world::Collisions::Collision_all) >= dir_x * delta){
+        if (collisions->get_dist(x, y, world::Collisions::dir_east, dir_x * delta * 1.2, world::Collisions::Collision_det_player_shoot) >= dir_x * delta){
             x += dir_x * delta;
         } else {
             return false;
         }
     } else {
-        if (collisions->get_dist(x, y, world::Collisions::dir_west, std::abs(dir_x * delta * 1.2), world::Collisions::Collision_all) >= std::abs(dir_x * delta)){
+        if (collisions->get_dist(x, y, world::Collisions::dir_west, std::abs(dir_x * delta * 1.2), world::Collisions::Collision_det_player_shoot) >= std::abs(dir_x * delta)){
            x += dir_x * delta;
         } else {
-            std::cout << "del" << std::endl;
             return false;
         }
     }
 
     if (dir_y > 0.0f){
-        if (collisions->get_dist(x, y, world::Collisions::dir_south, dir_y * delta * 1.2, world::Collisions::Collision_all) >= dir_y * delta){
+        if (collisions->get_dist(x, y, world::Collisions::dir_south, dir_y * delta * 1.2, world::Collisions::Collision_det_player_shoot) >= dir_y * delta){
             y += dir_y * delta;
         } else {
             return false;
         }
     } else {
-        if (collisions->get_dist(x, y, world::Collisions::dir_north, std::abs(dir_y * delta * 1.2), world::Collisions::Collision_all) >= std::abs(dir_y * delta)){
+        if (collisions->get_dist(x, y, world::Collisions::dir_north, std::abs(dir_y * delta * 1.2), world::Collisions::Collision_det_player_shoot) >= std::abs(dir_y * delta)){
            y += dir_y * delta;
         } else {
-            std::cout << "del" << std::endl;
             return false;
         }
     }
@@ -80,8 +78,9 @@ void Projectile::set_angle(const float angle){
 }
 
 void Projectile::update_dir(void){
-    dir_x = cos(angle / 180 * M_PI) * _type->get_speed();
-    dir_y = sin(angle / 180 * M_PI) * _type->get_speed();
+    const float speed = _type->get_rand_speed();
+    dir_x = cos(angle / 180 * M_PI) * speed;
+    dir_y = sin(angle / 180 * M_PI) * speed;
 }
 
 void Projectile::set_owner(std::shared_ptr<entity::Entity> owner){

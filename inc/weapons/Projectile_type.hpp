@@ -18,7 +18,9 @@
             bool load(std::string path, std::shared_ptr<light::LightImageList> lights);
 
             int get_damages(void) const;
-            float get_speed(void) const;
+            float get_max_speed(void) const;
+            float get_min_speed(void) const;
+            float get_rand_speed(void) const;
 
         private:
 
@@ -28,7 +30,9 @@
             std::shared_ptr<light::LightImage> light;
 
             int damages;
-            float speed;
+            float max_speed;
+            float min_speed;
+            
             std::string name;
     };
 

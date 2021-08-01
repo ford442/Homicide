@@ -1,6 +1,7 @@
 #include "weapons/Projectile_type.hpp"
 #include <string>
 #include <SDL2/SDL_image.h>
+#include <cmath>
 #include "dir.hpp"
 #include "csv.hpp"
 
@@ -56,11 +57,17 @@ bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageLi
     }
 
     try {
-        speed = std::stof(doc.search("speed"));
-        std::cout << "speed : " << speed << std::endl;
+        max_speed = std::stof(doc.search("max_speed"));
     } catch (std::exception& e){
         ERR("standart exception : " + std::string(e.what()));
-        speed = 10;
+        max_speed = 10;
+    }
+
+    try {
+        min_speed = std::stof(doc.search("min_speed"));
+    } catch (std::exception& e){
+        ERR("standart exception : " + std::string(e.what()));
+        min_speed = 10;
     }
 
     light = lights->get(doc.search("light"));
@@ -73,8 +80,16 @@ int Projectile_type::get_damages(void) const{
     return damages;
 }
 
-float Projectile_type::get_speed(void) const{
-    return speed;
+float Projectile_type::get_max_speed(void) const{
+    return max_speed;
+}
+
+float Projectile_type::get_min_speed(void) const{
+    return min_speed;
+}
+
+float Projectile_type::get_rand_speed(void) const{
+    return std::fmod(rand(), max_speed - min_speed) + min_speed;
 }
 
 std::shared_ptr<light::LightImage> Projectile_type::get_light_image(void){
