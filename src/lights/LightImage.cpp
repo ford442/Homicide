@@ -150,7 +150,6 @@ bool L::load_csv(std::string path){
         return false;
     }
 
-    if (doc.exist())
     try {
         center.x = std::stoi(doc.search("center-x"));
     } catch (std::exception &e){

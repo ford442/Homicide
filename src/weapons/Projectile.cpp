@@ -48,26 +48,28 @@ bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> coll
             return false;
         }
     } else {
-        if (collisions->get_dist(x, y, world::Collisions::dir_west, dir_x * delta * 1.5, world::Collisions::Collision_all) >= dir_x * delta){
+        float dist = collisions->get_dist(x, y, world::Collisions::dir_west, dir_x * delta * 1.5, world::Collisions::Collision_all); 
+        std::cout << dist << " ; " << dir_x * delta << " ; " << (dist <= dir_x * delta) << std::endl;
+        if (dist >= dir_x * delta){
            x += dir_x * delta;
         } else {
             return false;
         }
     }
 
-    if (dir_y > 0.0f){
-        if (collisions->get_dist(x, y, world::Collisions::dir_south, dir_y * delta * 1.5, world::Collisions::Collision_all) >= dir_y * delta){
-            y += dir_y * delta;
-        } else {
-            return false;
-        }
-    } else {
-        if (collisions->get_dist(x, y, world::Collisions::dir_north, dir_y * delta * 1.5, world::Collisions::Collision_all) >= dir_y * delta){
-            y += dir_y * delta;
-        } else {
-            return false;
-        }
-    }
+    // if (dir_y > 0.0f){
+    //     if (collisions->get_dist(x, y, world::Collisions::dir_south, dir_y * delta * 1.5, world::Collisions::Collision_all) >= dir_y * delta){
+    //         y += dir_y * delta;
+    //     } else {
+    //         return false;
+    //     }
+    // } else {
+    //     if (collisions->get_dist(x, y, world::Collisions::dir_north, dir_y * delta * 1.5, world::Collisions::Collision_all) <= -dir_y * delta){
+    //         y += dir_y * delta;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
     return true;
 }
