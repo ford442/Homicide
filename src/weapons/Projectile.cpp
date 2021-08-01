@@ -32,8 +32,6 @@ void Projectile::draw(GPU_Target *t, float x, float y, float zoom){
     }
 
     GPU_BlitTransform(_type->get_image(), nullptr, t, this->x * zoom - x , this->y * zoom - y, angle + 90, zoom, zoom);
-
-    
 }
 
 bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> collisions){

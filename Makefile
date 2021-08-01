@@ -15,7 +15,7 @@ test : $(EXEC)
 
 obj/%.o : src/%.cpp
 	@echo compile $@ from $<
-	@$(CXX) $(STD_VERSION) -o $@ -c $< -I $(INCLUDE)
+	@$(CXX) -std=$(STD_VERSION) -o $@ -c $< -I $(INCLUDE)
 
 obj/%.o : src/*/%.cpp
 	@echo compile $@ from $<
