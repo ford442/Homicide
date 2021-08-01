@@ -9,6 +9,10 @@ STD_VERSION = c++17
 
 all : $(EXEC)
 
+test : $(EXEC)
+	@echo launch
+	@$(EXEC)
+
 obj/%.o : src/%.cpp
 	@echo compile $@ from $<
 	@$(CXX) $(STD_VERSION) -o $@ -c $< -I $(INCLUDE)
