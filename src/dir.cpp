@@ -58,3 +58,7 @@ std::string dir::LogDir(void){
 std::string dir::DataDir(void){
     return getMainDir() + "res\\data\\";
 }
+
+std::string dir::main_dir(void){
+    return getMainDir();
+}

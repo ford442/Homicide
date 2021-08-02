@@ -7,7 +7,9 @@ INCLUDE = inc/
 FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_GPU -lSDL2_ttf -lSDL2_mixer
 STD_VERSION = c++17
 
+
 all : $(EXEC)
+resources : obj/resources.o
 
 test : $(EXEC)
 	@echo launch
@@ -25,6 +27,9 @@ $(EXEC) : $(OBJ)
 	@echo building the executable ...
 	@$(CXX) -std=$(STD_VERSION) obj/*.o -I $(INCLUDE) -L $(LIB) -o $(EXEC) $(FLAGS)
 	@echo executable bluid, ready to launch
+
+obj/resources.o : src/resources/resources.rc
+	windres $< -o $@ 
 
 clean:
 	del obj\*.o

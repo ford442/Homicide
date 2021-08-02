@@ -305,7 +305,8 @@ void G::update(void){
     }
 
     for (auto p : projectiles){
-        if (!p->OnTick(delta_tick, _world->get_collisions())){
+        int normal;
+        if (!p->OnTick(delta_tick, _world->get_collisions(), &normal)){
             projectiles.remove(p);
         }
     }
@@ -412,8 +413,7 @@ void G::quit(void){
 
 int InitSDL_SUB_Libs(void *ptr){
     Game *g = (Game*)ptr;
-    
-    std::cout << "bonjour" << std::endl;
+
     if (!g->Init_Mixer()) return false;
     if (!g->Init_TTF()) return false;
     if (!g->Init_IMG()) return false;

@@ -9,6 +9,7 @@ namespace dir{
     std::string LogDir(void);
     std::string DataDir(void);
     std::vector<std::string> content(std::string directory_path);
+    std::string main_dir(void);
 }
 
 #ifndef RES

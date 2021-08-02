@@ -1,8 +1,6 @@
-#include <windows.h>
+#include <Windows.h>
 #include "Game.hpp"
 #include "dir.hpp"
-
-#define HIDE_TERMINAL true
 
 void HideConsole(){
     ::ShowWindow(GetConsoleWindow(), SW_HIDE);
@@ -13,8 +11,11 @@ void ShowConsole(){
 }
 
 int main(int argc, char **argv){
-    
-    if (HIDE_TERMINAL) HideConsole();
+
+    #ifndef SHOW_TERMINAL
+        HideConsole();
+    #endif
+
     Game homicide;
 
     if (homicide.Init_libs())

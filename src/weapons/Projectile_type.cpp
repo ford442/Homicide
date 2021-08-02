@@ -42,7 +42,6 @@ GPU_Image *Projectile_type::get_image(void) const{
 }
 
 bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageList> lights){
-    
     CSV::Document doc;
 
     if (!doc.load(path)) return false;
