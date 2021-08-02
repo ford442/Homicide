@@ -23,6 +23,7 @@ namespace weapons{
             void set_name_xml(XMLNode* node);
             void set_image_xml(XMLNode *node);
             bool set_image(std::string path);
+            void load_node(XMLNode *node);
 
             void destroy_image(void);
 
