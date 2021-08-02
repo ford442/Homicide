@@ -34,7 +34,7 @@ void Projectile::draw(GPU_Target *t, float x, float y, float zoom){
     GPU_BlitTransform(_type->get_image(), nullptr, t, this->x * zoom - x , this->y * zoom - y, angle + 90, zoom, zoom);
 }
 
-bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> collisions, int* contact_normal){
+bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> collisions, int *contact_normal, bool *is_wall){
     
     if (x > 1024 || x < 0){
         *contact_normal = -1;
@@ -51,6 +51,7 @@ bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> coll
             x += dir_x * delta;
         } else {
             *contact_normal = 270;
+            *is_wall = true;
             return false;
         }
     } else {
@@ -58,6 +59,7 @@ bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> coll
            x += dir_x * delta;
         } else {
             *contact_normal = 90;
+            *is_wall = true;
             return false;
         }
     }
@@ -67,6 +69,7 @@ bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> coll
             y += dir_y * delta;
         } else {
             *contact_normal = 180;
+            *is_wall = true;
             return false;
         }
     } else {
@@ -74,6 +77,7 @@ bool Projectile::OnTick(const int delta, std::shared_ptr<world::Collisions> coll
            y += dir_y * delta;
         } else {
             *contact_normal = 0;
+            *is_wall = true;
             return false;
         }
     }

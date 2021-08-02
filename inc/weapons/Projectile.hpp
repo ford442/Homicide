@@ -18,7 +18,7 @@
             void set_type(std::shared_ptr<Projectile_type> type);
             void draw(GPU_Target *t, float x, float y, float zoom);
 
-            bool OnTick(const int delta, std::shared_ptr<world::Collisions> collisions, int* contact_normal);
+            bool OnTick(const int delta, std::shared_ptr<world::Collisions> collisions, int *contact_normal, bool *is_wall);
 
             void set_angle(const float angle);
             void update_dir(void);

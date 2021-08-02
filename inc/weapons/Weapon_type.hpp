@@ -11,7 +11,7 @@ namespace weapons{
             Weapon_type();
             ~Weapon_type();
 
-            bool Init(std::string path);
+            bool load(std::string path);
 
             std::string get_name(void) const;
             void set_name(std::string name);
@@ -21,9 +21,16 @@ namespace weapons{
             std::string _name;
 
             void set_name_xml(XMLNode* node);
-            void set_item_image_xml(XMLNode *node);
-            bool set_item_image(std::string path);
+            void set_image_xml(XMLNode *node);
+            bool set_image(std::string path);
 
-            GPU_Image* item_img;
+            void destroy_image(void);
+
+            GPU_Image *image;
+
+            float x;
+            float y;
+
+            float power;
     };
 };
