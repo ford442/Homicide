@@ -1,0 +1,52 @@
+#include "weapons/Weapon_type_list.hpp"
+#include "dir.hpp"
+#include <cstring>
+
+using namespace weapons;
+
+#define is_equal(str1, str2) !strcmp(str1, str2)
+
+#define ERR(msg) std::cerr << "ERROR :: in " << __FILE__ << " at : " << __func__ << " : " << msg << std::endl;
+
+Weapon_list::Weapon_list(){
+
+}
+
+Weapon_list::~Weapon_list(){
+    _weapons.clear();
+}
+
+bool Weapon_list::load(std::string directory){
+    if (directory[1] != ':') directory = RES + directory;
+
+    std::vector<std::string> files = dir::content(directory);
+    if (files.empty()){
+        ERR("the given directory dosent exist \"" + directory + "\"");
+        return false;
+    }
+
+    for (auto &f : files){
+        if (f == "."|| f == "..") continue;
+        load_weapon(directory + f);
+    }
+    return true;
+}
+
+bool Weapon_list::is_weapon_exist(std::string name){
+    for (auto &w : _weapons){
+        if (w->get_name() == name) return true;
+    }
+    return false;
+}
+
+void Weapon_list::push_weapon(std::shared_ptr<Weapon_type> w){
+    _weapons.push_back(w);
+}
+
+void Weapon_list::load_weapon(std::string path){
+    std::shared_ptr<weapons::Weapon_type> type;
+    
+    if (type->load(path)){
+        push_weapon(type);
+    }
+}

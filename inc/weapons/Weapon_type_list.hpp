@@ -20,6 +20,7 @@ namespace weapons{
         private:
             std::list<std::shared_ptr<Weapon_type>> _weapons;
 
-            bool push_weapon(std::shared_ptr<Weapon_type> w);
+            void push_weapon(std::shared_ptr<Weapon_type> w);
+            void load_weapon(std::string path);
     };
 }

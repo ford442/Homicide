@@ -13,7 +13,7 @@
 #include "entity/Player.hpp"
 #include "entity/NPC.hpp"
 #include "Camera.hpp"
-#include "weapons/Weapon_list.hpp"
+#include "weapons/Weapon_type_list.hpp"
 #include "weapons/Projectile_type.hpp"
 #include "weapons/Projectile.hpp"
 

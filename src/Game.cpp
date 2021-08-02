@@ -306,7 +306,9 @@ void G::update(void){
 
     for (auto p : projectiles){
         int normal;
-        if (!p->OnTick(delta_tick, _world->get_collisions(), &normal)){
+        bool is_wall;
+
+        if (!p->OnTick(delta_tick, _world->get_collisions(), &normal, &is_wall)){
             projectiles.remove(p);
         }
     }
