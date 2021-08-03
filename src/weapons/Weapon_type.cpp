@@ -133,6 +133,21 @@ void Weapon_type::load_node(XMLNode *node){
 
         if (is_equal(child->tag, "image")){
             set_image_xml(child);
+        
+        } else if (is_equal(child->tag, "posision")){
+            load_position(child);
+        
+        } else if (is_equal(child->tag, "power")){
+            load_power(child);
+        
+        } else if (is_equal(child->tag, "countdown")){
+            load_countdown(child);
+        
+        } else if (is_equal(child->tag, "cannon-pos")){
+            load_cannon_pos(child);
+        
+        } else if (is_equal(child->tag, "precision")){
+            load_precision(child);
 
         } else {
             WARN("cannot reconize \"" + std::string(child->tag) + "\" weapon child");
@@ -189,3 +204,36 @@ void Weapon_type::load_countdown(XMLNode *node){
         }
     }
 }
+
+void Weapon_type::load_cannon_pos(XMLNode *node){
+    LOG("set the position from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "x")){
+            to_float(attr.value, &cannon_x);
+        
+        } else if (is_equal(attr.key, "y")){
+            to_float(attr.value, &cannon_y);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon position attribute");
+        }
+    }
+}
+
+void Weapon_type::load_precision(XMLNode *node){
+    LOG("set the precision from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "deg")){
+            to_float(attr.value, &precision);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon precision attribute");
+        }
+    }
+}   

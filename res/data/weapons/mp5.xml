@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <weapon name="mp5">
-    
+    <image path="img\weapons\mp5\mp5.png"/>
+    <position x="10" y="10"/>
+    <power power="2.5"/>
+    <countdown countdown="250"/>
+    <cannon-pos x="2" y="17"/>
+    <precision deg="15"/>
 </weapon>

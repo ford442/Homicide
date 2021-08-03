@@ -27,6 +27,8 @@ namespace weapons{
             void load_power(XMLNode *node);
             void load_node(XMLNode *node);
             void load_countdown(XMLNode *node);
+            void load_cannon_pos(XMLNode *node);
+            void load_precision(XMLNode *node);
 
             void destroy_image(void);
 
@@ -35,7 +37,11 @@ namespace weapons{
             float x;
             float y;
 
+            float cannon_x;
+            float cannon_y;
+
             float power;
             int countdown;
+            float precision;
     };
 };
