@@ -8,6 +8,7 @@
 
 #define WARN(msg) std::cerr << "WARNING :: in " << __FILE__ << " at " << __func__ << " : " << msg << std::endl;
 #define ERR(msg) std::cerr << "ERROR :: in " << __FILE__ << " at " << __func__ << " : " << msg << std::endl;
+#define LOG(msg) std::cout << "INFO :: in " << __FILE__ << " at " << __func__ << " : " << msg << std::endl;
 
 using namespace weapons;
 
@@ -20,9 +21,10 @@ Weapon_type::~Weapon_type(){
 }
 
 bool Weapon_type::load(std::string path){
+    LOG("load weapon type from \"" + path + "\"");
+
     XMLDocument doc;
-    
-    if (!XMLDocument_load(&doc, path.c_str())){
+    if (XMLDocument_load(&doc, path.c_str())){
         for (int c=0; c<doc.root->children.size; c++){
             XMLNode *child = XMLNode_child(doc.root, c);
 
@@ -38,7 +40,7 @@ bool Weapon_type::load(std::string path){
     }
 
     XMLDocument_free(&doc);
-    return false;
+    return true;
 }
 
 std::string Weapon_type::get_name(void) const{
@@ -50,6 +52,7 @@ void Weapon_type::set_name(std::string name){
 }
 
 void Weapon_type::set_name_xml(XMLNode* node){
+    LOG("set weapon name from xml");
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
 
@@ -59,9 +62,11 @@ void Weapon_type::set_name_xml(XMLNode* node){
             WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon attribute");
         }
     }
+    LOG("name set to \"" + _name + "\"");
 }
 
 void Weapon_type::set_image_xml(XMLNode *node){
+    LOG("set the image from an xml node");
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
 
@@ -110,8 +115,11 @@ void Weapon_type::load_node(XMLNode *node){
 
         if (is_equal(child->tag, "image")){
             set_image_xml(child);
+
         } else {
             WARN("cannot reconize \"" + std::string(child->tag) + "\" weapon child");
         }
     }
+
+    LOG("weapon loaded");
 }

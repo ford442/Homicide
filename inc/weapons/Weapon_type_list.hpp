@@ -16,11 +16,12 @@ namespace weapons{
             bool load(std::string directory);
 
             bool is_weapon_exist(std::string name);
+            std::shared_ptr<Weapon_type> get(std::string weapon);
 
         private:
             std::list<std::shared_ptr<Weapon_type>> _weapons;
 
             void push_weapon(std::shared_ptr<Weapon_type> w);
-            void load_weapon(std::string path);
+            bool load_weapon(std::string path);
     };
 }

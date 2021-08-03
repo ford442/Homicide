@@ -100,6 +100,7 @@ bool G::Init_libs(void){
     _event_handler = std::make_shared<event::Handler>();
     _animations = std::make_shared<sprite::Animations>();
     _entityList = std::make_shared<entity::EntityList>();
+    _weapon_list = std::make_shared<weapons::Weapon_list>();
     _lightImageList = std::make_shared<light::LightImageList>(&_pixel_size, &_x, &_y);
     debug_mod = false;
 
@@ -492,6 +493,7 @@ bool Game::load_settings_file(std::string path){
     if (!load_lights(doc.search("lights"))) return false;
     if (!load_projectiles(doc.search("projectiles"))) return false;
     if (!load_animations(doc.search("animations"))) return false;
+    if (!load_weapons(doc.search("weapons"))) return false;
 
     return true;
 }
@@ -590,4 +592,8 @@ bool Game::load_animations(std::string dir_path){
         }
     }
     return true;
+}
+
+bool Game::load_weapons(std::string dir_path){
+    return _weapon_list->load(dir_path);
 }

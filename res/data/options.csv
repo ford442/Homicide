@@ -3,6 +3,7 @@ window_title : Homicide
 window_width : 1920
 window_height : 1080
 window_fullscreen : true
+
 lights : data\lights\
 projectiles : data\projectiles\
 weapons : data\weapons\

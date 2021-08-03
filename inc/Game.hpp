@@ -70,6 +70,7 @@ class Game{
         bool load_lights(std::string dir_path);
         bool load_projectiles(std::string dir_path);
         bool load_animations(std::string dir_path);
+        bool load_weapons(std::string dir_path);
 
         void shoot(int x, int y, int dir);
 
