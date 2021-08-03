@@ -23,7 +23,10 @@ namespace weapons{
             void set_name_xml(XMLNode* node);
             void set_image_xml(XMLNode *node);
             bool set_image(std::string path);
+            void load_position(XMLNode *node);
+            void load_power(XMLNode *node);
             void load_node(XMLNode *node);
+            void load_countdown(XMLNode *node);
 
             void destroy_image(void);
 
@@ -33,5 +36,6 @@ namespace weapons{
             float y;
 
             float power;
+            int countdown;
     };
 };

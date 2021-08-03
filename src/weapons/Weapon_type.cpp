@@ -12,6 +12,24 @@
 
 using namespace weapons;
 
+static inline void to_float(std::string str, float *i){
+    try {
+        *i = std::stof(str);
+    } catch (std::exception &e){
+        ERR("standart execption : " + std::string(e.what()));
+        *i = 0;
+    }
+}
+
+static inline void to_int(std::string str, int *i){
+    try {
+        *i = std::stoi(str);
+    } catch (std::exception &e){
+        ERR("standart execption : " + std::string(e.what()));
+        *i = 0;
+    }
+} 
+
 Weapon_type::Weapon_type(){
     image = nullptr;
 }
@@ -122,4 +140,52 @@ void Weapon_type::load_node(XMLNode *node){
     }
 
     LOG("weapon loaded");
+}
+
+void Weapon_type::load_position(XMLNode *node){
+    LOG("set the position from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "x")){
+            to_float(attr.value, &x);
+        
+        } else if (is_equal(attr.key, "y")){
+            to_float(attr.value, &y);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon position attribute");
+        }
+    }
+}
+
+void Weapon_type::load_power(XMLNode *node){
+    LOG("set the power from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "power")){
+            to_float(attr.value, &power);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon power attribute");
+        }
+    }
+}
+
+void Weapon_type::load_countdown(XMLNode *node){
+    LOG("set the countdown from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "countdown")){
+            to_int(attr.value, &countdown);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon countdown attribute");
+        }
+    }
 }
