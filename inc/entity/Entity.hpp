@@ -11,11 +11,13 @@
 #include "sprites/Sprite.hpp"
 #include "world/LightSurface.hpp"
 #include "world/Collisions.hpp"
+#include "weapons/Weapon_type.hpp"
+#include "entity/Inventory.hpp"
 
 namespace world{class World;}
 
 namespace entity{
-    class Entity : public sprite::Sprite{
+    class Entity : public sprite::Sprite, public Inventory{
         public:
             Entity(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> light_surface, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions);
             ~Entity();

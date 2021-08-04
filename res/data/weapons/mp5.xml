@@ -7,4 +7,6 @@
     <countdown countdown="250"/>
     <cannon-pos x="2" y="17"/>
     <precision deg="15"/>
+    <mass mass="25"/>
+    <recoil recoil="0.1"/>
 </weapon>
