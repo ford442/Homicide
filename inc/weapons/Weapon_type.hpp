@@ -4,6 +4,7 @@
 #include <string>
 #include <SDL2/SDL_gpu.h>
 #include "xml.hpp"
+#include "weapons/Projectile_type.hpp"
 
 namespace weapons{
     class Weapon_type{
@@ -15,6 +16,8 @@ namespace weapons{
 
             std::string get_name(void) const;
             void set_name(std::string name);
+
+            bool is_valid_projecile(std::shared_ptr<Projectile_type> p);
 
         private:
 
@@ -29,6 +32,9 @@ namespace weapons{
             void load_countdown(XMLNode *node);
             void load_cannon_pos(XMLNode *node);
             void load_precision(XMLNode *node);
+            void load_mass(XMLNode *node);
+            void load_recoil(XMLNode *node);
+            void load_caliber(XMLNode *node);
 
             void destroy_image(void);
 
@@ -43,5 +49,8 @@ namespace weapons{
             float power;
             int countdown;
             float precision;
+            float mass;
+            float recoil;
+            float caliber;
     };
 };

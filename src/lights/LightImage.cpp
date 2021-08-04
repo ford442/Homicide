@@ -150,18 +150,24 @@ bool L::load_csv(std::string path){
         return false;
     }
 
-    try {
-        center.x = std::stoi(doc.search("center-x"));
-    } catch (std::exception &e){
-        WARN("standart exception : " + std::string(e.what()));
-        center.x = _image->w / 2;
+    std::string temp = doc.search("center-x");
+    if (!temp.empty()){
+        try {
+            center.x = std::stoi(temp);
+        } catch (std::exception &e){
+            WARN("standart exception : " + std::string(e.what()) + " in \"" + path + "\"");
+            center.x = _image->w / 2;
+        }
     }
 
-    try {
-        center.y = std::stoi(doc.search("center-y"));
-    } catch (std::exception &e){
-        WARN("standart exception : " + std::string(e.what()));
-        center.y = _image->h / 2;
+    temp = doc.search("center-y");
+    if (!temp.empty()){
+        try {
+            center.y = std::stoi(temp);
+        } catch (std::exception &e){
+            WARN("standart exception : " + std::string(e.what()) + " in \"" + path + "\"");
+            center.y = _image->h / 2;
+        }
     }
 
     return true;

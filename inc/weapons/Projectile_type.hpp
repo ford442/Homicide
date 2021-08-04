@@ -21,6 +21,8 @@
             float get_max_speed(void) const;
             float get_min_speed(void) const;
             float get_rand_speed(void) const;
+            
+            float get_caliber(void) const;
 
         private:
 
@@ -32,6 +34,7 @@
             int damages;
             float max_speed;
             float min_speed;
+            float caliber;
             
             std::string name;
     };

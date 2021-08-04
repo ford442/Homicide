@@ -134,7 +134,7 @@ void Weapon_type::load_node(XMLNode *node){
         if (is_equal(child->tag, "image")){
             set_image_xml(child);
         
-        } else if (is_equal(child->tag, "posision")){
+        } else if (is_equal(child->tag, "position")){
             load_position(child);
         
         } else if (is_equal(child->tag, "power")){
@@ -148,6 +148,15 @@ void Weapon_type::load_node(XMLNode *node){
         
         } else if (is_equal(child->tag, "precision")){
             load_precision(child);
+        
+        } else if (is_equal(child->tag, "mass")){
+            load_mass(child);
+        
+        } else if (is_equal(child->tag, "recoil")){
+            load_recoil(child);
+        
+        } else if (is_equal(child->tag, "caliber")){
+            load_caliber(child);
 
         } else {
             WARN("cannot reconize \"" + std::string(child->tag) + "\" weapon child");
@@ -236,4 +245,53 @@ void Weapon_type::load_precision(XMLNode *node){
             WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon precision attribute");
         }
     }
-}   
+}
+
+void Weapon_type::load_mass(XMLNode *node){
+    LOG("set the mass from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "mass")){
+            to_float(attr.value, &mass);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon mass attribute");
+        }
+    }
+}
+
+void Weapon_type::load_recoil(XMLNode *node){
+    LOG("set the recoil from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "recoil")){
+            to_float(attr.value, &recoil);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon recoil attribute");
+        }
+    }
+}
+
+void Weapon_type::load_caliber(XMLNode *node){
+    LOG("set the caliber from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "caliber")){
+            to_float(attr.value, &caliber);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon caliber attribute");
+        }
+    }
+}
+
+bool Weapon_type::is_valid_projecile(std::shared_ptr<Projectile_type> p){
+    return (p->get_caliber() == caliber);
+}

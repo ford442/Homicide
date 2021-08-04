@@ -114,3 +114,7 @@ bool Projectile_type::load_img(std::string path){
     }
     return true;
 }
+
+float Projectile_type::get_caliber(void) const{
+    return caliber;
+}
