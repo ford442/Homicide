@@ -7,15 +7,9 @@
 
 using W = world::World;
 
-W::World(std::shared_ptr<sprite::Animations> animations) : _animations(animations){
+W::World(std::shared_ptr<sprite::Animations> animations, float *pixel_size, float *x, float *y, std::shared_ptr<light::LightImageList> lightImageList, std::shared_ptr<entity::Player> player, std::shared_ptr<World> self, std::shared_ptr<event::Handler> events, std::shared_ptr<entity::EntityList> entity_list) : _animations(animations), _pixel_size(pixel_size), _x(x), _y(y), _lightImageList(lightImageList), _player(player), _self(self), _entityList(entity_list){
     std::cout << "INFO :: allocating World instance" << std::endl;
     init_ptr();
-}
-
-W::World(std::string file, std::shared_ptr<sprite::Animations> animations, float *pixel_size, float *x, float *y, std::shared_ptr<light::LightImageList> lightImageList, std::shared_ptr<entity::Player> player, std::shared_ptr<World> self, std::shared_ptr<event::Handler> events, std::shared_ptr<entity::EntityList> entity_list) : _animations(animations), _pixel_size(pixel_size), _x(x), _y(y), _lightImageList(lightImageList), _player(player), _self(self), _entityList(entity_list){
-    std::cout << "INFO :: allocating World instance" << std::endl;
-    init_ptr();
-    load(file, events);
 }
 
 W::~World(){
@@ -271,6 +265,7 @@ bool W::load(std::string file, std::shared_ptr<event::Handler> events){
                 #endif
                 _player = std::make_shared<entity::Player>(_animations, _light, events, _x, _y, _pixel_size, _collisions);
                 _player->load(node);
+                _player->set_primary(weapons->get("mp5"));
 
             } else if (!strcmp(node->tag, "Astar")){
                 #ifdef WORLD_LOGS
@@ -461,4 +456,8 @@ void W::OnTick(const float delta){
 
 GPU_Target *W::get_enlightened_target(void) const{
     return enlightened_target;
+}
+
+void W::set_weapons(std::shared_ptr<weapons::Weapon_list> list){
+    weapons = list;
 }

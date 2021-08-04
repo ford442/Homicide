@@ -379,9 +379,10 @@ bool G::Init_IMG(void){
 
 bool G::load_world(std::string world_path){
     int tick = SDL_GetTicks();
-    _world = std::make_shared<world::World>(world_path, _animations, &_pixel_size, &_x, &_y, _lightImageList, _player, _world, _event_handler, _entityList);
+    _world = std::make_shared<world::World>(_animations, &_pixel_size, &_x, &_y, _lightImageList, _player, _world, _event_handler, _entityList);
+    _world->set_weapons(_weapon_list);
     std::cout << std::endl << "INFO :: world loading finish, loading time : " << SDL_GetTicks() - tick << " milisecond" << std::endl << std::endl;
-    return true;
+    return _world->load(world_path, _event_handler);
 }
 
 void G::quit(void){

@@ -4,21 +4,19 @@
 #include <memory>
 #include <SDL2/SDL_gpu.h>
 #include <string>
-
 #include "world/Floor.hpp"
 #include "world/LightSurface.hpp"
 #include "world/Top.hpp"
 #include "world/Collisions.hpp"
 #include "world/A-star.hpp"
-
 #include "lights/LightImageList.hpp"
 #include "lights/IlluminatedImage.hpp"
-
 #include "sprites/Animations.hpp"
 #include "sprites/Sprite.hpp"
 #include "entity/Player.hpp"
 #include "entity/Enemy.hpp"
 #include "entity/EntityList.hpp"
+#include "weapons/Projectile_type.hpp"
 
 namespace entity{
     class Entity;
@@ -30,8 +28,7 @@ namespace entity{
 namespace world{
     class World{
         public:
-            World(std::shared_ptr<sprite::Animations> animations);
-            World(std::string file, std::shared_ptr<sprite::Animations> animations, float *pixel_size, float *x, float *y, std::shared_ptr<light::LightImageList> lightImageList, std::shared_ptr<entity::Player> player, std::shared_ptr<World> self, std::shared_ptr<event::Handler> events, std::shared_ptr<entity::EntityList> entity_list);
+            World(std::shared_ptr<sprite::Animations> animations, float *pixel_size, float *x, float *y, std::shared_ptr<light::LightImageList> lightImageList, std::shared_ptr<entity::Player> player, std::shared_ptr<World> self, std::shared_ptr<event::Handler> events, std::shared_ptr<entity::EntityList> entity_list);
             ~World();
 
             void draw(GPU_Target *t);
@@ -57,10 +54,10 @@ namespace world{
             std::shared_ptr<sprite::Sprite> push_sprite(std::string type);
             std::vector<std::shared_ptr<sprite::Sprite>>* get_sprited(void);
 
-
             std::shared_ptr<A_star> get_Astar(void) const;
-
             GPU_Target *get_enlightened_target(void) const;
+
+            void set_weapons(std::shared_ptr<weapons::Weapon_list> list);
 
 
         private:
@@ -74,6 +71,7 @@ namespace world{
             std::shared_ptr<light::LightImageList> _lightImageList;
             std::shared_ptr<Collisions> _collisions;
             std::shared_ptr<A_star> _Astar;
+            
 
             std::shared_ptr<sprite::Animations> _animations;
             std::vector<std::shared_ptr<light::IlluminatedImage>> images;
@@ -81,6 +79,7 @@ namespace world{
             std::shared_ptr<entity::Player> _player;
             std::shared_ptr<entity::EntityList> _entityList;
             std::shared_ptr<World> _self;
+            std::shared_ptr<weapons::Weapon_list> weapons;
 
             bool _error;
             int world_w, world_h;

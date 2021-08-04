@@ -16,11 +16,16 @@
 
             std::shared_ptr<weapons::Weapon_type> get_primary(void) const;
             std::shared_ptr<weapons::Weapon_type> get_secondary(void) const;
+            std::shared_ptr<weapons::Weapon_type> get_selected(void) const;
+            const int get_selector(void) const;
 
             void set_primary(std::shared_ptr<weapons::Weapon_type> weapon);
             void set_secondary(std::shared_ptr<weapons::Weapon_type> weapon);
+            void set_seletector(const int selector);
 
         private:
+            int selector;
+
             std::shared_ptr<weapons::Weapon_type> primary;
             std::shared_ptr<weapons::Weapon_type> secondary;
     };

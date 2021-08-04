@@ -13,6 +13,7 @@
             ~Projectile_type();
 
             GPU_Image *get_image(void) const;
+            GPU_Image *get_icon(void) const;
             std::shared_ptr<light::LightImage> get_light_image(void);
 
             bool load(std::string path, std::shared_ptr<light::LightImageList> lights);
@@ -27,8 +28,10 @@
         private:
 
             bool load_img(std::string path);
+            bool load_icon(std::string path);
 
             GPU_Image *image;
+            GPU_Image *icon;
             std::shared_ptr<light::LightImage> light;
 
             int damages;

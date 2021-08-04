@@ -238,6 +238,12 @@ void E::OnTick(const float delta){
 
 void E::OnDraw(GPU_Target* t){
     set_pos(_x, _y);
+
+    auto weapon = get_selected();
+    if (weapon){
+        GPU_Blit(weapon->get_image(), nullptr, t, _x, _y);
+    }
+
     Sprite::OnDraw(t);
 
     #ifdef DEBUG_COLLISIONS

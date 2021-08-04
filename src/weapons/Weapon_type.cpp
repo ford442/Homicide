@@ -295,3 +295,7 @@ void Weapon_type::load_caliber(XMLNode *node){
 bool Weapon_type::is_valid_projecile(std::shared_ptr<Projectile_type> p){
     return (p->get_caliber() == caliber);
 }
+
+GPU_Image *Weapon_type::get_image(void) const{
+    return image;
+}

@@ -24,3 +24,24 @@ void Inventory::set_primary(std::shared_ptr<weapons::Weapon_type> weapon){
 void Inventory::set_secondary(std::shared_ptr<weapons::Weapon_type> weapon){
     secondary = weapon;
 }
+
+void Inventory::set_seletector(const int selector){
+    this->selector = selector;
+}
+
+std::shared_ptr<weapons::Weapon_type> Inventory::get_selected(void) const{
+    switch (selector){
+        case 1:
+            return get_primary();
+        
+        case 2:
+            return get_secondary();
+        
+        default:
+            return nullptr;
+    }
+}
+
+const int Inventory::get_selector(void) const{
+    return selector;
+}

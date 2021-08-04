@@ -19,6 +19,8 @@ namespace weapons{
 
             bool is_valid_projecile(std::shared_ptr<Projectile_type> p);
 
+            GPU_Image *get_image(void) const;
+
         private:
 
             std::string _name;

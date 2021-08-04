@@ -118,3 +118,28 @@ bool Projectile_type::load_img(std::string path){
 float Projectile_type::get_caliber(void) const{
     return caliber;
 }
+
+bool Projectile_type::load_icon(std::string path){
+    if (path[1] != ':') path = RES + path;
+
+    SDL_Surface *surface = IMG_Load(path.c_str());
+
+    if (!surface){
+        ERR("IMG_Load : " + std::string(IMG_GetError()) + ", file : \"" + path + "\"");
+        return false;
+    }
+
+    icon = GPU_CopyImageFromSurface(surface);
+    SDL_FreeSurface(surface);
+
+    if (!icon){
+        ERR("GPU_CopyImageFromSurface");
+        return false;
+    }
+    return true;
+}
+
+
+GPU_Image *Projectile_type::get_icon(void) const{
+    return icon;
+}
