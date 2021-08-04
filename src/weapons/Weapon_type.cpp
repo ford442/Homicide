@@ -32,10 +32,12 @@ static inline void to_int(std::string str, int *i){
 
 Weapon_type::Weapon_type(){
     image = nullptr;
+    icon = nullptr;
 }
 
 Weapon_type::~Weapon_type(){
     destroy_image();
+    destory_icon();
 }
 
 bool Weapon_type::load(std::string path){
@@ -298,4 +300,48 @@ bool Weapon_type::is_valid_projecile(std::shared_ptr<Projectile_type> p){
 
 GPU_Image *Weapon_type::get_image(void) const{
     return image;
+}
+
+void Weapon_type::load_icon_xml(XMLNode *node){
+    LOG("set the xml from an xml node");
+
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "path")){
+            load_icon(attr.value);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" weapon xml attribute");
+        }
+    }
+}
+
+bool Weapon_type::load_icon(std::string path){
+    destory_icon();
+    if (path[1] != ':') path = RES + path; 
+
+    SDL_Surface *surface = IMG_Load(path.c_str());
+
+    if (!surface){
+        ERR("IMG_Load : " + std::string(IMG_GetError()));
+        return false;
+    }
+
+    icon = GPU_CopyImageFromSurface(surface);
+    SDL_FreeSurface(surface);
+
+    if (!icon){
+        ERR("GPU_CopyImageFromSurface");
+        return false;
+    }
+
+    return true;
+}
+
+void Weapon_type::destory_icon(void){
+    if (icon){
+        GPU_FreeImage(icon);
+        icon = nullptr;
+    }
 }

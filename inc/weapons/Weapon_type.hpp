@@ -20,6 +20,7 @@ namespace weapons{
             bool is_valid_projecile(std::shared_ptr<Projectile_type> p);
 
             GPU_Image *get_image(void) const;
+            GPU_Image *get_icon(void) const;
 
         private:
 
@@ -37,10 +38,14 @@ namespace weapons{
             void load_mass(XMLNode *node);
             void load_recoil(XMLNode *node);
             void load_caliber(XMLNode *node);
+            void load_icon_xml(XMLNode *node);
+            bool load_icon(std::string path);
 
             void destroy_image(void);
+            void destory_icon(void);
 
             GPU_Image *image;
+            GPU_Image *icon;
 
             float x;
             float y;
