@@ -2,10 +2,11 @@
     #define __MAIN__HPP__
 
     #include <iostream>
+    #include <cstring>
 
     #define DEBUG_LEVEL 6
-
     #define __func__ __FUNCTION__
+    #define is_equal(str1, str2) !strcmp(str1, str2)
 
     #ifdef DEBUG_LEVEL
         #if (DEBUG_LEVEL >= 1)
@@ -31,10 +32,6 @@
         #if (DEBUG_LEVEL >= 6)
             #define __CONSTRUCT_LOG
             #define __DESTRUCT_LOG
-        #endif
-
-        #if (DEBUG_LEVEL >= 7)
-            #define __FNC_LOG
         #endif
     #else
         #warning debug level not initalized, set as 0
@@ -88,14 +85,5 @@
     #else
         #define LOAD_LOG() {}
     #endif
-    
-    #ifdef __FNC_LOG
-        #define FNC_LOG() std::cout << "FUNCTION INFO :: " << __func__ << std::endl;
-        #undef __FNC_LOG
-    #else
-        #define FNC_LOG() {}
-    #endif
-    
-    #define FUNC_LOG FNC_LOG()
     
 #endif

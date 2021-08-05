@@ -101,7 +101,7 @@ class Game{
 
         std::shared_ptr<entity::Player> _player;
 
-        std::shared_ptr<Camera> _camera;
+        Camera _camera;
 
         Uint32 blur_vert;
         Uint32 blur_frag;

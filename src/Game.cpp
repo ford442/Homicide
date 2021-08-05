@@ -19,7 +19,6 @@ G::Game(void){
     _world = nullptr;
     _lightImageList = nullptr;
     _player = nullptr;
-    _camera = nullptr;
 }
 
 G::~Game(){
@@ -73,9 +72,10 @@ bool G::Init_libs(void){
     bool error = InitSDL_SUB_Libs(this);
     std::cout << "INFO :: SDL2 libs initalized" << std::endl;
 
-    _camera = std::make_shared<Camera>();
-    _camera->set_delay(350);
-    _camera->setMovementType(Camera::Camera_FadeIn);
+
+    _camera.set_delay(350);
+    _camera.setMovementType(Camera::Camera_FadeIn);
+
     _event_handler = std::make_shared<event::Handler>();
     _animations = std::make_shared<sprite::Animations>();
     _entityList = std::make_shared<entity::EntityList>();
@@ -299,10 +299,10 @@ void G::update(void){
     _entityList->updateAnimations(delta_tick);
     
 
-    _camera->OnTick(delta_tick);
-    _camera->go_to(_player->get_x(), _player->get_y());
+    _camera.OnTick(delta_tick);
+    _camera.go_to(_player->get_x(), _player->get_y());
     float x, y;
-    _camera->get_pos(&x, &y);
+    _camera.get_pos(&x, &y);
     _x = x - window_w / 2 + (_event_handler->mouse_x() - (window_w / 2)) / 10;
     _y = y - window_h / 2 + (_event_handler->mouse_y() - (window_h / 2)) / 10;
     
@@ -376,7 +376,6 @@ void G::quit(void){
     _entityList = nullptr;
     _lightImageList = nullptr;
     _player = nullptr;
-    _camera = nullptr;
 
     std::cout << "INFO :: quit SDL2 libs" << std::endl;
 
