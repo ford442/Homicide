@@ -96,3 +96,11 @@ void H::mouse_pos(int *x, int *y){
     *x = mouse_x();
     *y = mouse_y();
 }
+
+bool H::is_wheel_up(void) const{
+    return _mouse->wheel_up();
+}
+
+bool H::is_wheel_down(void) const{
+    return _mouse->wheel_down();
+}

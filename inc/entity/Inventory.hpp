@@ -21,7 +21,7 @@
 
             void set_primary(std::shared_ptr<weapons::Weapon_type> weapon);
             void set_secondary(std::shared_ptr<weapons::Weapon_type> weapon);
-            void set_seletector(const int selector);
+            void set_selector(const int selector);
 
         private:
             int selector;

@@ -28,6 +28,9 @@ namespace event{
 
             void mouse_pos(int *x, int *y);
 
+            bool is_wheel_up(void) const;
+            bool is_wheel_down(void) const;
+
         private:
 
             std::unique_ptr<Mouse> _mouse;

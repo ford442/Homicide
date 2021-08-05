@@ -11,6 +11,7 @@ P::Player(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world:
     set_left_key(SDL_SCANCODE_A);
     set_right_key(SDL_SCANCODE_D);
     set_run_key(SDL_SCANCODE_LSHIFT);
+    set_selector(1);
 }
 
 P::~Player(){
@@ -168,6 +169,16 @@ void P::OnTick(const float delta){
         set_spriteSheet(get_body_idle(&tick));
         set_delay(tick); 
         light_add_angle += delta/1000;
+    }
+
+    if (_events->is_wheel_up()){
+        if (get_selector() > 0){
+            set_selector(get_selector() - 1);
+        }
+    } else if (_events->is_wheel_down()){
+        if (get_selector() < 5){
+            set_selector(get_selector() + 1);
+        }
     }
 }
 

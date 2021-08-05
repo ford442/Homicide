@@ -25,7 +25,7 @@ void Inventory::set_secondary(std::shared_ptr<weapons::Weapon_type> weapon){
     secondary = weapon;
 }
 
-void Inventory::set_seletector(const int selector){
+void Inventory::set_selector(const int selector){
     this->selector = selector;
 }
 
