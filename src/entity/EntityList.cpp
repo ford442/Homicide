@@ -168,3 +168,13 @@ void EL::OnLightDraw(GPU_Target *t){
         temp = temp->next;
     }
 }
+
+void EL::drawHUD(GPU_Target *t){
+    std::shared_ptr<EntityElement> temp;
+    temp = back;
+
+    while (temp != nullptr){
+        temp->value->HUD(t);
+        temp = temp->next;
+    }
+}

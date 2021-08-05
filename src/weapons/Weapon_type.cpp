@@ -159,6 +159,9 @@ void Weapon_type::load_node(XMLNode *node){
         
         } else if (is_equal(child->tag, "caliber")){
             load_caliber(child);
+        
+        } else if (is_equal(child->tag, "icon")){
+            load_icon_xml(child);
 
         } else {
             WARN("cannot reconize \"" + std::string(child->tag) + "\" weapon child");
@@ -336,6 +339,7 @@ bool Weapon_type::load_icon(std::string path){
         return false;
     }
 
+    GPU_SetImageFilter(icon, GPU_FILTER_NEAREST);
     return true;
 }
 
@@ -344,4 +348,8 @@ void Weapon_type::destory_icon(void){
         GPU_FreeImage(icon);
         icon = nullptr;
     }
+}
+
+GPU_Image *Weapon_type::get_icon(void) const{
+    return icon;
 }

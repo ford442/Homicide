@@ -112,4 +112,10 @@ class Game{
         int blur_radius;
         int blur_resolution;
         int blur_dir;
+
+        world::Floor world_floor;
+        world::Top world_top;
+        world::A_star Astar;
+        world::Collisions collisons;
+        world::LightSurface light_layer;
 };

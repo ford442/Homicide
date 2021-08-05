@@ -434,6 +434,10 @@ void E::OnLightDraw(GPU_Target *t){
     }
 }
 
-float E:: get_facing(void) const{
+float E::get_facing(void) const{
     return _facing_angle;
+}
+
+void E::HUD(GPU_Target *t){
+    
 }

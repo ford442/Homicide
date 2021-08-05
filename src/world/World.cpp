@@ -32,7 +32,6 @@ W::~World(){
 void W::draw(GPU_Target *t){
 
     GPU_Clear(enlightened_target);
-    _light->draw(t);
     _floor->draw(enlightened_target);
 
     for (auto &i : images){
@@ -367,7 +366,7 @@ void W::update_sizes(void){
     }
 
     GPU_SetImageFilter(enlightened_image, GPU_FILTER_NEAREST);
-    GPU_SetBlendMode(enlightened_image, GPU_BLEND_MULTIPLY);
+    // GPU_SetBlendMode(enlightened_image, GPU_BLEND_MULTIPLY);
 
     if (enlightened_image) GPU_FreeTarget(enlightened_target);
     enlightened_target = GPU_LoadTarget(enlightened_image);
@@ -430,6 +429,7 @@ void W::draw_top(GPU_Target *t, bool debug_mod){
 
 void W::draw_light_poly(GPU_Target *t){
     _light->draw_poly(t);
+    _light->draw(t);
 }
 
 std::shared_ptr<world::Collisions> W::get_collisions(void) const{

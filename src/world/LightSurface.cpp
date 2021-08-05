@@ -356,6 +356,9 @@ void S::update_light_poly_size(int w, int h){
     if (light_poly_target) GPU_FreeTarget(light_poly_target);
     light_poly_target = GPU_LoadTarget(light_poly_image);
 
+    
+    GPU_SetBlendMode(light_poly_image, GPU_BLEND_MULTIPLY);
+
     light_poly_image->w = light_image->w;
     light_poly_image->h = light_image->h;
 }

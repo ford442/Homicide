@@ -65,6 +65,7 @@ namespace entity{
             virtual void OnAnimationUpdate(const float delta);
             virtual void OnTick(const float delta);
             virtual void OnDraw(GPU_Target* t);
+            virtual void HUD(GPU_Target *t);
             virtual void OnLightDraw(GPU_Target *t);
             virtual void OnMouseClick(int mouse_btn);
             virtual void OnMouseMovement(const int x, const int y);

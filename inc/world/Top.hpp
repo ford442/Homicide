@@ -8,17 +8,13 @@
 namespace world{
     class Top{
         public:
-            Top(float *pixel_size, float *x, float *y);
+            Top();
             ~Top();
 
             bool load(std::string path);
-            void draw(GPU_Target* t);
+            GPU_Image *image(void) const;
 
         private:
-            float *_pixel_size;
-            float *_x;
-            float *_y;
-
             GPU_Image* _image;
 
             

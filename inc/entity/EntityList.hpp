@@ -18,6 +18,7 @@ namespace entity{
             void clear(void);
 
             void draw(GPU_Target* t);
+            void drawHUD(GPU_Target *t);
             void updateMovements(const float delta);
             void updateAnimations(const float delta);
             void OnTick(const float delta);

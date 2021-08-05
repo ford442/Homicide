@@ -21,6 +21,7 @@ namespace entity{
             void OnMouseMovement(const int x, const int y) override;
             void OnMouseClick(int mouse_btn) override;
             void OnTick(const float delta) override;
+            void HUD(GPU_Target *t) override;
 
             void load(XMLNode* node);
             

@@ -182,7 +182,14 @@ void P::OnTick(const float delta){
     }
 }
 
-
 void P::set_run_key(SDL_Scancode key){
     _run = key;
+}
+
+void P::HUD(GPU_Target *t){
+    auto weapon = get_selected();
+    if (weapon){
+        GPU_Rect rect = {0, 0, weapon->get_icon()->w, weapon->get_icon()->h};
+        // GPU_BlitScale(weapon->get_icon(), &rect, t, 0, 100, 5, 5);
+    }
 }

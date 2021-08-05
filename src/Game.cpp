@@ -6,28 +6,7 @@
 #include <filesystem>
 
 #include "csv.hpp"
-
-#define _ERRS
-#define _WARNS
-#define _LOGS
-
-#ifdef _ERRS
-    #define ERR(msg) std::cerr << "ERROR :: " << __func__ << " : " << msg << std::endl;
-#else
-    #define ERR(msg)
-#endif
-
-#ifdef _WARNS
-    #define WARN(msg) std::cerr << "WARNING :: " << __func__ << " : " << msg << std::endl;
-#else
-    #define WARN(msg)
-#endif
-
-#ifdef _LOGS
-    #define LOG(msg) std::cout << "INFO :: " << __func__ << " : " << msg << std::endl;
-#else
-    #define LOG(msg)
-#endif
+#include "main.hpp"
 
 using G = Game;
 
@@ -257,16 +236,6 @@ void G::event(void){
 void G::draw(void){
     GPU_Clear(_target);
 
-    
-    GPU_ActivateShaderProgram(blur_shader, &blur);
-
-    GPU_SetUniformf(blur_resolution, 5000.0f);
-    GPU_SetUniformf(blur_radius, 10.0f);
-    _world->draw_light_poly(_target);
-    
-    GPU_ActivateShaderProgram(0, nullptr);
-
-    // _entityList->OnLightDraw(_world->get_enlightened_target());
 
     _world->draw(_target);
     _world->blit(_target);
@@ -275,7 +244,16 @@ void G::draw(void){
         p->draw(_target, _x, _y, _pixel_size);
     }
 
+    GPU_ActivateShaderProgram(blur_shader, &blur);
+
+    GPU_SetUniformf(blur_resolution, 5000.0f);
+    GPU_SetUniformf(blur_radius, 10.0f);
+    _world->draw_light_poly(_target);
+    
+    GPU_ActivateShaderProgram(0, nullptr);
+
     _world->draw_top(_target, debug_mod);
+    _entityList->drawHUD(_target);
 
     GPU_Flip(_target);
 }

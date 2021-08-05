@@ -8,11 +8,11 @@
 namespace world{
     class Floor{
         public:
-            Floor(float *pixel_size);
+            Floor();
             ~Floor();
 
             bool load(std::string path);
-            void draw(GPU_Target* t);
+            GPU_Image *image(void) const;
 
         private:
             float *_pixel_size;
