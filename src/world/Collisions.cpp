@@ -4,18 +4,19 @@
 #include <algorithm>
 #include <SDL2/SDL_image.h>
 #include "dir.hpp"
+#include "main.hpp"
 
 using C = world::Collisions;
 
 extern Uint32 get_pixel32(SDL_Surface *surface, int x, int y);
 
-C::Collisions(float *x, float *y, float *zoom) : _x(x), _y(y), _zoom(zoom){
-    std::cout << "INFO :: allocating a Collision instance" << std::endl;
+C::Collisions(){
+    CONSTRUCT();
     _world = nullptr;
 }
 
 C::~Collisions(){
-    std::cout << "INFO :: releasing memory from a Collision instance" << std::endl;
+    DESTRUCT();
     _world = nullptr;
 }
 
@@ -31,7 +32,7 @@ bool load_color_node(XMLNode *node, Uint32 *color){
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
 
-        if (!strcmp(attr.key, "color")){
+        if (is_equal(attr.key, "color")){
             std::string value = attr.value;
             std::size_t pos = value.find("0x");
 
@@ -57,70 +58,70 @@ bool load_color_node(XMLNode *node, Uint32 *color){
 }
 
 bool C::load(XMLNode *node){
-    std::cout << "INFO :: load collisions from the xml node" << std::endl;
+    LOG("load from a xml node");
     for (int c=0; c<node->children.size; c++){
         XMLNode *child = XMLNode_child(node, c);
 
-        if (!strcmp(child->tag, "none")){
+        if (is_equal(child->tag, "none")){
             load_color_node(child, &colors.none);
 
-        } else if (!strcmp(child->tag, "enemys_shoots")){
+        } else if (is_equal(child->tag, "enemys_shoots")){
             load_color_node(child, &colors.enemys_shoots);
 
-        } else if (!strcmp(child->tag, "enemys")){
+        } else if (is_equal(child->tag, "enemys")){
             load_color_node(child, &colors.none);
             
-        } else if (!strcmp(child->tag, "enemys_and_enemys_shoots")){
+        } else if (is_equal(child->tag, "enemys_and_enemys_shoots")){
             load_color_node(child, &colors.enemys_and_enemys_shoots);
             
-        } else if (!strcmp(child->tag, "player_shoots")){
+        } else if (is_equal(child->tag, "player_shoots")){
             load_color_node(child, &colors.player_shoots);
             
-        } else if (!strcmp(child->tag, "all_shoots")){
+        } else if (is_equal(child->tag, "all_shoots")){
             load_color_node(child, &colors.all_shoots);
             
-        } else if (!strcmp(child->tag, "player_shoots_and_enemys")){
+        } else if (is_equal(child->tag, "player_shoots_and_enemys")){
             load_color_node(child, &colors.player_shoots_and_enemys);
             
-        } else if (!strcmp(child->tag, "player_and_enemys_shoots_plus_enemys")){
+        } else if (is_equal(child->tag, "player_and_enemys_shoots_plus_enemys")){
             load_color_node(child, &colors.player_and_enemys_shoots_plus_enemys);
             
-        } else if (!strcmp(child->tag, "player")){
+        } else if (is_equal(child->tag, "player")){
             load_color_node(child, &colors.player);
             
-        } else if (!strcmp(child->tag, "player_and_enemys_shoots")){
+        } else if (is_equal(child->tag, "player_and_enemys_shoots")){
             load_color_node(child, &colors.player_and_enemys_shoots);
             
-        } else if (!strcmp(child->tag, "player_and_enemys")){
+        } else if (is_equal(child->tag, "player_and_enemys")){
             load_color_node(child, &colors.player_and_enemys);
             
-        } else if (!strcmp(child->tag, "player_and_enemys_plus_enemys_shoots")){
+        } else if (is_equal(child->tag, "player_and_enemys_plus_enemys_shoots")){
             load_color_node(child, &colors.player_and_enemys_plus_enemys_shoots);
             
-        } else if (!strcmp(child->tag, "player_and_player_shoots")){
+        } else if (is_equal(child->tag, "player_and_player_shoots")){
             load_color_node(child, &colors.player_and_player_shoots);
             
-        } else if (!strcmp(child->tag, "player_and_all_shoots")){
+        } else if (is_equal(child->tag, "player_and_all_shoots")){
             load_color_node(child, &colors.player_and_all_shoots);
             
-        } else if (!strcmp(child->tag, "player_and_player_shoots_plus_enemys")){
+        } else if (is_equal(child->tag, "player_and_player_shoots_plus_enemys")){
             load_color_node(child, &colors.player_and_player_shoots_plus_enemys);
             
-        } else if (!strcmp(child->tag, "all")){
+        } else if (is_equal(child->tag, "all")){
             load_color_node(child, &colors.all);
             
         } else {
-            std::cerr << "WARNING :: cannot reconize \'" << child->tag << "\" collision children" << std::endl;
+            WARN("cannot reconize \"" + std::string(child->tag) + "\" collision xml node child");
         }
     }
 
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
 
-        if (!strcmp(attr.key, "path")){
+        if (is_equal(attr.key, "path")){
             if (!load(attr.value)) return false;
         } else {
-            std::cerr << "WARNING :: cannot reconize \"" << attr.key << "\" collision attribute" << std::endl;
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" collision xml node attribute");
         }
     }
 
@@ -130,18 +131,19 @@ bool C::load(XMLNode *node){
 
 bool C::load(std::string image_path){
     if (image_path[1] != ':') image_path = RES + image_path;
-    std::cout << "INFO :: load the source image : \"" << image_path << "\"" << std::endl;
+    LOAD_LOG(image_path);
 
     SDL_Surface* surface = IMG_Load(image_path.c_str());
 
     if (!surface){
-        std::cerr << "ERROR :: IMG_Load : " << IMG_GetError() << ", file : \"" << image_path << "\"" << std::endl;
+        ERR("IMG_Load : " + std::string(IMG_GetError()));
         return false;
     }
 
     world_w = surface->w;
     world_h = surface->h;
 
+    ALLOC_LOG("Collision table : " + std::to_string(surface->w * surface->h));
     _world = std::make_unique<Collision_type[]>(surface->w * surface->h);
 
     for (int y=0; y<surface->h; y++){
@@ -151,8 +153,6 @@ bool C::load(std::string image_path){
     }
 
     SDL_FreeSurface(surface);
-    surface = nullptr;
-
     return true;
 }
 

@@ -85,5 +85,7 @@
     #else
         #define LOAD_LOG() {}
     #endif
+
+    #define LOG(msg) std::cout << "INFO :: in " << __func__ << " : " << msg << std::endl;
     
 #endif

@@ -13,10 +13,21 @@
 namespace world{
     class Collisions{
         public:
-            Collisions(float *x, float *y, float *zoom);
+            Collisions();
             ~Collisions();
 
+            /**
+             * @brief load the collision from the given xml node
+             * @param node the xml node from a XMLDocument
+             * @return true if succesfuly loaded, false otherwise
+             */
             bool load(XMLNode *node);
+
+            /**
+             * @brief load the given image to convert it into the collisions table
+             * @param image_path the path to the source image
+             * @return true if loaded false ontherwise
+             */
             bool load(std::string image_path);
 
             enum Collision_type{
@@ -83,14 +94,52 @@ namespace world{
                 #endif
             };
 
+            /**
+             * @brief get thr type of collision at the givent coordonates
+             * @param x the target x
+             * @param y the target y
+             * @return return the type of collision
+             */
             Collision_type get(const float x, const float y);
 
+            /**
+             * @brief get if the given collision type can stop the player
+             * 
+             * @param type the collision type
+             * @return true if the collision block the player, false if not
+             */
             bool is_player_collision(Collision_type type);
+
+            /**
+             * @brief get if the given collision type can stop the player projectiles
+             * 
+             * @param type the collision type
+             * @return true if the collision block the player prjectiles, false if not
+             */
             bool is_player_shoot_collision(Collision_type type);
 
+            /**
+             * @brief get if the given collision type can stop ennemys
+             * 
+             * @param type the collision type
+             * @return true if the collision block ennemys, false if not
+             */
             bool is_enemy_collision(Collision_type type);
+
+            /**
+             * @brief get if the given collision type can stop ennemys projectile
+             * 
+             * @param type the collision type
+             * @return true if the collision block ennemys projectiles, false if not
+             */
             bool is_enemy_shoot_collision(Collision_type type);
 
+            /**
+             * @brief get if the given collision type can stop projectiles
+             * 
+             * @param type the collision type
+             * @return true if the collision block projecitles, false if not
+             */
             bool is_shoot_collision(Collision_type type);
 
             
@@ -101,9 +150,32 @@ namespace world{
                 dir_east
             };
 
+            /**
+             * @brief get the distance bettween the start position and the targeting
+             * 
+             * @param sx the start x
+             * @param sy the start y 
+             * @param dir the direction 
+             * @param distance the distance wher the ray stop
+             * @param type the type of collision to detect
+             * @return the distance bettween the start pos and the fisrt collision occured
+             */
             float get_dist(const int sx, const int sy, const Direction dir, float distance, Collision_type type);
 
+            /**
+             * @brief get the type of collision from the given color
+             * 
+             * @param color the color as hexadecimal 0xRRGGBBAA
+             * @return the type of collisons
+             */
             Collision_type get_type_from_color(Uint32 color);
+
+            /**
+             * @brief get the color the given collision type
+             * 
+             * @param type the type to test
+             * @return the color of the collision type as a hexadecimal color 0xRRGGBBAA
+             */
             Uint32 get_color_from_type(Collision_type type);
 
             SDL_FPoint cast_ray(float x1, float y1, float x2, float y2);
@@ -114,12 +186,6 @@ namespace world{
             std::unique_ptr<Collision_type[]> _world;
 
             Colors colors;
-
-            
-
-            float *_x;
-            float *_y;
-            float *_zoom;
 
             bool is_collision(int x, int y, Collision_type type);
     };

@@ -5,7 +5,6 @@
 #include <SDL2/SDL_gpu.h>
 
 #include "events/Event_handler.hpp"
-#include "world/World.hpp"
 #include "lights/LightImageList.hpp"
 #include "sprites/Animations.hpp"
 
@@ -16,6 +15,7 @@
 #include "weapons/Weapon_type_list.hpp"
 #include "weapons/Projectile_type.hpp"
 #include "weapons/Projectile.hpp"
+#include "ShadowCaster.hpp"
 
 class Game{
     public:
@@ -117,5 +117,5 @@ class Game{
         world::Top world_top;
         world::A_star Astar;
         world::Collisions collisons;
-        world::LightSurface light_layer;
+        ShadowCaster light_layer;
 };
