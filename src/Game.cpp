@@ -15,10 +15,6 @@ int InitSDL_SUB_Libs(void *ptr);
 G::Game(void){
     launched = false;
     _window = nullptr;
-    _event_handler = nullptr;
-    _world = nullptr;
-    _lightImageList = nullptr;
-    _player = nullptr;
 }
 
 G::~Game(){
@@ -75,12 +71,6 @@ bool G::Init_libs(void){
 
     _camera.set_delay(350);
     _camera.setMovementType(Camera::Camera_FadeIn);
-
-    _event_handler = std::make_shared<event::Handler>();
-    _animations = std::make_shared<sprite::Animations>();
-    _entityList = std::make_shared<entity::EntityList>();
-    _weapon_list = std::make_shared<weapons::Weapon_list>();
-    _lightImageList = std::make_shared<light::LightImageList>(&_pixel_size, &_x, &_y);
     debug_mod = false;
 
     std::string vert_filename(RES + "shaders\\blur\\vert.glsl");
@@ -131,14 +121,8 @@ bool G::Init_libs(void){
 
     load_settings_file("data\\options.csv");
 
-    _pixel_size = window_w / 450;
-    if (!load_world("worlds\\menu_map.xml")) return false;
-
-    if (!_world->get_light()->set_shader(blur_shader)) return false;
-
-    _player = _world->get_player();
-    _player->set_location(50, 50);
-    _entityList->push_back(_player);
+    _zoom = window_w / 450;
+    if (!load_save("worlds\\menu_map.xml")) return false;
 
     std::cout << "INFO :: game initialization ended" << std::endl;
     return error;
@@ -215,7 +199,7 @@ void G::event(void){
 				switch (e.window.event){
                     case SDL_WINDOWEVENT_RESIZED:
                         GPU_SetWindowResolution(e.window.data1, e.window.data2);
-                        _pixel_size = e.window.data1 / 450;
+                        _zoom = e.window.data1 / 450;
                         window_w = e.window.data1;
                         window_h = e.window.data2;
                         break;
@@ -229,84 +213,79 @@ void G::event(void){
                 break;
         }
 
-        _event_handler->event(&e);
+        events.event(&e);
     }
 }
 
 void G::draw(void){
     GPU_Clear(_target);
 
-
-    _world->draw(_target);
-    _world->blit(_target);
-    
-    for (auto p : projectiles){
-        p->draw(_target, _x, _y, _pixel_size);
-    }
+    GPU_Image *image = world_floor.image();
+    image->base_w = image->w * _zoom;
+    image->base_h = image->h * _zoom;
+    GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
+    GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
 
     GPU_ActivateShaderProgram(blur_shader, &blur);
 
     GPU_SetUniformf(blur_resolution, 5000.0f);
     GPU_SetUniformf(blur_radius, 10.0f);
-    _world->draw_light_poly(_target);
     
     GPU_ActivateShaderProgram(0, nullptr);
-
-    _world->draw_top(_target, debug_mod);
-    _entityList->drawHUD(_target);
 
     GPU_Flip(_target);
 }
 
 void Game::shoot(int x, int y, int dir){
-    std::shared_ptr<Projectile> p = std::make_shared<Projectile>();
+    // std::shared_ptr<Projectile> p = std::make_shared<Projectile>();
 
-    p->set_type(projectile_types.front());
-    p->set_x(x);
-    p->set_y(y);
-    p->set_angle(dir);
-    projectiles.push_back(p);
+    // p->set_type(projectile_types.front());
+    // p->set_x(x);
+    // p->set_y(y);
+    // p->set_angle(dir);
+    // projectiles.push_back(p);
 }
 
 void G::update(void){
 
-    if (_event_handler->IsKeyDown(SDL_SCANCODE_O))
-        _pixel_size += 0.1;
+    if (events.IsKeyDown(SDL_SCANCODE_O))
+        _zoom += 0.1;
 
-    if (_event_handler->IsKeyDown(SDL_SCANCODE_L))
-        _pixel_size -= 0.1;
+    if (events.IsKeyDown(SDL_SCANCODE_L))
+        _zoom -= 0.1;
     
-    if (_event_handler->IsKeyPush(SDL_SCANCODE_F3))
+    if (events.IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
     
-    if (_event_handler->isButtonDown(event::Mouse_button_left)){
-        shoot(_player->get_x() / _pixel_size, _player->get_y() / _pixel_size, _player->get_facing());
-    }
+    // if (events.isButtonDown(event::Mouse_button_left)){
+    //     shoot(_player->get_x() / _zoom, _player->get_y() / _zoom, _player->get_facing());
+    // }
 
-    for (auto p : projectiles){
-        int normal;
-        bool is_wall;
+    // for (auto p : projectiles){
+    //     int normal;
+    //     bool is_wall;
 
-        if (!p->OnTick(delta_tick, _world->get_collisions(), &normal, &is_wall)){
-            projectiles.remove(p);
-        }
-    }
+    //     if (!p->OnTick(delta_tick, _world->get_collisions(), &normal, &is_wall)){
+    //         projectiles.remove(p);
+    //     }
+    // }
     
-    _world->OnTick(delta_tick);
-    _entityList->OnTick(delta_tick);
-    _entityList->updateMovements(delta_tick);
-    _entityList->OnMouseMovement(_event_handler->mouse_x(), _event_handler->mouse_y());
-    _entityList->updateAnimations(delta_tick);
+    // _world->OnTick(delta_tick);
+    // _entityList->OnTick(delta_tick);
+    // _entityList->updateMovements(delta_tick);
+    // _entityList->OnMouseMovement(events.mouse_x(), events.mouse_y());
+    // _entityList->updateAnimations(delta_tick);
     
 
     _camera.OnTick(delta_tick);
-    _camera.go_to(_player->get_x(), _player->get_y());
+    _camera.go_to(events.mouse_x(), events.mouse_y());
+
     float x, y;
     _camera.get_pos(&x, &y);
-    _x = x - window_w / 2 + (_event_handler->mouse_x() - (window_w / 2)) / 10;
-    _y = y - window_h / 2 + (_event_handler->mouse_y() - (window_h / 2)) / 10;
+    _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
+    _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
     
-    _event_handler->update();
+    events.update();
 }
 
 void G::delay(void){
@@ -325,10 +304,6 @@ void G::delay(void){
 
 void G::set_max_fps(int fps){
     max_ticks_per_frames = 1000 / fps;
-}
-
-float G::get_pixel_size(void) const{
-    return _pixel_size;
 }
 
 SDL_Window* G::get_window(void) const{
@@ -355,27 +330,12 @@ bool G::Init_IMG(void){
     return true;
 }
 
-bool G::load_world(std::string world_path){
-    int tick = SDL_GetTicks();
-    _world = std::make_shared<world::World>(_animations, &_pixel_size, &_x, &_y, _lightImageList, _player, _world, _event_handler, _entityList);
-    _world->set_weapons(_weapon_list);
-    std::cout << std::endl << "INFO :: world loading finish, loading time : " << SDL_GetTicks() - tick << " milisecond" << std::endl << std::endl;
-    return _world->load(world_path, _event_handler);
-}
-
 void G::quit(void){
     std::cout << std::endl;
     int tick = SDL_GetTicks();
     std::cout << "INFO :: releasing memory from a Game instance" << std::endl;
     if (_window) SDL_DestroyWindow(_window);
     if (_target) GPU_FreeTarget(_target);
-
-    _event_handler = nullptr;
-    _world = nullptr;
-    _animations = nullptr;
-    _entityList = nullptr;
-    _lightImageList = nullptr;
-    _player = nullptr;
 
     std::cout << "INFO :: quit SDL2 libs" << std::endl;
 
@@ -385,7 +345,6 @@ void G::quit(void){
     Mix_Quit();
     TTF_Quit();
     tick = SDL_GetTicks() - tick;
-    projectile_types.clear();
 
     GPU_Quit();
 
@@ -414,11 +373,11 @@ bool Game::load_projectiles(std::string dir_path){
     for (auto &f : dir_content){
         if (f == ".." || f == ".") continue;
 
-        auto projectile = std::make_shared<Projectile_type>();
+        // auto projectile = std::make_shared<Projectile_type>();
 
-        if (projectile->load(dir_path + f, _lightImageList)){
-            projectile_types.push_back(projectile);
-        }
+        // if (projectile->load(dir_path + f, _lightImageList)){
+        //     projectile_types.push_back(projectile);
+        // }
     }
     return true;
 }
@@ -541,11 +500,11 @@ bool Game::load_lights(std::string dir_path){
     for (auto &f : dir_content){
         if (f == ".." || f == ".") continue;
 
-        auto light = std::make_shared<light::LightImage>(&_pixel_size, &_x, &_y);
+        // auto light = std::make_shared<light::LightImage>(&_zoom, &_x, &_y);
 
-        if (light->load_csv(dir_path + f)){
-            _lightImageList->push(light);
-        }
+        // if (light->load_csv(dir_path + f)){
+        //     _lightImageList->push(light);
+        // }
     }
     return true;
 }
@@ -563,15 +522,96 @@ bool Game::load_animations(std::string dir_path){
     for (auto &f : dir_content){
         if (f == ".." || f == ".") continue;
 
-        auto spriteSheet = std::make_shared<sprite::SpriteSheet>();
+        // auto spriteSheet = std::make_shared<sprite::SpriteSheet>();
 
-        if (spriteSheet->load_csv(dir_path + f)){
-            _animations->push(spriteSheet);
-        }
+        // if (spriteSheet->load_csv(dir_path + f)){
+        //     _animations->push(spriteSheet);
+        // }
     }
     return true;
 }
 
 bool Game::load_weapons(std::string dir_path){
-    return _weapon_list->load(dir_path);
+    // return _weapon_list->load(dir_path);
+    return true;
+}
+
+static inline std::string get_attr(std::string key, XMLNode *node){
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (attr.key == key){
+            return attr.value;
+        }
+    }
+
+    return "";
+}
+
+bool Game::load_save(std::string path){
+    if (path[1] != ':') path = RES + path;
+    LOAD_LOG(path);
+
+    bool err = false;
+
+    GPU_Clear(_target);
+
+    XMLDocument doc;
+    if (XMLDocument_load(&doc, path.c_str())){
+        for (int c=0; c<doc.root->children.size; c++){
+            XMLNode *child = XMLNode_child(doc.root, c);
+
+            if (is_equal(child->tag, "floor"))
+                is_floor_loaded = load_world_floor(child);
+            
+            else if (is_equal(child->tag, "top"))
+                is_top_loaded = load_world_top(child);
+            
+            else if (is_equal(child->tag, "ShadowCaster"))
+                if (!shadow_layer.load(child)){
+                    err = true;
+                    break;
+                }
+            
+            else if (is_equal(child->tag, "collisions"))
+                if (!collisions.load(child)){
+                    err = true;
+                    break;
+                }
+            
+
+            GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
+        }
+    } else {
+        return false;
+    }
+
+    XMLDocument_free(&doc);
+    return !err;
+}
+
+bool Game::load_world_floor(XMLNode *node){
+    std::string path = get_attr("path", node);
+
+    if (path.empty()){
+        ERR("cannot find \"" + path + "\" floor attribute");
+        return false;
+    }
+
+    return world_floor.load(path);
+}
+
+bool Game::load_world_top(XMLNode *node){
+    std::string path = get_attr("path", node);
+
+    if (path.empty()){
+        ERR("cannot find \"" + path + "\" floor attribute");
+        return false;
+    }
+
+    return world_top.load(path);
+}
+
+bool Game::is_everything_loaded(void) const{
+    return (is_floor_loaded && is_top_loaded);
 }

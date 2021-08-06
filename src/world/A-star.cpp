@@ -40,7 +40,7 @@ A::A_star(){
 }
 
 A::~A_star(){
-
+    stop();
 }
 
 
@@ -50,10 +50,13 @@ void A::run(void){
 }
 
 void A::stop(void){
-    data.launched = false;
-    SDL_WaitThread(thread, nullptr);
-    thread = nullptr;
-    data.list.clear();
+
+    if (thread){
+        data.launched = false;
+        SDL_WaitThread(thread, nullptr);
+        thread = nullptr;
+        data.list.clear();
+    }
 }
 
 void A::restart(void){
@@ -76,14 +79,6 @@ bool A::is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h){
     }
 
     return false;
-}
-
-A::~A_star(){
-    _nodes = nullptr;
-
-    data.launched = false;
-    data.astar = this;
-    SDL_WaitThread(thread, nullptr);
 }
 
 void A::drawMap(GPU_Target *t){

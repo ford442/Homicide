@@ -227,23 +227,16 @@ void ShadowCaster::calculateVisibilityPolygon(float ox, float oy, float radius, 
 
 }
 
-bool ShadowCaster::load(std::string file){
-    if (file[1] != ':') file = RES + file;
+bool ShadowCaster::load(XMLNode *node){
 
-    XMLDocument doc;
-    if (XMLDocument_load(&doc, file.c_str())){
-        for (int c=0; c<doc.root->children.size; c++){
-            XMLNode *child = XMLNode_child(doc.root, c);
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
 
-            if (is_equal(child->tag, "shadow_caster")){
-                return load(child);
-            }
+        if (is_equal(attr.key, "path")){
+            return load(attr.value);
         }
-    } else {
-        return false;
     }
 
-    XMLDocument_free(&doc);
     return false;
 }
 

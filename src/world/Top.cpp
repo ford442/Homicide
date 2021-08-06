@@ -16,7 +16,6 @@ T::~Top(){
 }
 
 bool T::load(std::string path){
-    FUNC_LOG;
     if (path[1] != ':') path = RES + path;
     LOAD_LOG(path);
 
@@ -32,6 +31,5 @@ bool T::load(std::string path){
 }
 
 GPU_Image *T::image(void) const{
-    FUNC_LOG;
     return _image;
 }

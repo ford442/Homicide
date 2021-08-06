@@ -5,17 +5,24 @@
 #include <SDL2/SDL_gpu.h>
 
 #include "events/Event_handler.hpp"
-#include "lights/LightImageList.hpp"
-#include "sprites/Animations.hpp"
+// #include "lights/LightImageList.hpp"
+// #include "sprites/Animations.hpp"
 
-#include "entity/EntityList.hpp"
-#include "entity/Player.hpp"
-#include "entity/NPC.hpp"
-#include "Camera.hpp"
-#include "weapons/Weapon_type_list.hpp"
-#include "weapons/Projectile_type.hpp"
-#include "weapons/Projectile.hpp"
+// #include "entity/EntityList.hpp"
+// #include "entity/Player.hpp"
+// #include "entity/NPC.hpp"
+// #include "Camera.hpp"
+// #include "weapons/Weapon_type_list.hpp"
+// #include "weapons/Projectile_type.hpp"
+// #include "weapons/Projectile.hpp"
+// #include "ShadowCaster.hpp"
+
 #include "ShadowCaster.hpp"
+#include "world/A-star.hpp"
+#include "world/Collisions.hpp"
+#include "world/Floor.hpp"
+#include "world/Top.hpp"
+#include "Camera.hpp"
 
 class Game{
     public:
@@ -45,10 +52,8 @@ class Game{
         float get_y(void) const;
 
         bool load_settings_file(std::string path);
-        bool load_world(std::string world_path);
 
     private:
-
         bool launched;
 
         GPU_Target* _target;
@@ -72,6 +77,14 @@ class Game{
         bool load_animations(std::string dir_path);
         bool load_weapons(std::string dir_path);
 
+        bool load_world_floor(XMLNode *node);
+        bool load_world_top(XMLNode *node);
+
+        bool is_floor_loaded;
+        bool is_top_loaded;
+
+        bool is_everything_loaded(void) const;
+
         void shoot(int x, int y, int dir);
 
         // ticks
@@ -84,22 +97,23 @@ class Game{
         int fps_tick;
 
         // display attributes
-        float _pixel_size;
+        float _zoom;
         float _x, _y;
         int window_w, window_h;
         bool debug_mod;
 
-        std::shared_ptr<event::Handler> _event_handler;
-        std::shared_ptr<world::World> _world;
-        std::shared_ptr<sprite::Animations> _animations;
-        std::shared_ptr<entity::EntityList> _entityList;
-        std::shared_ptr<light::LightImageList> _lightImageList;
-        std::shared_ptr<weapons::Weapon_list> _weapon_list;
+        event::Handler events;
 
-        std::list<std::shared_ptr<Projectile_type>> projectile_types;
-        std::list<std::shared_ptr<Projectile>> projectiles;
+        // std::shared_ptr<world::World> _world;
+        // std::shared_ptr<sprite::Animations> _animations;
+        // std::shared_ptr<entity::EntityList> _entityList;
+        // std::shared_ptr<light::LightImageList> _lightImageList;
+        // std::shared_ptr<weapons::Weapon_list> _weapon_list;
 
-        std::shared_ptr<entity::Player> _player;
+        // std::list<std::shared_ptr<Projectile_type>> projectile_types;
+        // std::list<std::shared_ptr<Projectile>> projectiles;
+
+        // std::shared_ptr<entity::Player> _player;
 
         Camera _camera;
 
@@ -116,6 +130,8 @@ class Game{
         world::Floor world_floor;
         world::Top world_top;
         world::A_star Astar;
-        world::Collisions collisons;
-        ShadowCaster light_layer;
+        world::Collisions collisions;
+        ShadowCaster shadow_layer;
+
+        bool load_save(std::string path);
 };

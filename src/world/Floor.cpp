@@ -16,7 +16,6 @@ F::~Floor(){
 }
 
 bool F::load(std::string path){
-    FUNC_LOG;
     if (path[1] != ':') path = RES + path;
     LOAD_LOG(path);
 
@@ -32,6 +31,5 @@ bool F::load(std::string path){
 }
 
 GPU_Image *F::image(void) const{
-    FUNC_LOG;
     return _image;
 }
