@@ -5,16 +5,8 @@
 #include <string>
 #include <list>
 #include <SDL2/SDL_thread.h>
+#include "main.hpp"
 
-
-// #define DEBUG_DISPLAY_ASTAR
-// #define ASTAR_LOGS
-
-#ifdef ASTAR_LOGS
-    #define LOG(msg){std::cout << __func__ << " : " << msg << std::endl;}
-#else
-    #define LOG(msg){}
-#endif
 
 int astar_loop(void *ptr){
     world::A_star::Astar_thread_data* a = (world::A_star::Astar_thread_data*)ptr;
@@ -42,6 +34,33 @@ using A = world::A_star;
 
 Uint32 get_pixel32(SDL_Surface *surface, int x, int y);
 
+
+A::A_star(){
+    
+}
+
+A::~A_star(){
+
+}
+
+
+void A::run(void){
+    data.launched = true;
+    if (!thread) thread = SDL_CreateThread(astar_loop, "Astar loop", &data);
+}
+
+void A::stop(void){
+    data.launched = false;
+    SDL_WaitThread(thread, nullptr);
+    thread = nullptr;
+    data.list.clear();
+}
+
+void A::restart(void){
+    stop();
+    run();
+}
+
 bool A::is_collision(SDL_Surface* surface, int x, int y){
     return _collisions->is_enemy_collision(_collisions->get_type_from_color(get_pixel32(surface, x, y)));
 }
@@ -59,20 +78,7 @@ bool A::is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h){
     return false;
 }
 
-A::A_star(float *zoom, float *x, float *y, std::shared_ptr<Collisions> collisions) : _zoom(zoom), _x(x), _y(y), _collisions(collisions){
-    
-    LOG("INFO :: allocating a new A_star path finder instance");
-
-    _nodeEnd = nullptr;
-    _nodeStart = nullptr;
-    data.launched = true;
-    thread = SDL_CreateThread(astar_loop, "Astar loop", &data);
-}
-
 A::~A_star(){
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: releasing memory from a A_star instance" << std::endl;
-    #endif
     _nodes = nullptr;
 
     data.launched = false;
@@ -120,9 +126,6 @@ float dist(A::PNode* s, A::PNode* e){
 }
 
 void A::calculate(const int sx, const int sy, const int ex, const int ey, PNode** start, PNode** end, Path_node* nodes){
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: calculating A* : from " << sx << ";" << sy << " to " << ex << ";" << ey << std::endl;
-    #endif
 
     int start_x = std::floor(sx / nodes_padding);
     int start_y = std::floor(sy / nodes_padding);
@@ -151,9 +154,6 @@ void A::calculate(const int sx, const int sy, const int ex, const int ey, PNode*
         }
     }
 
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: Astar : rested node table values" << std::endl;
-    #endif
 
     Path_node *currNode = &nodes[(*start)->y * mapWidth + (*start)->x];
     PNode* current_node = start_node;
@@ -163,10 +163,6 @@ void A::calculate(const int sx, const int sy, const int ex, const int ey, PNode*
 
     std::list<Path_node*> notTested;
     notTested.push_back(node_s);
-
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: Astar : path calulation" << std::endl;
-    #endif
 
     while (!notTested.empty() && current_node != end_node){
 
@@ -201,9 +197,6 @@ void A::calculate(const int sx, const int sy, const int ex, const int ey, PNode*
         }
     }
 
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: Astar : astar path calculation : success" << std::endl;
-    #endif
 }
 
 void A::calculate_vec(const int sx, const int sy, const int ex, const int ey, Astar_nodes_path* l, Path_node* nodes){
@@ -216,10 +209,6 @@ void A::calculate_vec(const int sx, const int sy, const int ex, const int ey, As
 
     if (end == nullptr) return;
 
-    #if defined(ASTAR_LOGS)
-        std::cout << "INFO :: Astar : pushing nodes into list" << std::endl;
-    #endif
-
     // count
     Path_node* node = &nodes[end->y * mapWidth + end->x];
     while (node->parent != nullptr){
@@ -228,9 +217,6 @@ void A::calculate_vec(const int sx, const int sy, const int ex, const int ey, As
         node = &nodes[node->parent->y * mapWidth + node->parent->x];
     }
     
-    #if defined(ASTAR_LOGS)
-        std::cout << "INFO :: Astar : nodes pushed" << std::endl;
-    #endif
     l->calculating = false;
 }
 
@@ -241,16 +227,7 @@ void A::set_world_size(const int w, const int h){
 
 bool A::load(SDL_Surface *source, const float padding){
     nodes_padding = padding;
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: Astar : load map table" << std::endl;
-    #endif
     if (!source){
-        #ifdef ASTAR_ERRS
-            std::cerr << "ERROR :: Astar : cannot init the tap from a null source surface" << std::endl;
-        #endif
-        #ifdef ASTAR_OUT_LOGS
-            std::cout << "INFO :: Astar : load : result (false)" << std::endl;
-        #endif
         return false;
     }
 
@@ -261,15 +238,9 @@ bool A::load(SDL_Surface *source, const float padding){
     set_world_size(w, h);
 
     _nodes = std::make_unique<PNode[]>(max);
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: A* node table size : " << w << "x" << h << " : " << max << std::endl;
-    #endif
-    
+
     for (int y=0; y<h; y++){
         for (int x=0; x<w; x++){
-            #ifdef ASTAR_LOGS_TABLE
-                std::cout << "\tINFO : Astar : x : " << x << " y : " << y << std::endl;
-            #endif
 
             PNode node;
             
@@ -281,10 +252,6 @@ bool A::load(SDL_Surface *source, const float padding){
             
         }
     }
-
-    #ifdef ASTAR_LOGS
-        std::cout << "INFO :: Astar : table loading : success" << std::endl;
-    #endif
 
     for (int y=0; y<h; y++){
         for (int x=0; x<w; x++){
@@ -324,10 +291,6 @@ bool A::load(SDL_Surface *source, const float padding){
             }
         }
     }
-
-    #ifdef ASTAR_OUT_LOGS
-        std::cout << "INFO :: Astar : table loading and node vector loading : sucess; result (true)" << std::endl;
-    #endif
     return true;
 }
 
@@ -382,8 +345,7 @@ bool world::calculate_Astar(float start_x, float start_y, float end_x, float end
 
 
     std::cout << "INFO :: Astar : calculate astar path multithreaded" << std::endl;
-    // a->calculate_vec(au->sx, au->sy, au->ex, au->ey, au->nodes, au->visited_table);
-    a->data.list.push_back(au);
+    a->push(au);
 
     return true;
 }
@@ -395,4 +357,8 @@ int A::get_padding(void) const{
 void A::set_world_pix_size(const int w, const int h){
     world_w = w;
     world_h = h;
+}
+
+void A::push(std::shared_ptr<Astar_update> au){
+    data.list.push_back(au);
 }
