@@ -3,13 +3,10 @@
 #include <cmath>
 #include "xml.hpp"
 #include "dir.hpp"
-#include <cassert>
-
-#include "world/World.hpp"
 
 using E = entity::Entity;
 
-E::Entity(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> light_surface, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions) : _animations(animations), _light_surface(light_surface), _cam_x(x), _cam_y(y), _pixel_size(pixel_size), Sprite(animations), _collisions(collisions){
+E::Entity(std::shared_ptr<sprite::Animations> animations, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions) : _animations(animations), _cam_x(x), _cam_y(y), _pixel_size(pixel_size), Sprite(animations), _collisions(collisions){
     std::cout << "INFO :: allocating Entity instance" << std::endl;
     _collisions_radius = 17;
     reset_animations();
@@ -313,11 +310,12 @@ void E::push_light(std::shared_ptr<light::LightSource> light){
 }
 
 std::shared_ptr<light::LightSource> E::push_light(std::string light_type){
-    std::cout << "INFO :: push light of an entity" << std::endl;
-    std::shared_ptr<light::LightSource> light = _light_surface->push_light(light_type);
-    std::cout << "INFO :: light pushed into the world light vector" << std::endl;
-    if (light != nullptr) push_light(light);
-    return light;
+    // std::cout << "INFO :: push light of an entity" << std::endl;
+    // std::shared_ptr<light::LightSource> light = _light_surface->push_light(light_type);
+    // std::cout << "INFO :: light pushed into the world light vector" << std::endl;
+    // if (light != nullptr) push_light(light);
+    // return light;
+    return 0;
 }
 
 std::vector<std::shared_ptr<light::LightSource>> *E::get_lights(void){

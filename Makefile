@@ -11,10 +11,6 @@ STD_VERSION = c++17
 all : $(EXEC)
 resources : obj/resources.o
 
-test : $(EXEC)
-	@echo launch
-	@$(EXEC)
-
 obj/%.o : src/%.cpp
 	@echo compile $@ from $<
 	@$(CXX) -std=$(STD_VERSION) -o $@ -c $< -I $(INCLUDE)

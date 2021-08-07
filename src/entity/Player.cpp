@@ -4,7 +4,7 @@
 
 using P = entity::Player;
 
-P::Player(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> lightSurface, std::shared_ptr<event::Handler> events, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions) : Entity(animations, lightSurface, x, y, pixel_size, collisions), _events(events){
+P::Player(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<event::Handler> events, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions) : Entity(animations, x, y, pixel_size, collisions), _events(events){
     std::cout << "INFO :: allocating a player instance" << std::endl;
     set_forward_key(SDL_SCANCODE_W);
     set_backward_key(SDL_SCANCODE_Z);

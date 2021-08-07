@@ -8,7 +8,10 @@
 
 using C = world::Collisions;
 
-extern Uint32 get_pixel32(SDL_Surface *surface, int x, int y);
+static inline Uint32 get_pixel32(SDL_Surface *surface, int x, int y){
+    Uint32 *pixels = (Uint32*)surface->pixels;
+    return pixels[(y * surface->w) + x];
+}
 
 C::Collisions(){
     CONSTRUCT();

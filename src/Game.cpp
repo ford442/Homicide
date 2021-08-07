@@ -579,7 +579,6 @@ bool Game::load_save(std::string path){
                     break;
                 }
             
-
             GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
         }
     } else {
@@ -613,5 +612,5 @@ bool Game::load_world_top(XMLNode *node){
 }
 
 bool Game::is_everything_loaded(void) const{
-    return (is_floor_loaded && is_top_loaded);
+    return (is_floor_loaded && is_top_loaded && is_collisions_loaded && is_Astar_loaded);
 }

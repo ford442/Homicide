@@ -9,7 +9,7 @@
 namespace entity{
     class NPC : public Entity{
         public:
-            NPC(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> light_surface, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions, std::shared_ptr<world::A_star> A_star);
+            NPC(std::shared_ptr<sprite::Animations> animations, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions, std::shared_ptr<world::A_star> A_star);
             ~NPC();
 
             void OnTick(const float delta) override;

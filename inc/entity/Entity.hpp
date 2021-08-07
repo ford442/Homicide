@@ -9,7 +9,6 @@
 
 #include "lights/LightSource.hpp"
 #include "sprites/Sprite.hpp"
-#include "world/LightSurface.hpp"
 #include "world/Collisions.hpp"
 #include "weapons/Weapon_type.hpp"
 #include "entity/Inventory.hpp"
@@ -19,7 +18,7 @@ namespace world{class World;}
 namespace entity{
     class Entity : public sprite::Sprite, public Inventory{
         public:
-            Entity(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> light_surface, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions);
+            Entity(std::shared_ptr<sprite::Animations> animations, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions);
             ~Entity();
             
             // init
@@ -143,10 +142,7 @@ namespace entity{
             void reset_animations(void);
 
             std::vector<std::shared_ptr<light::LightSource>> _lights;
-            std::shared_ptr<world::LightSurface> _light_surface;
-
             std::shared_ptr<sprite::Sprite> _legs;
-
             std::shared_ptr<world::Collisions> _collisions;
             int _collisions_radius;
 

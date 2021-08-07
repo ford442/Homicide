@@ -7,7 +7,7 @@ using N = entity::NPC;
 // #define DRAW_TARGET
 // #define DRAW_BASE
 
-N::NPC(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> light_surface, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions, std::shared_ptr<world::A_star> A_star) : Entity(animations, light_surface, x, y, pixel_size, collisions), _A_star(A_star){
+N::NPC(std::shared_ptr<sprite::Animations> animations, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions, std::shared_ptr<world::A_star> A_star) : Entity(animations, x, y, pixel_size, collisions), _A_star(A_star){
     std::cout << "INFO :: NPC : new NPC instance" << std::endl;
     set_moving_angle(0);
     _target = nullptr;

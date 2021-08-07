@@ -6,7 +6,6 @@
 #include "entity/Entity.hpp"
 #include "lights/LightSource.hpp"
 #include "events/Event_handler.hpp"
-#include "world/World.hpp"
 #include "world/Collisions.hpp"
 #include "xml.hpp"
 
@@ -15,7 +14,7 @@ namespace world{class World;}
 namespace entity{
     class Player : public Entity{
         public:
-            Player(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> lightSurface, std::shared_ptr<event::Handler> events, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions);
+            Player(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<event::Handler> events, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions);
             ~Player();
 
             void OnMouseMovement(const int x, const int y) override;
@@ -32,7 +31,6 @@ namespace entity{
             void set_run_key(SDL_Scancode key);
         
         private:
-            std::shared_ptr<world::World> _world;
             std::shared_ptr<light::LightSource> _light;
             std::shared_ptr<event::Handler> _events;
 

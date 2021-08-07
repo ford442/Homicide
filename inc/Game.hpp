@@ -82,6 +82,8 @@ class Game{
 
         bool is_floor_loaded;
         bool is_top_loaded;
+        bool is_Astar_loaded;
+        bool is_collisions_loaded;
 
         bool is_everything_loaded(void) const;
 

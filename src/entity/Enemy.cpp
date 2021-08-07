@@ -3,7 +3,7 @@
 #define LOGS_OUTPUT
 
 using E = entity::Enemy;
-E::Enemy(std::shared_ptr<sprite::Animations> animations, std::shared_ptr<world::LightSurface> light_surface, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions, std::shared_ptr<world::A_star> A_star) : NPC(animations, light_surface, x, y, pixel_size, collisions, A_star){
+E::Enemy(std::shared_ptr<sprite::Animations> animations, float *x, float *y, float *pixel_size, std::shared_ptr<world::Collisions> collisions, std::shared_ptr<world::A_star> A_star) : NPC(animations, x, y, pixel_size, collisions, A_star){
     #ifdef LOGS_OUTPUT
         std::cout << "INFO :: Enemy : allocating a new Enemy instance" << std::endl;
     #endif
