@@ -122,7 +122,7 @@ bool G::Init_libs(void){
     load_settings_file("data\\options.csv");
 
     _zoom = window_w / 450;
-    if (!load_save("worlds\\menu_map.xml")) return false;
+    if (!load_save("data\\worlds\\menu_map.xml")) return false;
 
     std::cout << "INFO :: game initialization ended" << std::endl;
     return error;
@@ -567,19 +567,19 @@ bool Game::load_save(std::string path){
             else if (is_equal(child->tag, "top"))
                 is_top_loaded = load_world_top(child);
             
-            else if (is_equal(child->tag, "ShadowCaster"))
-                if (!shadow_layer.load(child)){
-                    err = true;
-                    break;
-                }
+            // else if (is_equal(child->tag, "ShadowCaster"))
+            //     if (!shadow_layer.load(child)){
+            //         err = true;
+            //         break;
+            //     }
             
-            else if (is_equal(child->tag, "collisions"))
-                if (!collisions.load(child)){
-                    err = true;
-                    break;
-                }
+            // else if (is_equal(child->tag, "collisions"))
+            //     if (!collisions.load(child)){
+            //         err = true;
+            //         break;
+            //     }
             
-            GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
+            // GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
         }
     } else {
         return false;

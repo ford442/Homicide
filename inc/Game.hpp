@@ -131,9 +131,9 @@ class Game{
 
         world::Floor world_floor;
         world::Top world_top;
-        world::A_star Astar;
-        world::Collisions collisions;
-        ShadowCaster shadow_layer;
+        // world::A_star Astar;
+        // world::Collisions collisions;
+        // ShadowCaster shadow_layer;
 
         bool load_save(std::string path);
 };

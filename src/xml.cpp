@@ -5,6 +5,7 @@
 #include <string.h>
 #include <cstring>
 #include <string>
+#include "main.hpp"
 
 #if (__cplusplus == 201703L)
     char * strdup(const char *str) {
@@ -186,9 +187,7 @@ static TagType parse_attrs(char* buf, int* i, char* lex, int* lexi, XMLNode* cur
         // Attribute value
         if (buf[*i] == '\"') {
             if (!curr_attr.key) {
-                #ifdef XML_ERRS
-                    std::cerr << "littlexml ERROR :: Value has no key" << std::endl;
-                #endif
+                std::cerr << "littlexml ERROR :: Value has no key" << std::endl;
                 return TAG_START;
             }
 
@@ -221,24 +220,17 @@ static TagType parse_attrs(char* buf, int* i, char* lex, int* lexi, XMLNode* cur
 }
 
 int XMLDocument_load(XMLDocument* doc, const char* path){
-
-    #ifdef XML_LOGS
-        std::cout << std::endl;
-        std::cout << "\tINFO :: littlexml : load \"" << path << "\" xml file : \"XMLDocument_load(XMLDocument* doc, const char* path)\"" << std::endl;
-    #endif
+    LOG("load \"" + std::string(path) + "\"");
 
     FILE* file = fopen(path, "r");
     if (!file) {
+        ERR("littlxml : cannot load \"" + std::string(path) + "\"");
         return false;
     }
 
     fseek(file, 0, SEEK_END);
     int size = ftell(file);
     fseek(file, 0, SEEK_SET);
-
-    #ifdef XML_LOGS
-        std::cout << "\tINFO :: littlexml : file buffer size : " << size + 1 << " chars : " << sizeof(char) * size + 1 << "o" << std::endl;
-    #endif
     char* buf = (char*) malloc(sizeof(char) * size + 1);
     fread(buf, 1, size, file);
     fclose(file);
@@ -252,28 +244,17 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
 
     XMLNode* curr_node = doc->root;
 
-    #ifdef XML_LOGS
-        std::cout << "\tINFO :: littlexml : file found, reading" << std::endl;
-        std::cout << "\tINFO :: littlexml : reading logs : " << std::endl << std::endl;
-    #endif
+    std::cout << "\tINFO :: littlexml : file found, reading" << std::endl;
 
     while (buf[i] != '\0'){
         if (buf[i] == '<') {
-            #ifdef XML_LOGS
-                std::cout << "\tINFO :: littlexml : new node" << std::endl;
-            #endif
             lex[lexi] = '\0';
 
             // Inner text
             if (lexi > 0) {
                 if (!curr_node) {
-                    #ifdef XML_OUT_LOG
-                        std::cout << "\tINFO :: littlexml : file reading : failure; result (false)" << std::endl;
-                    #endif
-
-                    #ifdef XML_ERRS
-                        std::cerr << "littlexml ERROR : Text outside of document" << std::endl;
-                    #endif
+                    std::cout << "\tINFO :: littlexml : file reading : failure; result (false)" << std::endl;
+                    std::cerr << "littlexml ERROR : Text outside of document" << std::endl;
                     return false;
                 }
 
@@ -283,9 +264,6 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
 
             // End of node
             if (buf[i + 1] == '/') {
-                #ifdef XML_LOGS
-                    std::cout << "\tINFO :: littlexml : node end found : node tag : ";
-                #endif
 
                 i += 2;
                 while (buf[i] != '>')
@@ -293,24 +271,13 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
                 lex[lexi] = '\0';
 
                 if (!curr_node) {
-                    #ifdef XML_LOGS
-                        std::cout << "\"None\"" << std::endl;
-                    #endif
-                    #ifdef XML_ERRS
-                        std::cerr << "\tINFO :: littlexml ERROR : Already at the root" << endl;
-                    #endif
+                    std::cerr << "INFO :: littlexml ERROR : Already at the root" << endl;
 
                     return false;
                 }
 
-                #ifdef XML_LOGS
-                    std::cout << "\"" << curr_node->tag << "\"" << std::endl;
-                #endif
-
                 if (strcmp(curr_node->tag, lex)) {
-                    #ifdef XML_LOGS
-                        std::cerr << "littlexml ERROR : Mismatched tags (" << curr_node->tag << " != " << lex << ")" << std::endl;
-                    #endif
+                    std::cerr << "littlexml ERROR : Mismatched tags (" << curr_node->tag << " != " << lex << ")" << std::endl;
                     return false;
                 }
 
@@ -327,9 +294,6 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
 
                 // Comments
                 if (!strcmp(lex, "<!--")) {
-                    #ifdef XML_LOGS
-                        std::cout << "\tINFO :: littlexml : comment found" << std::endl;
-                    #endif
 
                     lex[lexi] = '\0';
                     while (!ends_with(lex, "-->")) {
@@ -348,10 +312,6 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
 
                 // This is the XML declaration
                 if (!strcmp(lex, "<?xml")) {
-                    #ifdef XML_LOGS
-                        std::cout << "\tINFO :: littlexml : xml declaration found" << std::endl;
-                    #endif
-
                     lexi = 0;
                     XMLNode* desc = XMLNode_new(NULL);
                     parse_attrs(buf, &i, lex, &lexi, desc);
@@ -367,9 +327,6 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
 
             // Start tag
             i++;
-            #ifdef XML_LOGS
-                std::cout << "\tINFO :: littlexml : pars node's attributes : \"TagType parse_attrs(char* buf, int* i, char* lex, int* lexi, XMLNode* curr_node)\"" << std::endl;
-            #endif
 
             if (parse_attrs(buf, &i, lex, &lexi, curr_node) == TAG_INLINE) {
                 curr_node = curr_node->parent;
@@ -391,10 +348,8 @@ int XMLDocument_load(XMLDocument* doc, const char* path){
         }
     }
     
-    
-    #ifdef XML_OUT_LOG
-        std::cout << "\tINFO :: littlexml : file reading : success; result (true)" << std::endl << std::endl;
-    #endif
+
+    std::cout << "\tINFO :: littlexml : file reading : success; result (true)" << std::endl << std::endl;
 
     return true;
 }
