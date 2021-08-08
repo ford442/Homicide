@@ -39,6 +39,9 @@ bool G::Init_Window(void){
     if (!_target){
         return false;
     }
+
+    GPU_Clear(_target);
+    GPU_Flip(_target);
     return true;
 }
 
@@ -567,19 +570,24 @@ bool Game::load_save(std::string path){
             else if (is_equal(child->tag, "top"))
                 is_top_loaded = load_world_top(child);
             
-            // else if (is_equal(child->tag, "ShadowCaster"))
-            //     if (!shadow_layer.load(child)){
-            //         err = true;
-            //         break;
-            //     }
+            else if (is_equal(child->tag, "ShadowCaster"))
+                if (!shadow_layer.load(child)){
+                    err = true;
+                    break;
+                }
             
-            // else if (is_equal(child->tag, "collisions"))
-            //     if (!collisions.load(child)){
-            //         err = true;
-            //         break;
-            //     }
+            else if (is_equal(child->tag, "collisions"))
+                if (!collisions.load(child)){
+                    err = true;
+                    break;
+                }
             
-            // GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
+            else if (is_equal(child->tag, "astar"))
+                if (!Astar.load())
+            
+            GPU_Clear(_target);
+            GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
+            GPU_Flip(_target);
         }
     } else {
         return false;

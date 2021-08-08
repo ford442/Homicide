@@ -6,6 +6,8 @@
 #include <list>
 #include <SDL2/SDL_thread.h>
 #include "main.hpp"
+#include "dir.hpp"
+#include <SDL2/SDL_image.h>
 
 
 int astar_loop(void *ptr){
@@ -358,4 +360,101 @@ void A::set_world_pix_size(const int w, const int h){
 
 void A::push(std::shared_ptr<Astar_update> au){
     data.list.push_back(au);
+}
+
+struct Astar_multithread_load{
+    world::A_star *a;
+    XMLNode *n;
+};
+
+bool A::load(XMLNode *node){
+    nodes_padding = -1;
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "nodes_padding")){
+            try{
+                nodes_padding = std::stof(attr.value);
+            } catch (std::exception &e){
+                ERR("standart exception : " + std::string(e.what()));
+            }
+        } else if (is_equal(attr.key, "source")){
+        }
+    }
+}
+
+bool A::load(std::string path){
+    if (path[1] != ':') path = RES + path;
+    LOAD_LOG(path);
+
+    SDL_Surface *surface = IMG_Load(path.c_str());
+
+    if (surface){
+        ERR("cannot load \"" + path + "\" image");
+        return false;
+    }
+
+    int w = surface->w / nodes_padding;
+    int h = surface->w / nodes_padding;
+
+    const float max = w * h;
+    set_world_size(w, h);
+
+    _nodes = std::make_unique<PNode[]>(max);
+
+    for (int y=0; y<h; y++){
+        for (int x=0; x<w; x++){
+
+            PNode node;
+            
+            node.x = x;
+            node.y = y;
+            node.is_obstacle = is_collisions_rect(surface, x * nodes_padding, y * nodes_padding, nodes_padding, nodes_padding);
+
+            _nodes[y * w + x] = node;
+            
+        }
+    }
+
+    for (int y=0; y<h; y++){
+        for (int x=0; x<w; x++){
+
+            PNode* p = &_nodes[y  * w + x];
+            
+            if (y>0){
+                p->neighbours.push_back(&_nodes[(y - 1) *w+ x]);
+            }
+
+            if (y<h-1){
+                p->neighbours.push_back(&_nodes[(y + 1) * w + x]);
+            }
+            
+            if (x>0){
+                p->neighbours.push_back(&_nodes[y * w + (x - 1)]);
+            }
+
+            if (x<w-1){
+                p->neighbours.push_back(&_nodes[y * w + (x + 1)]);
+            }
+
+            if (y>0 && x>0){
+                p->neighbours.push_back(&_nodes[(y - 1) * w + (x - 1)]);
+            }
+
+            if (y<h-1 && x<w-1){
+                p->neighbours.push_back(&_nodes[(y + 1) * w + (x + 1)]);
+            }
+
+            if (y>0 && x<w-1){
+                p->neighbours.push_back(&_nodes[(y - 1) * w + (x + 1)]);
+            }
+
+            if (y<h-1 && x>0){
+                p->neighbours.push_back(&_nodes[(y + 1) * w + (x - 1)]);
+            }
+        }
+    }
+
+    SDL_FreeSurface(surface);
+    return true;
 }

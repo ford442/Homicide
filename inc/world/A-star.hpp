@@ -12,6 +12,7 @@
     #include <SDL2/SDL_thread.h>
 
     #include "world/Collisions.hpp"
+    #include "xml.hpp"
 
     namespace world{
 
@@ -48,6 +49,11 @@
                 void calculate_vec(const int sx, const int sy, const int ex, const int ey, Astar_nodes_path *l, Path_node* nodes);
 
                 bool load(SDL_Surface *source, const float padding);
+
+                // multithreading : ok
+                bool load(XMLNode *node);
+
+                bool load(std::string path);
 
                 int get_w(void) const;
                 int get_h(void) const;
