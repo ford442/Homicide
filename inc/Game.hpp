@@ -89,6 +89,9 @@ class Game{
 
         void shoot(int x, int y, int dir);
 
+        bool blit_floor(void);
+        bool blit_top(void);
+
         // ticks
         int start_tick;
         int delta_tick;
@@ -128,6 +131,8 @@ class Game{
         int blur_radius;
         int blur_resolution;
         int blur_dir;
+
+        float blur_radius_f;
 
         world::Floor world_floor;
         world::Top world_top;

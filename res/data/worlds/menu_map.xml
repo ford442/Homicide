@@ -6,7 +6,7 @@
 <top path="img\maps\menu_map\top.png"/>
 <shadowCaster path="img\maps\menu_map\light_collisions.png"/>
 <collisions path="img\maps\menu_map\collisions.png"/>
-<Astar path="img\maps\menu_map\collisions.png" nodes-padding="20"/>
+<Astar source="img\maps\menu_map\collisions.png" nodes_padding="20"/>
 
 <player>
     <key>

@@ -1,45 +1,36 @@
-varying vec4 vColor;
-varying vec2 vTexCoord;
+precision highp float;
 
-//declare uniforms
-uniform sampler2D u_texture;
-uniform float resolution;
-uniform float radius;
-// layout(location=3) uniform vec2 dir;
+uniform vec3 iResolution;
+uniform sampler2D iChannel0;
+uniform bool flip;
+uniform vec2 direction;
+uniform float size;
 
 void main() {
-	//this will be our RGBA sum
-	vec4 sum = vec4(0.0);
-	
-	//our original texcoord for this fragment
-	vec2 tc = vTexCoord;
-	
-	//the amount to blur, i.e. how far off center to sample from 
-	//1.0 -> blur by one pixel
-	//2.0 -> blur by two pixels, etc.
-	float blur = radius/resolution; 
+	float Pi = 6.28318530718; // Pi*2
     
-	//the direction of our blur
-	//(1.0, 0.0) -> x-axis blur
-	//(0.0, 1.0) -> y-axis blur
-	float hstep = 1;//dir.x;
-	float vstep = 1;//dir.y;
-
-	float coef = 2;
+    // GAUSSIAN BLUR SETTINGS {{{
+    float Directions = 16.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
+    float Quality = 3.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
+    // GAUSSIAN BLUR SETTINGS }}}
+   
+    vec2 Radius = size/iResolution.xy;
     
-	//apply blurring, using a 9-tap filter with predefined gaussian weights
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+    // Pixel colour
+    vec4 Color = texture(iChannel0, uv);
     
-	sum += texture2D(u_texture, vec2(tc.x - 4.0*blur*hstep, tc.y - 4.0*blur*vstep)) * 0.0162162162 * coef;
-	sum += texture2D(u_texture, vec2(tc.x - 3.0*blur*hstep, tc.y - 3.0*blur*vstep)) * 0.0540540541 * coef;
-	sum += texture2D(u_texture, vec2(tc.x - 2.0*blur*hstep, tc.y - 2.0*blur*vstep)) * 0.1216216216 * coef;
-	sum += texture2D(u_texture, vec2(tc.x - 1.0*blur*hstep, tc.y - 1.0*blur*vstep)) * 0.1945945946 * coef;
-	
-	sum += texture2D(u_texture, vec2(tc.x, tc.y)) * 0.2270270270 * coef;
-	
-	sum += texture2D(u_texture, vec2(tc.x + 1.0*blur*hstep, tc.y + 1.0*blur*vstep)) * 0.1945945946 * coef;
-	sum += texture2D(u_texture, vec2(tc.x + 2.0*blur*hstep, tc.y + 2.0*blur*vstep)) * 0.1216216216 * coef;
-	sum += texture2D(u_texture, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.0540540541 * coef;
-	sum += texture2D(u_texture, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.0162162162 * coef;
-
-	gl_FragColor = vColor * vec4(sum.rgb, 1.0);
+    // Blur calculations
+    for( float d=0.0; d<Pi; d+=Pi/Directions)
+    {
+		for(float i=1.0/Quality; i<=1.0; i+=1.0/Quality)
+        {
+			Color += texture( iChannel0, uv+vec2(cos(d),sin(d))*Radius*i);		
+        }
+    }
+    
+    // Output to screen
+    Color /= Quality * Directions - 15.0;
+    gl_Color =  Color;
 }

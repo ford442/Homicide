@@ -27,6 +27,13 @@ bool F::load(std::string path){
 
     _image = GPU_CopyImageFromSurface(surface);
     SDL_FreeSurface(surface);
+    
+    if (!_image){
+        ERR("GPU_CopyImageFromSurface");
+        return false;
+    }
+    
+    GPU_SetImageFilter(_image, GPU_FILTER_NEAREST);
     return true;
 }
 

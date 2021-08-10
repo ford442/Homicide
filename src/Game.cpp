@@ -15,6 +15,7 @@ int InitSDL_SUB_Libs(void *ptr);
 G::Game(void){
     launched = false;
     _window = nullptr;
+    blur_radius_f = 0;
 }
 
 G::~Game(){
@@ -102,17 +103,19 @@ bool G::Init_libs(void){
 
     blur = GPU_LoadShaderBlock(blur_shader, "Position", "TexCoord", "Color", "u_projView");
 
-    blur_resolution = GPU_GetUniformLocation(blur_shader, "resolution");
+    blur_resolution = GPU_GetUniformLocation(blur_shader, "iResolution");
     if (blur_resolution == -1){
         std::cerr << "ERROR :: cannot found the uniform value \"resolution\" in : \"" << frag_filename << "\"" << std::endl;
         return false;
     }
 
-    blur_radius = GPU_GetUniformLocation(blur_shader, "radius");
+    blur_radius = GPU_GetUniformLocation(blur_shader, "size");
     if (blur_radius == -1){
         std::cerr << "ERROR :: cannot found the uniform value \" radius \" in : \"" << frag_filename << "\"" << std::endl;
         return false;
     }
+
+
 
     _x = 0;
     _y = 0;
@@ -222,17 +225,15 @@ void G::event(void){
 
 void G::draw(void){
     GPU_Clear(_target);
-
-    GPU_Image *image = world_floor.image();
-    image->base_w = image->w * _zoom;
-    image->base_h = image->h * _zoom;
-    GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
-    GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
+    
 
     GPU_ActivateShaderProgram(blur_shader, &blur);
 
-    GPU_SetUniformf(blur_resolution, 5000.0f);
-    GPU_SetUniformf(blur_radius, 10.0f);
+    GPU_SetUniformf(blur_resolution, 50000.0f);
+    GPU_SetUniformf(blur_radius, blur_radius_f);
+    
+    // blit_top();
+    blit_floor();
     
     GPU_ActivateShaderProgram(0, nullptr);
 
@@ -259,6 +260,14 @@ void G::update(void){
     
     if (events.IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
+
+    if (events.IsKeyDown(SDL_SCANCODE_UP))
+        blur_radius_f += 1;
+
+    if (events.IsKeyDown(SDL_SCANCODE_DOWN))
+        blur_radius_f -= 1;
+
+    std::cout << blur_radius_f << std::endl;
     
     // if (events.isButtonDown(event::Mouse_button_left)){
     //     shoot(_player->get_x() / _zoom, _player->get_y() / _zoom, _player->get_facing());
@@ -564,26 +573,30 @@ bool Game::load_save(std::string path){
         for (int c=0; c<doc.root->children.size; c++){
             XMLNode *child = XMLNode_child(doc.root, c);
 
-            if (is_equal(child->tag, "floor"))
+            if (is_equal(child->tag, "floor")){
                 is_floor_loaded = load_world_floor(child);
             
-            else if (is_equal(child->tag, "top"))
+            } else if (is_equal(child->tag, "top")){
                 is_top_loaded = load_world_top(child);
             
-            else if (is_equal(child->tag, "ShadowCaster"))
+            } else if (is_equal(child->tag, "ShadowCaster")){
                 if (!shadow_layer.load(child)){
                     err = true;
                     break;
                 }
             
-            else if (is_equal(child->tag, "collisions"))
-                if (!collisions.load(child)){
-                    err = true;
-                    break;
-                }
+            } else if (is_equal(child->tag, "collisions")){
+            //     if (!collisions.load(child)){
+            //         err = true;
+            //         break;
+            //     }
             
-            else if (is_equal(child->tag, "astar"))
-                if (!Astar.load())
+            // } else if (is_equal(child->tag, "Astar")){
+            //     if (!Astar.load(child)){
+            //         err = true;
+            //         break;
+            //     }
+            }
             
             GPU_Clear(_target);
             GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
@@ -621,4 +634,26 @@ bool Game::load_world_top(XMLNode *node){
 
 bool Game::is_everything_loaded(void) const{
     return (is_floor_loaded && is_top_loaded && is_collisions_loaded && is_Astar_loaded);
+}
+
+bool Game::blit_floor(void){
+    GPU_Image *image = world_floor.image();
+    if (!image) return false;
+
+    image->base_w = image->w * _zoom;
+    image->base_h = image->h * _zoom;
+    GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
+    GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
+    return true;
+}
+
+bool Game::blit_top(void){
+    GPU_Image *image = world_top.image();
+    if (!image) return false;
+
+    image->base_w = image->w * _zoom;
+    image->base_h = image->h * _zoom;
+    GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
+    GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
+    return true;
 }

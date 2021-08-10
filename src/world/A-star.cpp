@@ -369,6 +369,10 @@ struct Astar_multithread_load{
 
 bool A::load(XMLNode *node){
     nodes_padding = -1;
+    std::string path;
+    LOAD_LOG("load astar");
+    std::cout << "ERDD " << std::endl;
+
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
 
@@ -379,8 +383,21 @@ bool A::load(XMLNode *node){
                 ERR("standart exception : " + std::string(e.what()));
             }
         } else if (is_equal(attr.key, "source")){
+            path = attr.value;
         }
     }
+
+    if (nodes_padding < 0){
+        ERR("the given Astar node padding is note valid");
+        return false;
+    }
+
+    if (path.empty()){
+        ERR("cannot load Astar from a empty path, make sure there is a \"source\" attribute in the Astar node");
+        return false;
+    }
+
+    return load(path);
 }
 
 bool A::load(std::string path){
