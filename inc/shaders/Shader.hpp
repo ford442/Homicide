@@ -31,6 +31,15 @@
             bool is_loaded(void);
             void unload(void);
 
+            virtual void update_uniforms(void);
+            virtual bool update_uniforms_position(void);
+
+            void active(void);
+            void unacitve(void);
+
+            std::string get_frag_path(void) const;
+            std::string get_vert_path(void) const;
+
         private:
 
             std::string frag_path;

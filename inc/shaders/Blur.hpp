@@ -17,10 +17,16 @@
                 const float size(void) const;
                 const float quality(void) const;
                 const float direction(void) const;
+                const SDL_FPoint resolution(void) const;
 
                 void size(const float size);
                 void quality(const float quality);
                 void direction(const float direction);
+                void resolution(const SDL_FPoint resolution);
+                void resolution(const float width, const float height);
+
+                void update_uniforms(void) override;
+                bool update_uniforms_position(void) override;
 
             private:
 
@@ -28,8 +34,13 @@
                 float _quality;
                 float _direction;
 
-                float resolution_x;
-                float resolution_y;
+                float resolution_w;
+                float resolution_h;
+
+                int size_uniform;
+                int quality_uniform;
+                int direction_uniform;
+                int resolution_uniform;
 
                 void set_size(std::string str);
                 void set_quality(std::string str);

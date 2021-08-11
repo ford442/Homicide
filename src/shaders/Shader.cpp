@@ -99,3 +99,28 @@ bool Shader::load_csv(std::string path){
 bool Shader::load_xml(XMLNode *node){
     return true;
 }
+
+void Shader::active(void){
+    GPU_ActivateShaderProgram(shader, &shader_block);
+    update_uniforms();
+}
+
+void Shader::unacitve(void){
+    GPU_ActivateShaderProgram(0, nullptr);
+}
+
+void Shader::update_uniforms(void){
+
+}
+
+bool Shader::update_uniforms_position(void){
+    return true;
+}
+
+std::string Shader::get_frag_path(void) const{
+    return frag_path;
+}
+
+std::string Shader::get_vert_path(void) const{
+    return vert_path;
+}

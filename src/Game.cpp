@@ -103,17 +103,7 @@ bool G::Init_libs(void){
 
     blur = GPU_LoadShaderBlock(blur_shader, "Position", "TexCoord", "Color", "u_projView");
 
-    blur_resolution = GPU_GetUniformLocation(blur_shader, "iResolution");
-    if (blur_resolution == -1){
-        std::cerr << "ERROR :: cannot found the uniform value \"resolution\" in : \"" << frag_filename << "\"" << std::endl;
-        return false;
-    }
-
-    blur_radius = GPU_GetUniformLocation(blur_shader, "size");
-    if (blur_radius == -1){
-        std::cerr << "ERROR :: cannot found the uniform value \" radius \" in : \"" << frag_filename << "\"" << std::endl;
-        return false;
-    }
+    
 
 
 

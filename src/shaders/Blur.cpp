@@ -194,3 +194,47 @@ void Blur::set_direction(std::string str){
         direction(STANDART_DIRECTION_VALUE);
     }
 }
+
+void Blur::update_uniforms(void){
+    GPU_SetUniformf(size_uniform, size());
+    GPU_SetUniformf(quality_uniform, quality());
+    GPU_SetUniformf(direction_uniform, direction());
+    float resolution[2] = {resolution_w, resolution_h};
+    GPU_GetUniformfv(resolution_uniform, 2, resolution);
+} 
+
+bool Blur::update_uniforms_position(void){
+    size_uniform = GPU_GetUniformLocation(get_shader(), "iSize");
+    if (size_uniform == -1){
+        ERR("cannot found the uniform \"iSize\" in \"" + get_frag_path() + "\"");
+        return false;
+    }
+
+    quality_uniform = GPU_GetUniformLocation(get_shader(), "iQuality");
+    if (quality_uniform == -1){
+        ERR("cannot found the uniform \"iQuality\" in \"" + get_frag_path() + "\"");
+        return false;
+    }
+
+    direction_uniform = GPU_GetUniformLocation(get_shader(), "iDirection");
+    if (direction_uniform == -1){
+        ERR("cannot found the uniform \"iDirection\" in \"" + get_frag_path() + "\"");
+        return false;
+    }
+
+    resolution_uniform = GPU_GetUniformLocation(get_shader(), "iResolution");
+    if (resolution_uniform == -1){
+        ERR("cannot found the uniform \"iResolution\" in \"" + get_frag_path() + "\"");
+        return false;
+    }
+    return true;
+}
+
+void Blur::resolution(const SDL_FPoint resolution){
+    this->resolution(resolution.x, resolution.y);
+}
+
+void Blur::resolution(const float width, const float height){
+    resolution_w = width;
+    resolution_h = height;
+}
