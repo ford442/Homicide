@@ -1,36 +1,32 @@
-precision highp float;
+#version 330 core
 
-uniform vec3 iResolution;
-uniform sampler2D iChannel0;
-uniform bool flip;
-uniform vec2 direction;
+out vec4 FragColor;
+in vec2 fragCoord
+
 uniform float size;
+uniform float qualtity;
+uniform float direction;
+uniform vec2 iResolution;
 
-void main() {
-	float Pi = 6.28318530718; // Pi*2
-    
-    // GAUSSIAN BLUR SETTINGS {{{
-    float Directions = 16.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
-    float Quality = 3.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
-    // GAUSSIAN BLUR SETTINGS }}}
-   
+uniform sampler2D texture;
+
+void main(){
+    float Pi = 6.28318530718; // Pi*2
+
     vec2 Radius = size/iResolution.xy;
-    
-    // Normalized pixel coordinates (from 0 to 1)
-    vec2 uv = fragCoord/iResolution.xy;
-    // Pixel colour
-    vec4 Color = texture(iChannel0, uv);
+
+    vec2 uv = gl_Position/iResolution.xy;
+    vec4 Color = texture2D(texture, uv);
     
     // Blur calculations
-    for( float d=0.0; d<Pi; d+=Pi/Directions)
-    {
-		for(float i=1.0/Quality; i<=1.0; i+=1.0/Quality)
-        {
-			Color += texture( iChannel0, uv+vec2(cos(d),sin(d))*Radius*i);		
+    for( float d=0.0; d<Pi; d+=Pi/directions){
+		for(float i=1.0/quality; i<=1.0; i+=1.0/quality){
+
+			Color += texture2D(texture, uv+vec2(cos(d),sin(d))*Radius*i);		
         }
     }
     
     // Output to screen
-    Color /= Quality * Directions - 15.0;
-    gl_Color =  Color;
+    Color /= quality * directions - 15.0;
+    FragColor =  Color;
 }

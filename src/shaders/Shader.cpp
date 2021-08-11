@@ -73,7 +73,7 @@ bool Shader::reload(void){
     return true;
 }
 
-bool Shader::set_sampler2d(void){
+bool Shader::set_sampler2d(GPU_Image *image){
     return true;
 }
 
@@ -88,6 +88,14 @@ void Shader::unload(void){
     }
 }
 
-bool Shader::update_shader_block(void){
+void Shader::update_shader_block(std::string position, std::string texCoord, std::string color, std::string viewModelMatrix){
+    shader_block = GPU_LoadShaderBlock(shader, position.c_str(), texCoord.c_str(), color.c_str(), viewModelMatrix.c_str());
+}
+
+bool Shader::load_csv(std::string path){
+    return true;
+}
+
+bool Shader::load_xml(XMLNode *node){
     return true;
 }

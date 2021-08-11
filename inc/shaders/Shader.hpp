@@ -3,12 +3,16 @@
 
     #include <iostream>
     #include <SDL2/SDL_gpu.h>
+    #include "xml.hpp"
 
     class Shader{
         public:
             Shader();
             Shader(std::string frag, std::string vert);
             ~Shader();
+
+            virtual bool load_csv(std::string path);
+            virtual bool load_xml(XMLNode *node);
 
             Uint32 get_vert(void) const;
             Uint32 get_frag(void) const;
@@ -22,7 +26,7 @@
             bool reload_vert(void);
             bool reload(void);
 
-            virtual bool set_sampler2d(void);
+            virtual bool set_sampler2d(GPU_Image *image);
 
             bool is_loaded(void);
             void unload(void);
@@ -39,8 +43,7 @@
             GPU_ShaderBlock shader_block;
 
         protected:
-        
-            virtual bool update_shader_block(void);
+            virtual void update_shader_block(std::string position, std::string texCoord, std::string color, std::string viewModelMatrix);
     };
 
 #endif
