@@ -25,7 +25,8 @@ $(EXEC) : $(OBJ)
 	@echo executable bluid, ready to launch
 
 obj/resources.o : src/resources/resources.rc
-	windres $< -o $@ 
+	@echo build resources file
+	@windres $< -o $@ 
 
 clean:
 	del obj\*.o

@@ -24,6 +24,7 @@
 #include "world/Top.hpp"
 #include "Camera.hpp"
 #include "shaders/Blur.hpp"
+#include "lights/Light.hpp"
 
 class Game{
     public:
@@ -127,6 +128,7 @@ class Game{
         world::A_star Astar;
         world::Collisions collisions;
         ShadowCaster shadow_layer;
+        Light light_layer;
 
         // shader
 

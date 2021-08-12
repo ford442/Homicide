@@ -487,6 +487,12 @@ bool Game::load_save(std::string path){
                     break;
                 }
             
+            } else if (is_equal(child->tag, "light_layer")){
+                if (!light_layer.load(child)){
+                    err = true;
+                    break;
+                }
+            
             } else if (is_equal(child->tag, "collisions")){
             //     if (!collisions.load(child)){
             //         err = true;
