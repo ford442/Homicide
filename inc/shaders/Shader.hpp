@@ -35,7 +35,7 @@
             virtual bool update_uniforms_position(void);
 
             void active(void);
-            void unacitve(void);
+            void unactive(void);
 
             std::string get_frag_path(void) const;
             std::string get_vert_path(void) const;

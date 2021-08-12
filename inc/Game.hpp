@@ -23,6 +23,7 @@
 #include "world/Floor.hpp"
 #include "world/Top.hpp"
 #include "Camera.hpp"
+#include "shaders/Blur.hpp"
 
 class Game{
     public:
@@ -35,7 +36,6 @@ class Game{
         bool Init_Mixer(void);
         bool Init_IMG(void);
         bool Init_libs(void);
-        bool Init_logs(void);
 
         void run(void);
         void quit(void);
@@ -122,23 +122,15 @@ class Game{
 
         Camera _camera;
 
-        Uint32 blur_vert;
-        Uint32 blur_frag;
-        Uint32 blur_shader;
-
-        GPU_ShaderBlock blur;
-
-        int blur_radius;
-        int blur_resolution;
-        int blur_dir;
-
-        float blur_radius_f;
-
         world::Floor world_floor;
         world::Top world_top;
         world::A_star Astar;
         world::Collisions collisions;
         ShadowCaster shadow_layer;
+
+        // shader
+
+        shader::Blur blur;
 
         bool load_save(std::string path);
 };

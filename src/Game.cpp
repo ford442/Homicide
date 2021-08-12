@@ -15,7 +15,6 @@ int InitSDL_SUB_Libs(void *ptr);
 G::Game(void){
     launched = false;
     _window = nullptr;
-    blur_radius_f = 0;
 }
 
 G::~Game(){
@@ -66,7 +65,7 @@ bool G::Init_Mixer(void){
 
 bool G::Init_libs(void){
 
-    Init_logs();
+    GPU_SetDebugLevel(GPU_DEBUG_LEVEL_3);
     std::cout << "INFO :: Init librarys" << std::endl;
     Init_Window();
     bool error = InitSDL_SUB_Libs(this);
@@ -79,33 +78,8 @@ bool G::Init_libs(void){
 
     std::string vert_filename(RES + "shaders\\blur\\vert.glsl");
     std::string frag_filename(RES + "shaders\\blur\\frag.glsl");
-
-    blur_vert = GPU_LoadShader(GPU_VERTEX_SHADER, vert_filename.c_str());
-
-    if (!blur_vert){
-        std::cerr << "ERROR :: cannot load \"" << vert_filename << "\"" << std::endl;
-        return false;
-    }
-
-    blur_frag = GPU_LoadShader(GPU_FRAGMENT_SHADER, frag_filename.c_str());
-
-    if (!blur_frag){
-        std::cerr << "ERROR :: cannot load \"" << frag_filename << "\"" << std::endl;
-        return false;
-    }
-
-    blur_shader = GPU_LinkShaders(blur_vert, blur_frag);
-
-    if (!blur_shader){
-        std::cerr << "ERROR :: cannot link blur shader" << std::endl;
-        return false;
-    }
-
-    blur = GPU_LoadShaderBlock(blur_shader, "Position", "TexCoord", "Color", "u_projView");
-
     
-
-
+    blur.load(vert_filename, frag_filename);
 
     _x = 0;
     _y = 0;
@@ -122,53 +96,6 @@ bool G::Init_libs(void){
 
     std::cout << "INFO :: game initialization ended" << std::endl;
     return error;
-}
-
-std::string getCurrentDateTime(std::string s){
-    time_t now = time(0);
-    struct tm tstruct;
-    char buf[80];
-
-    tstruct = *localtime(&now);
-    if(s=="now")
-        strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
-    else if(s=="date")
-        strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
-
-    return std::string(buf);
-}
-
-std::string log_dir(void){
-    return LOGS + getCurrentDateTime("date");
-}
-
-bool initLogDir(void){
-    std::cout << log_dir() << std::endl;
-    return std::filesystem::create_directories(log_dir());
-}
-
-bool G::Init_logs(void){
-    GPU_SetDebugLevel(GPU_DEBUG_LEVEL_3);
-
-    if (!std::filesystem::exists(log_dir())){
-        if (!initLogDir()){
-            std::cerr << "ERROR :: cannot create the log folder" << std::endl;
-            return false;
-        }
-    }
-
-    std::string log_path = log_dir() + "\\log_" + getCurrentDateTime("date") + ".log";
-    freopen(log_path.c_str(), "w", stdout);
-
-    std::cout << "LOG file :: init at " << getCurrentDateTime("now") << std::endl;
- 
-    std::string err_path = log_dir() + "\\err_" + getCurrentDateTime("date") + ".log";
-    std::cout << "open err file : \"" << err_path << "\"" << std::endl;
-    freopen(err_path.c_str(), "w", stderr);
-
-    std::cerr << "ERROR file :: init at " << getCurrentDateTime("now") << std::endl;
-    
-    return true;
 }
 
 void G::run(void){
@@ -216,16 +143,11 @@ void G::event(void){
 void G::draw(void){
     GPU_Clear(_target);
     
-
-    GPU_ActivateShaderProgram(blur_shader, &blur);
-
-    GPU_SetUniformf(blur_resolution, 50000.0f);
-    GPU_SetUniformf(blur_radius, blur_radius_f);
-    
-    // blit_top();
+    // blur.active();
     blit_floor();
-    
-    GPU_ActivateShaderProgram(0, nullptr);
+    blit_top();
+
+    // blur.unactive();
 
     GPU_Flip(_target);
 }
@@ -250,14 +172,6 @@ void G::update(void){
     
     if (events.IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
-
-    if (events.IsKeyDown(SDL_SCANCODE_UP))
-        blur_radius_f += 1;
-
-    if (events.IsKeyDown(SDL_SCANCODE_DOWN))
-        blur_radius_f -= 1;
-
-    std::cout << blur_radius_f << std::endl;
     
     // if (events.isButtonDown(event::Mouse_button_left)){
     //     shoot(_player->get_x() / _zoom, _player->get_y() / _zoom, _player->get_facing());
@@ -340,8 +254,6 @@ void G::quit(void){
     if (_target) GPU_FreeTarget(_target);
 
     std::cout << "INFO :: quit SDL2 libs" << std::endl;
-
-    GPU_FreeShader(blur_shader);
 
     IMG_Quit();
     Mix_Quit();

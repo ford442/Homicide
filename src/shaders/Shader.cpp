@@ -44,6 +44,7 @@ bool Shader::load(std::string frag, std::string vert){
 }
 
 bool Shader::reload_frag(void){
+    LOAD_LOG("load \"" + vert_path + "\" fragement shader");
     Uint32 frag = GPU_LoadShader(GPU_FRAGMENT_SHADER, frag_path.c_str());
 
     if (!frag){
@@ -56,6 +57,7 @@ bool Shader::reload_frag(void){
 }
 
 bool Shader::reload_vert(void){
+    LOAD_LOG("load \"" + vert_path + "\" vertex shader");
     Uint32 vert = GPU_LoadShader(GPU_VERTEX_SHADER, vert_path.c_str());
 
     if (!vert){
@@ -105,7 +107,7 @@ void Shader::active(void){
     update_uniforms();
 }
 
-void Shader::unacitve(void){
+void Shader::unactive(void){
     GPU_ActivateShaderProgram(0, nullptr);
 }
 
