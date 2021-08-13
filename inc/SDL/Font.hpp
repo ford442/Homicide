@@ -26,6 +26,12 @@
             GPU_Image *shaded_image(std::string text, SDL_Color fg, SDL_Color bg);
             GPU_Image *blended_image(std::string text, SDL_Color fg);
 
+            enum Render_type{
+                RenderType_Solid,
+                RenderType_Shaded,
+                RenderType_Blended
+            };
+
         private:
 
             void destroy_font(void);
