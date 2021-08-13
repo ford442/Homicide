@@ -26,16 +26,18 @@ void LightSource::pos(int *x, int *y) const{
 }
 
 void LightSource::x(const int x){
+    if (_x != x) moved = true;
     _x = x;
 }
 
 void LightSource::y(const int y){
+    if (_y != y) moved = true;
     _y = y;
 }
 
 void LightSource::pos(const int x, const int y){
     this->x(x);
-    this->y(y);    
+    this->y(y);
 }
 
 void LightSource::on(void){
@@ -51,7 +53,9 @@ bool LightSource::is_on(void) const{
 }
 
 void LightSource::OnTick(void){
-
+    if (moved && !locked){
+        
+    }
 }
 
 void LightSource::lock(void){
@@ -92,6 +96,10 @@ bool LightSource::update_size(const int w, const int h){
 
     this->image = image;
     this->target = target;
+
+    _w = w;
+    _h = h;
+
     return true; 
 }
 
@@ -105,4 +113,35 @@ void LightSource::destroy_target(void){
         GPU_FreeImage(image);
         image = nullptr;
     }
+}
+
+std::vector<ShadowCaster::Visibility_poly_point> LightSource::get_vibility_poly(void) const{
+    return visibility_poly;
+}
+
+void LightSource::update_target(void){
+
+    if (visibility_poly.size() > 1){
+
+        for (int i=0; i<visibility_poly.size()-1; i++){
+
+            float x1 = visibility_poly[i].x; 
+            float y1 = visibility_poly[i].y;
+            float x2 = visibility_poly[i+1].x; 
+            float y2 = visibility_poly[i+1].y; 
+
+            GPU_TriFilled(target, _x, _y, x1, y1, x2, y2, {255, 255, 255, 255});
+        }
+
+        float x1 = visibility_poly[0].x; 
+        float y1 = visibility_poly[0].y; 
+        float x2 = visibility_poly[visibility_poly.size()-1].x;
+        float y2 = visibility_poly[visibility_poly.size()-1].y;
+
+        GPU_TriFilled(target, _x, _y, x1, y1, x2, y2, {255, 255, 255, 255});
+    }
+}
+
+void LightSource::update_visibility_poly(ShadowCaster* shadowCaster){
+    shadowCaster->calculate(_x, _y, visibility_poly, _w, _h);
 }

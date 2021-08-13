@@ -21,8 +21,6 @@ P::~Player(){
 void P::OnMouseMovement(const int x, const int y){
     update_direction();
     set_facing_angle(-(atan2(x - get_x() + *_cam_x, y - get_y() + *_cam_y) * 180 / M_PI) + 90);
-    _light->angle(get_facing_angle() + 90 + cos(light_add_angle)*2);
-    _light->pos(get_x() / *_pixel_size, get_y() / *_pixel_size);
 }
 
 SDL_Scancode get_key(XMLNode *node){
@@ -78,9 +76,7 @@ void P::load(XMLNode* node){
                 XMLAttribute attr = child->attributes.data[a];
 
                 if (!strcmp(attr.key, "type")){
-                    _light = push_light(attr.value);
-                    _light->color({255, 255, 255, 255});
-                    _light->set_calculation(light::LightSource::Shadow_pylogon);
+
                 } else {
                     std::cerr << "WARNING :: cannot reconize  \"" << attr.key << "\" light player attribute" << std::endl;
                 }

@@ -161,10 +161,29 @@ void ShadowCaster::convertTileMapToPolyMap(int sx, int sy, int w, int h, int pit
     }
 }
 
-void ShadowCaster::calculateVisibilityPolygon(float ox, float oy, float radius, std::vector<std::tuple<float, float, float>> points){
+void ShadowCaster::calculateVisibilityPolygon(float ox, float oy, float radius, std::vector<Visibility_poly_point> points, float w, float h){
     points.clear();
 
+    w /= 2;
+    h /= 2;
+
+    const float left = ox - w;
+    const float right = ox + w;
+    const float top = oy - h;
+    const float down = oy - h;
+
+    vecEdges.push_back({right, down, right, top}); // right border
+    vecEdges.push_back({right, top, left, top}); // top border
+    vecEdges.push_back({left, top, left, down}); // left border
+    vecEdges.push_back({left, down, right, down}); // down border
+
     for (auto &e1 : vecEdges){
+        
+        // pass useless edges
+        if (e1.sx > right && e1.ex > right) continue;
+        if (e1.sx < left && e1.ex < left) continue;
+        if (e1.sy > down && e1.ey > down) continue;
+        if (e1.sy < top && e1.ey < top) continue;
 
         for (int i = 0; i < 2; i++){
             
@@ -212,7 +231,7 @@ void ShadowCaster::calculateVisibilityPolygon(float ox, float oy, float radius, 
                     }
                 }
 
-                if(bValid) points.push_back({ min_ang, min_px, min_py });
+                if(bValid) points.push_back({min_px, min_py, min_ang});
             }
         }
     }
@@ -220,10 +239,14 @@ void ShadowCaster::calculateVisibilityPolygon(float ox, float oy, float radius, 
     std::sort(
         points.begin(),
         points.end(),
-        [&](const std::tuple<float, float, float> &t1, const std::tuple<float, float, float> &t2)
-        {
-            return std::get<0>(t1) < std::get<0>(t2);
+        [&](const Visibility_poly_point &t1, const Visibility_poly_point &t2){
+            return t1.min_angle < t2.min_angle;
         });
+    
+    // supress added edges
+    for (int i=0; i<4; i++){
+        vecEdges.pop_back();
+    }
 
 }
 
@@ -241,6 +264,6 @@ bool ShadowCaster::load(XMLNode *node){
 }
 
 
-void ShadowCaster::calculate(const int x, const int y, std::vector<std::tuple<float, float, float>> points){
-    calculateVisibilityPolygon(x, y, 1, points);
+void ShadowCaster::calculate(const int x, const int y, std::vector<Visibility_poly_point> points, const float w, const float h){
+    calculateVisibilityPolygon(x, y, 1, points, w, h);
 }

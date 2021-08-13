@@ -13,6 +13,15 @@
         public:
             ShadowCaster();
             ~ShadowCaster();
+
+            /**
+             * @brief the struct where data of visibility polygone from light source are stored
+             * 
+             */
+            struct Visibility_poly_point{
+                float x, y;
+                float min_angle;
+            };
             
             /**
              * @brief load the shadow caster from the given xml node
@@ -36,13 +45,17 @@
              * @param y the observator y
              * @param points the vector where all points will be pushed
              */
-            void calculate(const int x, const int y, std::vector<std::tuple<float, float, float>> points);
+            void calculate(const int x, const int y, std::vector<Visibility_poly_point> points, const float w, const float h);
 
             struct Edge{
                 float sx, sy;
                 float ex, ey;
             };
 
+            /**
+             * @brief get the vector of edges
+             * @return std::vector<Edge> 
+             */
             std::vector<Edge> get_edges(void) const;
             
         private:
@@ -66,7 +79,7 @@
              * @param radius the radius of calculation
              * @param points the vector where visibility points will be pushed
              */
-            void calculateVisibilityPolygon(float ox, float oy, float radius, std::vector<std::tuple<float, float, float>> points);
+            void calculateVisibilityPolygon(float ox, float oy, float radius, std::vector<Visibility_poly_point> points, float w, float h);
 
             struct Cell{
                 int edge_id[4];

@@ -1,11 +1,9 @@
 #ifndef __PROJECTILE__TYPE__HPP__
     #define __PROJECTILE__TYPE__HPP__
 
-    #include <SDL2/SDL_gpu.h>
     #include <iostream>
-
-    #include "lights/LightImage.hpp"
-    #include "lights/LightImageList.hpp"
+    #include <memory>
+    #include <SDL2/SDL_gpu.h>
 
     class Projectile_type{
         public:
@@ -14,9 +12,8 @@
 
             GPU_Image *get_image(void) const;
             GPU_Image *get_icon(void) const;
-            std::shared_ptr<light::LightImage> get_light_image(void);
 
-            bool load(std::string path, std::shared_ptr<light::LightImageList> lights);
+            bool load(std::string path);
 
             int get_damages(void) const;
             float get_max_speed(void) const;
@@ -32,7 +29,6 @@
 
             GPU_Image *image;
             GPU_Image *icon;
-            std::shared_ptr<light::LightImage> light;
 
             int damages;
             float max_speed;

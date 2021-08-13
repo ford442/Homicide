@@ -29,7 +29,6 @@
 
 Projectile_type::Projectile_type(){
     image = nullptr;
-    light = nullptr;
     name = "unknown";
 }
 
@@ -41,7 +40,7 @@ GPU_Image *Projectile_type::get_image(void) const{
     return image;
 }
 
-bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageList> lights){
+bool Projectile_type::load(std::string path){
     CSV::Document doc;
 
     if (!doc.load(path)) return false;
@@ -69,7 +68,6 @@ bool Projectile_type::load(std::string path, std::shared_ptr<light::LightImageLi
         min_speed = 10;
     }
 
-    light = lights->get(doc.search("light"));
     if (!load_img(doc.search("image"))) return false;
 
     return true;
@@ -91,9 +89,6 @@ float Projectile_type::get_rand_speed(void) const{
     return std::fmod(rand(), max_speed - min_speed) + min_speed;
 }
 
-std::shared_ptr<light::LightImage> Projectile_type::get_light_image(void){
-    return light;
-}
 
 bool Projectile_type::load_img(std::string path){
     if (path[1] != ':') path = RES + path;
