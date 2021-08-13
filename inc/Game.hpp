@@ -25,6 +25,7 @@
 #include "Camera.hpp"
 #include "shaders/Blur.hpp"
 #include "lights/Light.hpp"
+#include "lights/LightSource.hpp"
 
 class Game{
     public:

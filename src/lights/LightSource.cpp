@@ -6,6 +6,9 @@ using namespace light;
 LightSource::LightSource(){
     target = nullptr;
     image = nullptr;
+    on();
+    unlock();
+    pos(0, 0);
 }
 
 LightSource::~LightSource(){
@@ -54,7 +57,7 @@ bool LightSource::is_on(void) const{
 
 void LightSource::OnTick(void){
     if (moved && !locked){
-        
+        update_target();
     }
 }
 
@@ -120,6 +123,7 @@ std::vector<ShadowCaster::Visibility_poly_point> LightSource::get_vibility_poly(
 }
 
 void LightSource::update_target(void){
+    GPU_Clear(target);
 
     if (visibility_poly.size() > 1){
 
@@ -140,8 +144,18 @@ void LightSource::update_target(void){
 
         GPU_TriFilled(target, _x, _y, x1, y1, x2, y2, {255, 255, 255, 255});
     }
+    GPU_Flip(target);
+
 }
 
 void LightSource::update_visibility_poly(ShadowCaster* shadowCaster){
     shadowCaster->calculate(_x, _y, visibility_poly, _w, _h);
+}
+
+GPU_Target *LightSource::get_target(void) const{
+    return target;
+}
+
+GPU_Image *LightSource::get_image(void) const{
+    return image;
 }

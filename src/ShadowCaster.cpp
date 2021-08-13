@@ -45,8 +45,6 @@ bool ShadowCaster::load(std::string file){
     convertTileMapToPolyMap(0, 0, surface->w, surface->h, surface->w);
     SDL_FreeSurface(surface);
 
-    
-
     return true;
 }
 
@@ -266,4 +264,9 @@ bool ShadowCaster::load(XMLNode *node){
 
 void ShadowCaster::calculate(const int x, const int y, std::vector<Visibility_poly_point> points, const float w, const float h){
     calculateVisibilityPolygon(x, y, 1, points, w, h);
+}
+
+
+std::vector<ShadowCaster::Edge> ShadowCaster::get_edges(void) const{
+    return vecEdges;
 }

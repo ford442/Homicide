@@ -10,6 +10,8 @@
 
 using G = Game;
 
+light::LightSource test_light_source;
+
 int InitSDL_SUB_Libs(void *ptr);
 
 G::Game(void){
@@ -94,6 +96,9 @@ bool G::Init_libs(void){
     _zoom = window_w / 450;
     if (!load_save("data\\worlds\\menu_map.xml")) return false;
 
+    test_light_source.update_size(200, 200);
+    
+
     std::cout << "INFO :: game initialization ended" << std::endl;
     return error;
 }
@@ -147,6 +152,26 @@ void G::draw(void){
     blit_floor();
     blit_top();
 
+    // test lightsource
+
+    if (test_light_source.is_on()){
+        GPU_Image* image = test_light_source.get_image();
+        GPU_Rect rect = {0, 0, image->w, image->h};
+        GPU_Blit(image, &rect, _target, 0, 0);
+    }
+
+    for (ShadowCaster::Edge &e : shadow_layer.get_edges()){
+        int ex = (e.sx * _zoom) - _x;// + light_image->base_w;
+        int ey = (e.sy * _zoom) - _y;// + light_image->base_h;
+        int sx = (e.ex * _zoom) - _x;// + light_image->base_w;
+        int sy = (e.ey * _zoom) - _y;// + light_image->base_h;
+
+        GPU_Line(_target, sx, sy, ex, ey, {255, 255, 255, 255});
+
+        GPU_CircleFilled(_target, ex, ey, 3, {255, 0, 0, 255});
+        GPU_CircleFilled(_target, sx, sy, 3, {255, 0, 0, 255});
+    }
+
     // blur.unactive();
 
     GPU_Flip(_target);
@@ -191,15 +216,36 @@ void G::update(void){
     // _entityList->updateMovements(delta_tick);
     // _entityList->OnMouseMovement(events.mouse_x(), events.mouse_y());
     // _entityList->updateAnimations(delta_tick);
+
+    if (events.IsKeyRelease(SDL_SCANCODE_K)){
+        if (test_light_source.is_locked()){
+            test_light_source.unlock();
+        } else {
+            test_light_source.lock();
+        }
+    }
+
+    if (events.IsKeyRelease(SDL_SCANCODE_J)){
+        if (test_light_source.is_on()){
+            test_light_source.off();
+        } else {
+            test_light_source.on();
+        }
+    }
     
+    shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
+    test_light_source.OnTick();
 
     _camera.OnTick(delta_tick);
     _camera.go_to(events.mouse_x(), events.mouse_y());
 
     float x, y;
     _camera.get_pos(&x, &y);
-    _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
-    _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
+    // _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
+    // _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
+    _x += (events.mouse_x() - (window_w/2)) / 10;
+    _y += (events.mouse_y() - (window_h/2)) / 10;
+
     
     events.update();
 }
@@ -481,7 +527,7 @@ bool Game::load_save(std::string path){
             } else if (is_equal(child->tag, "top")){
                 is_top_loaded = load_world_top(child);
             
-            } else if (is_equal(child->tag, "ShadowCaster")){
+            } else if (is_equal(child->tag, "shadowCaster")){
                 if (!shadow_layer.load(child)){
                     err = true;
                     break;
@@ -504,10 +550,12 @@ bool Game::load_save(std::string path){
             //         err = true;
             //         break;
             //     }
+            } else {
+                WARN("cannot reconize \"" + std::string(child->tag) + "\" world xml node");
             }
             
             GPU_Clear(_target);
-            GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 255, 255, 255});
+            GPU_SectorFilled(_target, window_w / 2, window_h / 2, window_w / 11, window_w / 10, 0, float(c) / float(doc.root->children.size) * 360, {255, 0, 0, 255});
             GPU_Flip(_target);
         }
     } else {

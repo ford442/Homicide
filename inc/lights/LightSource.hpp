@@ -40,6 +40,9 @@
 
                 std::vector<ShadowCaster::Visibility_poly_point> get_vibility_poly(void) const;
 
+                GPU_Target *get_target(void) const;
+                GPU_Image *get_image(void) const;
+
             private:
 
                 void destroy_target(void);
