@@ -4,24 +4,24 @@
     #include <iostream>
     #include <list>
     #include <SDL2/SDL_ttf.h>
+    #include "SDL/Font.hpp"
 
     class TTF{
         public:
-            struct Font{
-                TTF_Font* font;
-                std::string name;
-                int size;
-            };
 
             TTF();
             ~TTF();
             
             bool init(void);
+            bool is_init(void) const;
+
             bool load_font(std::string path);
+            bool load_font_dir(std::string dir);
 
         private:
 
             std::list<Font> fonts;
+            bool is_ttf_init;
     };
 
 #endif

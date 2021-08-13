@@ -12,6 +12,7 @@ Font::~Font(){
 
 bool Font::load(std::string path){
     if (path[1] != ':') path = RES + path;
+    LOAD_LOG(path);
 
     TTF_Font* temp = TTF_OpenFont(path.c_str(), size);
 

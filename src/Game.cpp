@@ -396,8 +396,8 @@ bool Game::load_settings_file(std::string path){
             WARN("cannot reconize \"" + value + "\" key at \"pause_key\" declaration, set as escape");
         }
     }
-
-
+    
+    if (!fonts.load_font_dir(doc.search("fonts"))) return false;
     if (!load_lights(doc.search("lights"))) return false;
     if (!load_projectiles(doc.search("projectiles"))) return false;
     if (!load_animations(doc.search("animations"))) return false;

@@ -4,20 +4,7 @@
 #include <memory>
 #include <list>
 #include <SDL2/SDL_gpu.h>
-
 #include "events/Event_handler.hpp"
-// #include "lights/LightImageList.hpp"
-// #include "sprites/Animations.hpp"
-
-// #include "entity/EntityList.hpp"
-// #include "entity/Player.hpp"
-// #include "entity/NPC.hpp"
-// #include "Camera.hpp"
-// #include "weapons/Weapon_type_list.hpp"
-// #include "weapons/Projectile_type.hpp"
-// #include "weapons/Projectile.hpp"
-// #include "lights/ShadowCaster.hpp"
-
 #include "lights/ShadowCaster.hpp"
 #include "world/A-star.hpp"
 #include "world/Collisions.hpp"
@@ -28,6 +15,7 @@
 #include "lights/Light.hpp"
 #include "lights/LightSource.hpp"
 #include "widgets/Widget.hpp"
+#include "SDL/TTF.hpp"
 
 class Game{
     public:
@@ -140,6 +128,7 @@ class Game{
         world::Collisions collisions;
         ShadowCaster shadow_layer;
         Light light_layer;
+        TTF fonts;
 
         // shader
 
