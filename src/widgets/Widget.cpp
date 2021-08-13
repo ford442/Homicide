@@ -13,7 +13,11 @@ void Widget::OnTick(const int delta){
 
 }
 
-void Widget::OnDraw(void){
+void Widget::OnDraw(GPU_Target *t){
+
+}
+
+void Widget::OnHUDdraw(GPU_Target *t){
 
 }
 
@@ -67,4 +71,12 @@ void Widget::h(const float h){
 void Widget::size(const float w, const float h){
     this->w(w);
     this->h(h);
+}
+
+void Widget::set_events(event::Handler *handler){
+    events = handler;
+}
+
+bool Widget::load(XMLNode *node){
+    return true;
 }

@@ -17,6 +17,7 @@ int InitSDL_SUB_Libs(void *ptr);
 G::Game(void){
     launched = false;
     _window = nullptr;
+
 }
 
 G::~Game(){
@@ -91,7 +92,7 @@ bool G::Init_libs(void){
 
     std::cout << std::endl << "INFO :: game launched success : " << (launched == true ? "true" : "false") << " ticks : " << SDL_GetTicks() << " milisecond" << std::endl << std::endl;
 
-    load_settings_file("data\\options.csv");
+    if (!load_settings_file("data\\options.csv")) return false;
 
     _zoom = window_w / 450;
     if (!load_save("data\\worlds\\menu_map.xml")) return false;
@@ -150,6 +151,7 @@ void G::draw(void){
     
     // blur.active();
     blit_floor();
+    blit_widgets();
     blit_top();
 
     // test lightsource
@@ -172,6 +174,7 @@ void G::draw(void){
         GPU_CircleFilled(_target, sx, sy, 3, {255, 0, 0, 255});
     }
 
+    blit_widgets_HUD();
     // blur.unactive();
 
     GPU_Flip(_target);
@@ -207,20 +210,35 @@ void G::update(void){
             test_light_source.on();
         }
     }
-    
-    shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
-    test_light_source.OnTick();
-    // test_light_source.pos(events.mouse_x(), events.mouse_y());
 
-    _camera.OnTick(delta_tick);
-    _camera.go_to(events.mouse_x(), events.mouse_y());
+    // pause menu
+    if (events.IsKeyRelease(pause_key)){
+        if (is_menu_opened){
+            widgets.clear();
+            is_menu_opened = false;
+        } else {
+            is_menu_opened = true;
+        }
+    }
 
-    float x, y;
-    _camera.get_pos(&x, &y);
-    // _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
-    // _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
-    _x += (events.mouse_x() - (window_w/2)) / 10;
-    _y += (events.mouse_y() - (window_h/2)) / 10;
+    update_widgets();
+
+    if (is_menu_opened){
+        
+        shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
+        test_light_source.OnTick();
+        // test_light_source.pos(events.mouse_x(), events.mouse_y());
+
+        _camera.OnTick(delta_tick);
+        _camera.go_to(events.mouse_x(), events.mouse_y());
+
+        float x, y;
+        _camera.get_pos(&x, &y);
+        // _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
+        // _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
+        _x += (events.mouse_x() - (window_w/2)) / 10;
+        _y += (events.mouse_y() - (window_h/2)) / 10;
+    }
 
     
     events.update();
@@ -362,6 +380,23 @@ bool Game::load_settings_file(std::string path){
     } else {
         ERR("cannot set the fullscreen state of a null window");
     }
+
+    pause_menu_path = doc.search("pause_path");
+    if (pause_menu_path.empty()){
+        ERR("cannot found the pause path");
+        return false;
+    }
+
+    std::string value = doc.search("pause_key");
+    if (!value.empty()){
+        SDL_Scancode key = SDL_GetScancodeFromName(value.c_str());
+        if (key != SDL_SCANCODE_UNKNOWN){
+            pause_key = key;
+        } else {
+            WARN("cannot reconize \"" + value + "\" key at \"pause_key\" declaration, set as escape");
+        }
+    }
+
 
     if (!load_lights(doc.search("lights"))) return false;
     if (!load_projectiles(doc.search("projectiles"))) return false;
@@ -587,5 +622,45 @@ bool Game::blit_top(void){
     image->base_h = image->h * _zoom;
     GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
     GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
+    return true;
+}
+
+void Game::update_widgets(void){
+    for (auto &w : widgets){
+        w.OnTick(delta_tick);
+    }
+}
+
+void Game::blit_widgets(void){
+    for (auto &w : widgets){
+        w.OnDraw(_target);
+    }
+}
+
+void Game::blit_widgets_HUD(void){
+    for (auto &w : widgets){
+        w.OnHUDdraw(_target);
+    }
+}
+
+void Game::reset_keys(void){
+    pause_key = SDL_SCANCODE_ESCAPE;
+}
+
+bool Game::load_menu(std::string path){
+    if (path[1] != ':') path = RES + path;
+    LOAD_LOG(path);
+
+    XMLDocument doc;
+    if (XMLDocument_load(&doc, path.c_str())){
+        for (int c=0; c<doc.root->children.size; c++){
+            XMLNode *child = XMLNode_child(doc.root, c);
+
+        }
+    } else {
+        return false;
+    }
+
+    XMLDocument_free(&doc);
     return true;
 }

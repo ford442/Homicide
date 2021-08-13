@@ -4,14 +4,16 @@
     #include <iostream>
     #include <SDL2/SDL_gpu.h>
     #include <SDL2/SDL.h>
-
+    #include "events/Event_handler.hpp"
+    #include "xml.hpp"
     class Widget{
         public:
             Widget();
             ~Widget();
 
             virtual void OnTick(const int delta);
-            virtual void OnDraw(void);
+            virtual void OnDraw(GPU_Target *t);
+            virtual void OnHUDdraw(GPU_Target *t);
 
             const float x(void) const;
             const float y(void) const;
@@ -29,6 +31,10 @@
             void h(const float h);
             void size(const float w, const float h);
 
+            void set_events(event::Handler *handler);
+
+            virtual bool load(XMLNode *node);
+
         private:
 
             float _x, _y;
@@ -37,6 +43,7 @@
         protected:
 
             bool is_mouse_over(void) const;
+            event::Handler* events;
     };
 
 #endif

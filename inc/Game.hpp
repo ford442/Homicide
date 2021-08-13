@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <memory>
+#include <list>
 #include <SDL2/SDL_gpu.h>
 
 #include "events/Event_handler.hpp"
@@ -26,6 +27,7 @@
 #include "shaders/Blur.hpp"
 #include "lights/Light.hpp"
 #include "lights/LightSource.hpp"
+#include "widgets/Widget.hpp"
 
 class Game{
     public:
@@ -93,6 +95,14 @@ class Game{
 
         bool blit_floor(void);
         bool blit_top(void);
+        void update_widgets(void);
+        void blit_widgets(void);
+        void blit_widgets_HUD(void);
+        bool load_save(std::string path);
+
+        void reset_keys(void);
+        bool load_menu(std::string path);
+
 
         // ticks
         int start_tick;
@@ -135,5 +145,12 @@ class Game{
 
         shader::Blur blur;
 
-        bool load_save(std::string path);
+
+        // menus
+        std::string pause_menu_path;
+        SDL_Scancode pause_key;
+
+        bool is_menu_opened;
+
+        std::list<Widget> widgets;
 };

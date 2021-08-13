@@ -7,3 +7,5 @@ lights : data\lights\
 projectiles : data\projectiles\
 weapons : data\weapons\
 animations : data\animations\
+pause_path : data\menus\pause.xml
+pause_key : ESCAPE
