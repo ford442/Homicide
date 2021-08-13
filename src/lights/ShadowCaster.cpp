@@ -1,4 +1,4 @@
-#include "ShadowCaster.hpp"
+#include "lights/ShadowCaster.hpp"
 #include <SDL2/SDL_image.h>
 #include <algorithm>
 #include <cmath>

@@ -68,17 +68,17 @@ void A::restart(void){
     run();
 }
 
-bool A::is_collision(SDL_Surface* surface, int x, int y){
-    return _collisions->is_enemy_collision(_collisions->get_type_from_color(get_pixel32(surface, x, y)));
+inline static bool is_collision(SDL_Surface* surface, int x, int y, world::Collisions *col){
+    return col->is_enemy_collision(col->get_type_from_color(get_pixel32(surface, x, y)));
 }
 
-bool A::is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h){
+inline static bool is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h, world::Collisions *col){
     const int sx = cx - w/2, ex = cx + w/2;
     const int sy = cy - h/2, ey = cy + h/2;
 
     for (int x=sx; x<ex; x++){
         for (int y=sy; y<ey; y++){
-            if (x >= 0 && x <= surface->w && y >= 0 &&  y <= surface->h) if (is_collision(surface, x, y)) return true;
+            if (x >= 0 && x <= surface->w && y >= 0 &&  y <= surface->h) if (is_collision(surface, x, y, col)) return true;
         }
     }
 
@@ -224,75 +224,6 @@ void A::set_world_size(const int w, const int h){
     mapHeight = h;
 }
 
-bool A::load(SDL_Surface *source, const float padding){
-    nodes_padding = padding;
-    if (!source){
-        return false;
-    }
-
-    int w = source->w / nodes_padding;
-    int h = source->w / nodes_padding;
-
-    const float max = w * h;
-    set_world_size(w, h);
-
-    _nodes = std::make_unique<PNode[]>(max);
-
-    for (int y=0; y<h; y++){
-        for (int x=0; x<w; x++){
-
-            PNode node;
-            
-            node.x = x;
-            node.y = y;
-            node.is_obstacle = is_collisions_rect(source, x * nodes_padding, y * nodes_padding, nodes_padding, nodes_padding);
-
-            _nodes[y * w + x] = node;
-            
-        }
-    }
-
-    for (int y=0; y<h; y++){
-        for (int x=0; x<w; x++){
-
-            PNode* p = &_nodes[y  * w + x];
-            
-            if (y>0){
-                p->neighbours.push_back(&_nodes[(y - 1) *w+ x]);
-            }
-
-            if (y<h-1){
-                p->neighbours.push_back(&_nodes[(y + 1) * w + x]);
-            }
-            
-            if (x>0){
-                p->neighbours.push_back(&_nodes[y * w + (x - 1)]);
-            }
-
-            if (x<w-1){
-                p->neighbours.push_back(&_nodes[y * w + (x + 1)]);
-            }
-
-            if (y>0 && x>0){
-                p->neighbours.push_back(&_nodes[(y - 1) * w + (x - 1)]);
-            }
-
-            if (y<h-1 && x<w-1){
-                p->neighbours.push_back(&_nodes[(y + 1) * w + (x + 1)]);
-            }
-
-            if (y>0 && x<w-1){
-                p->neighbours.push_back(&_nodes[(y - 1) * w + (x + 1)]);
-            }
-
-            if (y<h-1 && x>0){
-                p->neighbours.push_back(&_nodes[(y + 1) * w + (x - 1)]);
-            }
-        }
-    }
-    return true;
-}
-
 int A::get_w(void) const{
     return mapWidth;
 }
@@ -367,11 +298,16 @@ struct Astar_multithread_load{
     XMLNode *n;
 };
 
-bool A::load(XMLNode *node){
-    nodes_padding = -1;
+bool A::load(XMLNode *node, world::Collisions *col){
     std::string path;
     LOAD_LOG("load astar");
-    std::cout << "ERDD " << std::endl;
+
+    if (!col){
+        ERR("cannot init the Astar path finding algorythme without a loaded collision tile map");
+        return false;
+    }
+    
+    nodes_padding = -1;
 
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
@@ -397,16 +333,16 @@ bool A::load(XMLNode *node){
         return false;
     }
 
-    return load(path);
+    return load(path, col);
 }
 
-bool A::load(std::string path){
+bool A::load(std::string path, world::Collisions *col){
     if (path[1] != ':') path = RES + path;
     LOAD_LOG(path);
 
     SDL_Surface *surface = IMG_Load(path.c_str());
 
-    if (surface){
+    if (!surface){
         ERR("cannot load \"" + path + "\" image");
         return false;
     }
@@ -414,19 +350,24 @@ bool A::load(std::string path){
     int w = surface->w / nodes_padding;
     int h = surface->w / nodes_padding;
 
-    const float max = w * h;
+    const float size = w * h;
     set_world_size(w, h);
 
-    _nodes = std::make_unique<PNode[]>(max);
+    ALLOC_LOG("allocate " + std::to_string(size * sizeof(PNode)) + " o");
+    try {
+        _nodes = std::make_unique<PNode[]>(size);
+    } catch (std::exception &e) {
+        ERR("standart execption : " + std::string(e.what()));
+        return false;
+    }
 
     for (int y=0; y<h; y++){
         for (int x=0; x<w; x++){
-
             PNode node;
             
             node.x = x;
             node.y = y;
-            node.is_obstacle = is_collisions_rect(surface, x * nodes_padding, y * nodes_padding, nodes_padding, nodes_padding);
+            node.is_obstacle = is_collisions_rect(surface, x * nodes_padding, y * nodes_padding, nodes_padding, nodes_padding, col);
 
             _nodes[y * w + x] = node;
             

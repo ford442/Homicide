@@ -178,13 +178,7 @@ void G::draw(void){
 }
 
 void Game::shoot(int x, int y, int dir){
-    // std::shared_ptr<Projectile> p = std::make_shared<Projectile>();
 
-    // p->set_type(projectile_types.front());
-    // p->set_x(x);
-    // p->set_y(y);
-    // p->set_angle(dir);
-    // projectiles.push_back(p);
 }
 
 void G::update(void){
@@ -197,25 +191,6 @@ void G::update(void){
     
     if (events.IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
-    
-    // if (events.isButtonDown(event::Mouse_button_left)){
-    //     shoot(_player->get_x() / _zoom, _player->get_y() / _zoom, _player->get_facing());
-    // }
-
-    // for (auto p : projectiles){
-    //     int normal;
-    //     bool is_wall;
-
-    //     if (!p->OnTick(delta_tick, _world->get_collisions(), &normal, &is_wall)){
-    //         projectiles.remove(p);
-    //     }
-    // }
-    
-    // _world->OnTick(delta_tick);
-    // _entityList->OnTick(delta_tick);
-    // _entityList->updateMovements(delta_tick);
-    // _entityList->OnMouseMovement(events.mouse_x(), events.mouse_y());
-    // _entityList->updateAnimations(delta_tick);
 
     if (events.IsKeyRelease(SDL_SCANCODE_K)){
         if (test_light_source.is_locked()){
@@ -235,6 +210,7 @@ void G::update(void){
     
     shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
     test_light_source.OnTick();
+    // test_light_source.pos(events.mouse_x(), events.mouse_y());
 
     _camera.OnTick(delta_tick);
     _camera.go_to(events.mouse_x(), events.mouse_y());
@@ -540,16 +516,16 @@ bool Game::load_save(std::string path){
                 }
             
             } else if (is_equal(child->tag, "collisions")){
-            //     if (!collisions.load(child)){
-            //         err = true;
-            //         break;
-            //     }
-            
-            // } else if (is_equal(child->tag, "Astar")){
-            //     if (!Astar.load(child)){
-            //         err = true;
-            //         break;
-            //     }
+                if (!collisions.load(child)){
+                    err = true;
+                    break;
+                }
+        
+            } else if (is_equal(child->tag, "Astar")){
+                if (!Astar.load(child, &collisions)){
+                    err = true;
+                    break;
+                }
             } else {
                 WARN("cannot reconize \"" + std::string(child->tag) + "\" world xml node");
             }

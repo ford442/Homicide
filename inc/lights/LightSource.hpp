@@ -5,7 +5,7 @@
     #include <vector>
     #include <SDL2/SDL_gpu.h>
 
-    #include "ShadowCaster.hpp"
+    #include "lights/ShadowCaster.hpp"
 
     namespace light{
         class LightSource{

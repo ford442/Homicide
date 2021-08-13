@@ -147,7 +147,13 @@ bool C::load(std::string image_path){
     world_h = surface->h;
 
     ALLOC_LOG("Collision table : " + std::to_string(surface->w * surface->h));
-    _world = std::make_unique<Collision_type[]>(surface->w * surface->h);
+
+    try{
+        _world = std::make_unique<Collision_type[]>(surface->w * surface->h);
+    } catch (std::exception &e){
+        ERR("standart error : " + std::string(e.what()));
+        return false;
+    }
 
     for (int y=0; y<surface->h; y++){
         for (int x=0; x<surface->w; x++){

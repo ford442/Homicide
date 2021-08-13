@@ -48,12 +48,10 @@
                 void calculate(const int sx, const int sy, const int ex, const int ey, PNode** start, PNode** end, Path_node* nodes);
                 void calculate_vec(const int sx, const int sy, const int ex, const int ey, Astar_nodes_path *l, Path_node* nodes);
 
-                bool load(SDL_Surface *source, const float padding);
-
                 // multithreading : ok
-                bool load(XMLNode *node);
+                bool load(XMLNode *node, world::Collisions *col);
 
-                bool load(std::string path);
+                bool load(std::string path, world::Collisions *col);
 
                 int get_w(void) const;
                 int get_h(void) const;
@@ -78,12 +76,8 @@
                 std::shared_ptr<PNode> _nodeEnd;
                 
                 std::unique_ptr<PNode[]> _nodes;
-                std::shared_ptr<Collisions> _collisions;
 
                 SDL_Thread* thread;
-
-                bool is_collision(SDL_Surface* surface, int x, int y);
-                bool is_collisions_rect(SDL_Surface* surface, int cx, int cy, int w, int h);
 
                 Astar_thread_data data;
         };

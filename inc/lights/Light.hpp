@@ -7,7 +7,7 @@
     #include <SDL2/SDL_gpu.h>
     #include <SDL2/SDL.h>
 
-    #include "ShadowCaster.hpp"
+    #include "lights/ShadowCaster.hpp"
     #include "xml.hpp"
 
     class Light{

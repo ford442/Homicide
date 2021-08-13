@@ -15,9 +15,9 @@
 // #include "weapons/Weapon_type_list.hpp"
 // #include "weapons/Projectile_type.hpp"
 // #include "weapons/Projectile.hpp"
-// #include "ShadowCaster.hpp"
+// #include "lights/ShadowCaster.hpp"
 
-#include "ShadowCaster.hpp"
+#include "lights/ShadowCaster.hpp"
 #include "world/A-star.hpp"
 #include "world/Collisions.hpp"
 #include "world/Floor.hpp"
