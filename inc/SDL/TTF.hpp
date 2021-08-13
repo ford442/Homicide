@@ -18,6 +18,8 @@
             bool load_font(std::string path);
             bool load_font_dir(std::string dir);
 
+            Font* get(std::string name);
+
         private:
 
             std::list<Font> fonts;

@@ -25,7 +25,13 @@ bool TTF::load_font(std::string path){
     Font font;
 
     if (font.load(path)){
-        fonts.push_back(font);
+
+        if (!get(font.get_name())){
+            fonts.push_back(font);
+        } else {
+            ERR("the name \"" + font.get_name() + "\" is early used by another font");
+            return false;
+        }
     } else {
         return false;
     }
@@ -57,4 +63,13 @@ bool TTF::load_font_dir(std::string dir){
     }
 
     return true;
+}
+
+Font* TTF::get(std::string name){
+    for (auto &f : fonts){
+        if (f.get_name() == name){
+            return &f;
+        }
+    }
+    return nullptr;
 }
