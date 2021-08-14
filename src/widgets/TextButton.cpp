@@ -13,21 +13,3 @@ bool TextButton::load(XMLNode *node){
     if (!Text::load(node)) return false;
     return true;
 }
-
-void TextButton::x(const float x){
-    Button::x(x);
-    Text::x(x);
-}
-
-void TextButton::y(const float y){
-    Button::y(y);
-    Text::y(y);
-}
-
-const float TextButton::x(void) const{
-    return Button::x();
-}
-
-const float TextButton::y(void) const{
-    return Button::y();
-}

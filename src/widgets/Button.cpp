@@ -17,20 +17,6 @@ void Button::set_path(const std::string path){
     this->path = path;
 }
 
-bool Button::is_mouse_hover(void){
-    const float w = this->w() / 2;
-    const float h = this->h() / 2;
-
-    const int mx = events->mouse_x();
-    const int my = events->mouse_y();
-
-    if (mx >= x() - w && mx <= x() + w)
-        if (my >= y() - h && my <= y() + h)
-            return true;
-    
-    return false;
-}
-
 bool Button::load(XMLNode *node){
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];

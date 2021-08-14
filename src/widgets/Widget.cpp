@@ -175,3 +175,17 @@ void Widget::set_window_size(int *w, int *h){
     window_w = w;
     window_h = h;
 }
+
+bool Widget::is_mouse_hover(void){
+    const float w = this->w() / 2;
+    const float h = this->h() / 2;
+
+    const int mx = events->mouse_x();
+    const int my = events->mouse_y();
+
+    if (mx >= x() - w && mx <= x() + w)
+        if (my >= y() - h && my <= y() + h)
+            return true;
+    
+    return false;
+}

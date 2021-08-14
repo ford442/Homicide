@@ -12,14 +12,6 @@
 
             void OnDraw(GPU_Target *target) override;
             bool load(XMLNode *node) override;
-        
-        private:
-
-            void x(const float x);
-            void y(const float y);
-
-            const float x(void) const;
-            const float y(void) const;
     };
 
 #endif

@@ -3,9 +3,9 @@
 
     #include <iostream>
     #include <functional>
-    #include "widgets/Widget.hpp"
+    #include "xml.hpp"
 
-    class Button : public Widget{
+    class Button{
         public:
             Button();
             ~Button();
@@ -13,9 +13,7 @@
             const std::string get_path(void) const;
             void set_path(const std::string path);
 
-            bool is_mouse_hover(void);
-
-            bool load(XMLNode *node) override;
+            virtual bool load(XMLNode *node);
 
         private:
 

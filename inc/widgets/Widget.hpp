@@ -36,6 +36,8 @@
 
             void set_window_size(int *w, int *h);
 
+            bool is_mouse_hover(void);
+
         private:
 
             float _x, _y;

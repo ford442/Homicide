@@ -9,6 +9,7 @@
 #include "widgets/Text.hpp"
 #include "widgets/Rect.hpp"
 #include "widgets/Border.hpp"
+#include "widgets/TextButton.hpp"
 
 using G = Game;
 
@@ -700,6 +701,20 @@ bool Game::load_border_widget(XMLNode *node){
     if (border->load(node)){
         LOG("new border widget pushed");
         widgets.push_back(border);
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool Game::load_textButton_widget(XMLNode *node){
+    std::shared_ptr<TextButton> btn = std::make_shared<TextButton>();
+    btn->set_events(&events);
+    btn->set_window_size(&window_w, &window_h);
+
+    if (btn->load(node)){
+        LOG("new textButton widget pushed");
+        widgets.push_back(btn);
     } else {
         return false;
     }
