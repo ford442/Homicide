@@ -4,6 +4,7 @@
 
 Font::Font(){
     font = nullptr;
+    size = 16;
 }
 
 Font::~Font(){

@@ -22,14 +22,14 @@ bool TTF::init(void){
 }
 
 bool TTF::load_font(std::string path){
-    Font font;
+    std::shared_ptr<Font> font = std::make_shared<Font>();
 
-    if (font.load(path)){
+    if (font->load(path)){
 
-        if (!get(font.get_name())){
+        if (!get(font->get_name())){
             fonts.push_back(font);
         } else {
-            ERR("the name \"" + font.get_name() + "\" is early used by another font");
+            ERR("the name \"" + font->get_name() + "\" is early used by another font");
             return false;
         }
     } else {
@@ -65,10 +65,10 @@ bool TTF::load_font_dir(std::string dir){
     return true;
 }
 
-Font* TTF::get(std::string name){
+std::shared_ptr<Font> TTF::get(std::string name){
     for (auto &f : fonts){
-        if (f.get_name() == name){
-            return &f;
+        if (f->get_name() == name){
+            return f;
         }
     }
     return nullptr;

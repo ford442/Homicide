@@ -68,9 +68,9 @@ class Game{
         bool load_projectiles(std::string dir_path);
         bool load_animations(std::string dir_path);
         bool load_weapons(std::string dir_path);
-
         bool load_world_floor(XMLNode *node);
         bool load_world_top(XMLNode *node);
+        bool load_text_widget(XMLNode *node);
 
         bool is_floor_loaded;
         bool is_top_loaded;
@@ -141,5 +141,5 @@ class Game{
 
         bool is_menu_opened;
 
-        std::list<Widget> widgets;
+        std::list<std::shared_ptr<Widget>> widgets;
 };

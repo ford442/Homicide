@@ -1,9 +1,12 @@
 #include "widgets/Text.hpp"
 #include "main.hpp"
+#include <sstream>
 
 Text::Text(){
     font = nullptr;
     image = nullptr;
+    render_type = Font::RenderType_Solid;
+    set_forground_color({255, 255, 255, 255});
 }
 
 Text::~Text(){
@@ -11,29 +14,24 @@ Text::~Text(){
     image = nullptr;
 }
 
-bool Text::set_text(std::string){
-    this->text = text; 
-    return update();
+void Text::set_text(std::string){
+    this->text = text;
 }
 
-bool Text::set_forground_color(SDL_Color color){
+void Text::set_forground_color(SDL_Color color){
     fg = color;
-    return update();
 }
 
-bool Text::set_background_color(SDL_Color color){
+void Text::set_background_color(SDL_Color color){
     bg = color;
-    return update();
 }
 
-bool Text::set_font(Font *font){
+void Text::set_font(std::shared_ptr<Font> font){
     this->font = font;
-    return update();
 }
 
-bool Text::set_render_type(Font::Render_type type){
+void Text::set_render_type(Font::Render_type type){
     render_type = type;
-    return update();
 }
 
 bool Text::update(void){
@@ -73,4 +71,89 @@ void Text::OnDraw(GPU_Target *t){
 
 GPU_Image *Text::get_image(void) const{
     return image;
+}
+
+static inline SDL_Color colorConverter(int hexValue){
+    SDL_Color rgbColor;
+    rgbColor.r = (hexValue >> 24) & 0xFF;
+    rgbColor.g = (hexValue >> 16) & 0xFF;
+    rgbColor.b = (hexValue >> 8)& 0xFF;
+    rgbColor.a = hexValue & 0xff;
+
+    return rgbColor;
+}
+
+static inline void convert_hexa_to_Uint32(std::string hex_src, Uint32 *dst){
+    std::stringstream ss;
+    ss << std::hex << hex_src;
+    ss >> *dst;
+}
+
+static inline SDL_Color str_to_rgb(std::string str){
+    Uint32 hex;
+    convert_hexa_to_Uint32(str, &hex);
+    return colorConverter(hex);
+}
+
+bool Text::load(XMLNode *node){
+    LOG("load a text widget");
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "x")){
+            try {
+                x(std::stof(attr.value));
+            } catch (std::exception &e){
+                ERR("standart exception : " + std::string(e.what()));
+                return false;
+            }
+        } else if (is_equal(attr.key, "y")){
+            try {
+                y(std::stof(attr.value));
+            } catch (std::exception &e){
+                ERR("standart exception : " + std::string(e.what()));
+                return false;
+            }
+        } else if (is_equal(attr.key, "bg")){
+            bg = str_to_rgb(attr.value);
+
+        } else if (is_equal(attr.key, "fg")){
+            fg = str_to_rgb(attr.value);
+
+        } else if (is_equal(attr.key, "type")){
+            if (is_equal(attr.value, "solid")){
+                render_type = Font::RenderType_Solid;
+
+            } else if (is_equal(attr.value, "shaded")){
+                render_type = Font::RenderType_Shaded;
+
+            } else if (is_equal(attr.value, "blended")){
+                render_type = Font::RenderType_Blended;
+
+            } else {
+                WARN("cannot reconize \"" + std::string(attr.value) + "\" text type, set as solid");
+                render_type = Font::RenderType_Solid;
+            }
+
+        } else if (is_equal(attr.key, "text")){
+            text = attr.value;
+        
+        } else if (is_equal(attr.key, "font")){
+            font = ttf->get(attr.value);
+
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" text attribute");
+        }
+    }
+    LOG("widget loaded, update the image");
+    return update();
+}
+
+
+void Text::OnHUDdraw(GPU_Target *t){
+    
+}
+
+void Text::set_ttf(TTF* ttf){
+    this->ttf = ttf;
 }

@@ -4,9 +4,9 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 #include <filesystem>
-
 #include "csv.hpp"
 #include "main.hpp"
+#include "widgets/Text.hpp"
 
 using G = Game;
 
@@ -49,12 +49,7 @@ bool G::Init_Window(void){
 }
 
 bool G::Init_TTF(void){
-    std::cout << "Init_TTF()" << std::endl;
-    if (TTF_Init()){
-        std::cerr << "ERROR :: TTF_Init : " << TTF_GetError << std::endl;
-        return false;
-    }
-    return true;
+    return fonts.init();
 }
 
 bool G::Init_Mixer(void){
@@ -217,30 +212,29 @@ void G::update(void){
             widgets.clear();
             is_menu_opened = false;
         } else {
+            load_menu(pause_menu_path);
             is_menu_opened = true;
         }
     }
 
     update_widgets();
 
-    if (is_menu_opened){
+    
+    float x, y;
+    _camera.get_pos(&x, &y);
+    _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
+    _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
+
+    if (!is_menu_opened){
         
         shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
         test_light_source.OnTick();
         // test_light_source.pos(events.mouse_x(), events.mouse_y());
 
         _camera.OnTick(delta_tick);
-        _camera.go_to(events.mouse_x(), events.mouse_y());
-
-        float x, y;
-        _camera.get_pos(&x, &y);
-        // _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
-        // _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
-        _x += (events.mouse_x() - (window_w/2)) / 10;
-        _y += (events.mouse_y() - (window_h/2)) / 10;
+        // _camera.go_to(events.mouse_x(), events.mouse_y());
     }
 
-    
     events.update();
 }
 
@@ -396,7 +390,7 @@ bool Game::load_settings_file(std::string path){
             WARN("cannot reconize \"" + value + "\" key at \"pause_key\" declaration, set as escape");
         }
     }
-    
+
     if (!fonts.load_font_dir(doc.search("fonts"))) return false;
     if (!load_lights(doc.search("lights"))) return false;
     if (!load_projectiles(doc.search("projectiles"))) return false;
@@ -627,19 +621,19 @@ bool Game::blit_top(void){
 
 void Game::update_widgets(void){
     for (auto &w : widgets){
-        w.OnTick(delta_tick);
+        w->OnTick(delta_tick);
     }
 }
 
 void Game::blit_widgets(void){
     for (auto &w : widgets){
-        w.OnDraw(_target);
+        w->OnDraw(_target);
     }
 }
 
 void Game::blit_widgets_HUD(void){
     for (auto &w : widgets){
-        w.OnHUDdraw(_target);
+        w->OnHUDdraw(_target);
     }
 }
 
@@ -656,11 +650,30 @@ bool Game::load_menu(std::string path){
         for (int c=0; c<doc.root->children.size; c++){
             XMLNode *child = XMLNode_child(doc.root, c);
 
+            if (is_equal(child->tag, "text")){
+                load_text_widget(child);
+            } else {
+                WARN("cannot reconize \"" + std::string(child->tag) + "\" widget tag");
+            }
         }
     } else {
         return false;
     }
 
     XMLDocument_free(&doc);
+    return true;
+}
+
+bool Game::load_text_widget(XMLNode *node){
+    std::shared_ptr<Text> text = std::make_shared<Text>();
+    text->set_events(&events);
+    text->set_ttf(&fonts);
+
+    if (text->load(node)){
+        LOG("new text widget pushed");
+        widgets.push_back(text);
+    } else {
+        return false;
+    }
     return true;
 }

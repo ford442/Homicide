@@ -3,6 +3,7 @@
 
     #include <iostream>
     #include <list>
+    #include <memory>
     #include <SDL2/SDL_ttf.h>
     #include "SDL/Font.hpp"
 
@@ -18,11 +19,11 @@
             bool load_font(std::string path);
             bool load_font_dir(std::string dir);
 
-            Font* get(std::string name);
+            std::shared_ptr<Font> get(std::string name);
 
         private:
 
-            std::list<Font> fonts;
+            std::list<std::shared_ptr<Font>> fonts;
             bool is_ttf_init;
     };
 

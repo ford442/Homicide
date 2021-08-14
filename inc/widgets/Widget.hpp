@@ -14,6 +14,7 @@
             virtual void OnTick(const int delta);
             virtual void OnDraw(GPU_Target *t);
             virtual void OnHUDdraw(GPU_Target *t);
+            virtual bool load(XMLNode *node);
 
             const float x(void) const;
             const float y(void) const;
@@ -33,7 +34,6 @@
 
             void set_events(event::Handler *handler);
 
-            virtual bool load(XMLNode *node);
 
         private:
 
