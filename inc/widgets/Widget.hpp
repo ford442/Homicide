@@ -45,7 +45,6 @@
 
         protected:
 
-            bool is_mouse_over(void) const;
             event::Handler* events;
 
             float str_to_float(std::string str);

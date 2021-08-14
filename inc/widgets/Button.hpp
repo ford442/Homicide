@@ -1,19 +1,21 @@
-#ifndef __TEXTBUTTON_HPP__
-    #define __TEXTBUTTON_HPP__
+#ifndef __BUTTON_HPP__
+    #define __BUTTON_HPP__
 
     #include <iostream>
     #include <functional>
-    #include "widgets/Rect.hpp"
-    #include "widgets/Text.hpp"
-    #include "widgets/Border.hpp"
+    #include "widgets/Widget.hpp"
 
-    class Button : public Rect, public Border{
+    class Button : public Widget{
         public:
             Button();
             ~Button();
             
             const std::string get_path(void) const;
             void set_path(const std::string path);
+
+            bool is_mouse_hover(void);
+
+            bool load(XMLNode *node) override;
 
         private:
 
