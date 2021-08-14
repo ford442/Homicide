@@ -11,5 +11,6 @@ void TextButton::OnDraw(GPU_Target *target){
 bool TextButton::load(XMLNode *node){
     if (!Button::load(node)) return false;
     if (!Text::load(node)) return false;
+    LOG("TextButton laoded with success");
     return true;
 }

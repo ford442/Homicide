@@ -635,6 +635,7 @@ void Game::reset_keys(void){
 }
 
 bool Game::load_menu(std::string path){
+    const int start = SDL_GetTicks();
     if (path[1] != ':') path = RES + path;
     LOAD_LOG(path);
 
@@ -651,6 +652,9 @@ bool Game::load_menu(std::string path){
             
             } else if (is_equal(child->tag, "border")){
                 load_border_widget(child);
+            
+            } else if (is_equal(child->tag, "textButton")){
+                load_textButton_widget(child);
 
             } else {
                 WARN("cannot reconize \"" + std::string(child->tag) + "\" widget tag");
@@ -660,18 +664,19 @@ bool Game::load_menu(std::string path){
         return false;
     }
 
+    LOG("widget xml file loaded with success, duration : " + std::to_string(SDL_GetTicks() - start));
     XMLDocument_free(&doc);
     return true;
 }
 
 bool Game::load_text_widget(XMLNode *node){
+    LOG("load text widget");
     std::shared_ptr<Text> text = std::make_shared<Text>();
     text->set_events(&events);
     text->set_ttf(&fonts);
     text->set_window_size(&window_w, &window_h);
 
     if (text->load(node)){
-        LOG("new text widget pushed");
         widgets.push_back(text);
     } else {
         return false;
@@ -680,12 +685,12 @@ bool Game::load_text_widget(XMLNode *node){
 }
 
 bool Game::load_rect_widget(XMLNode *node){
+    LOG("load rect widget");
     std::shared_ptr<Rect> rect = std::make_shared<Rect>();
     rect->set_events(&events);
     rect->set_window_size(&window_w, &window_h);
 
     if (rect->load(node)){
-        LOG("new rect widget pushed");
         widgets.push_back(rect);
     } else {
         return false;
@@ -694,12 +699,12 @@ bool Game::load_rect_widget(XMLNode *node){
 }
 
 bool Game::load_border_widget(XMLNode *node){
+    LOG("load broder widget");
     std::shared_ptr<Border> border = std::make_shared<Border>();
     border->set_events(&events);
     border->set_window_size(&window_w, &window_h);
 
     if (border->load(node)){
-        LOG("new border widget pushed");
         widgets.push_back(border);
     } else {
         return false;
@@ -708,12 +713,13 @@ bool Game::load_border_widget(XMLNode *node){
 }
 
 bool Game::load_textButton_widget(XMLNode *node){
+    LOG("load text button widget");
     std::shared_ptr<TextButton> btn = std::make_shared<TextButton>();
     btn->set_events(&events);
+    btn->set_ttf(&fonts);
     btn->set_window_size(&window_w, &window_h);
 
     if (btn->load(node)){
-        LOG("new textButton widget pushed");
         widgets.push_back(btn);
     } else {
         return false;
