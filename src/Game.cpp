@@ -8,6 +8,7 @@
 #include "main.hpp"
 #include "widgets/Text.hpp"
 #include "widgets/Rect.hpp"
+#include "widgets/Border.hpp"
 
 using G = Game;
 
@@ -643,8 +644,13 @@ bool Game::load_menu(std::string path){
 
             if (is_equal(child->tag, "text")){
                 load_text_widget(child);
+
             } else if (is_equal(child->tag, "rect") || is_equal(child->tag, "rectangle")){
                 load_rect_widget(child);
+            
+            } else if (is_equal(child->tag, "border")){
+                load_border_widget(child);
+
             } else {
                 WARN("cannot reconize \"" + std::string(child->tag) + "\" widget tag");
             }
@@ -680,6 +686,20 @@ bool Game::load_rect_widget(XMLNode *node){
     if (rect->load(node)){
         LOG("new rect widget pushed");
         widgets.push_back(rect);
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool Game::load_border_widget(XMLNode *node){
+    std::shared_ptr<Border> border = std::make_shared<Border>();
+    border->set_events(&events);
+    border->set_window_size(&window_w, &window_h);
+
+    if (border->load(node)){
+        LOG("new border widget pushed");
+        widgets.push_back(border);
     } else {
         return false;
     }

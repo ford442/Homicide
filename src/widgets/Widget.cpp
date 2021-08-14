@@ -4,6 +4,7 @@
 Widget::Widget(){
     pos(0, 0);
     size(0, 0);
+    set_window_size(nullptr, nullptr);
 }
 
 Widget::~Widget(){
@@ -113,9 +114,13 @@ float Widget::str_to_float(std::string str){
         value /= 100;
 
         if (pourcent_side == 0){
-            return *window_w * value;
+            if (window_w)
+                return *window_w * value;
+            return 0;
         } else {
-            return *window_h * value;
+            if (window_h)
+                return *window_h * value;
+            return 0;
         }
     } else {
         return value;
@@ -153,9 +158,13 @@ float Widget::str_to_int(std::string str){
         value /= 100;
 
         if (pourcent_side == 0){
-            return float(*window_w) * value;
+            if (window_w)
+                return *window_w * value;
+            return 0;
         } else {
-            return float(*window_h) * value;
+            if (window_h)
+                return *window_h * value;
+            return 0;
         }
     } else {
         return value;
