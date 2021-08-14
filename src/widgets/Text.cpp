@@ -155,17 +155,20 @@ bool Text::load(XMLNode *node){
                 font->set_size(font_size);
             }
         
-        } else if (is_equal(attr.key, "font_size")){
-            if (!font){
-                try {
-                    font_size = std::stoi(attr.value);
-                } catch(std::exception &e){
-                    ERR("standart exception : " + std::string(e.what()));
+        } else if (is_equal(attr.key, "size")){
+            try {
+                font_size = std::stoi(attr.value);
+
+                if (font){
+                    font->set_size(font_size);
                     font_size = -1;
                 }
-            } else {
-                font->set_size(font_size);
+
+            } catch(std::exception &e){
+                ERR("standart exception : " + std::string(e.what()));
+                font_size = -1;
             }
+            
         
         } else if (is_equal(attr.key, "scale")){
 

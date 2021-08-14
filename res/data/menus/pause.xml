@@ -1,3 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<text x="100" y="100" fg="00FFFFFF" text="test" type="solid" font="bombardier" scale="10"/>
+<text x="100" y="100" fg="FFFFFFFF" text="test" type="solide" scale="10" size="25" font="bombardier"/>

@@ -8,7 +8,7 @@ K::Keypad(){
     #endif
     for (int i=0; i<UINT8_MAX; i++){
         _down[i] = false;
-        _up[i] = false;
+        _up[i] = true;
         _key[i] = false;
     }
 }
