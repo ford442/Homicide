@@ -7,6 +7,7 @@ Text::Text(){
     image = nullptr;
     render_type = Font::RenderType_Solid;
     set_forground_color({255, 255, 255, 255});
+    scale(1);
 }
 
 Text::~Text(){
@@ -62,11 +63,14 @@ bool Text::update(void){
             break;
     }
 
-    return image;
+    if (!image) return false;
+    if (scale() > 1) GPU_SetImageFilter(image, GPU_FILTER_NEAREST);    
+
+    return true;
 }
 
 void Text::OnDraw(GPU_Target *t){
-    GPU_Blit(image, nullptr, t, x(), y());
+    GPU_BlitScale(image, nullptr, t, x(), y(), scale(), scale());
 }
 
 GPU_Image *Text::get_image(void) const{
@@ -97,6 +101,7 @@ static inline SDL_Color str_to_rgb(std::string str){
 
 bool Text::load(XMLNode *node){
     LOG("load a text widget");
+    int font_size = -1;
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
 
@@ -141,6 +146,36 @@ bool Text::load(XMLNode *node){
         } else if (is_equal(attr.key, "font")){
             font = ttf->get(attr.value);
 
+            if (!font){
+                font = ttf->get_fonts().front();
+                WARN("cannot found \"" + std::string(attr.value) + "\" font, set as : " + font->get_name());
+            }
+
+            if (font_size > 0){
+                font->set_size(font_size);
+            }
+        
+        } else if (is_equal(attr.key, "font_size")){
+            if (!font){
+                try {
+                    font_size = std::stoi(attr.value);
+                } catch(std::exception &e){
+                    ERR("standart exception : " + std::string(e.what()));
+                    font_size = -1;
+                }
+            } else {
+                font->set_size(font_size);
+            }
+        
+        } else if (is_equal(attr.key, "scale")){
+
+            try {
+                scale(std::stof(attr.value));
+            } catch (std::exception &e){
+                ERR("standart exception : " + std::string(e.what()));
+                scale(1);
+            }
+
         } else {
             WARN("cannot reconize \"" + std::string(attr.key) + "\" text attribute");
         }
@@ -151,9 +186,17 @@ bool Text::load(XMLNode *node){
 
 
 void Text::OnHUDdraw(GPU_Target *t){
-    
+
 }
 
 void Text::set_ttf(TTF* ttf){
     this->ttf = ttf;
+}
+
+const float Text::scale(void) const{
+    return _scale;
+}
+
+void Text::scale(const float scale){
+    _scale = scale;
 }

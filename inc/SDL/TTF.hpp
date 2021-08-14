@@ -20,6 +20,7 @@
             bool load_font_dir(std::string dir);
 
             std::shared_ptr<Font> get(std::string name);
+            std::list<std::shared_ptr<Font>> get_fonts(void) const;
 
         private:
 

@@ -26,6 +26,9 @@
             virtual bool load(XMLNode *node) override;
 
             GPU_Image *get_image(void) const;
+
+            const float scale(void) const;
+            void scale(const float scale);
         
         private:
 
@@ -35,6 +38,7 @@
             std::shared_ptr<Font> font;
             TTF* ttf;
             Font::Render_type render_type;
+            float _scale;
     };
 
 #endif

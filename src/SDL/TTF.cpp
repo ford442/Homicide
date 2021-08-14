@@ -73,3 +73,7 @@ std::shared_ptr<Font> TTF::get(std::string name){
     }
     return nullptr;
 }
+
+std::list<std::shared_ptr<Font>> TTF::get_fonts(void) const{
+    return fonts;
+}
