@@ -7,6 +7,7 @@
 #include "csv.hpp"
 #include "main.hpp"
 #include "widgets/Text.hpp"
+#include "widgets/Rect.hpp"
 
 using G = Game;
 
@@ -88,12 +89,12 @@ bool G::Init_libs(void){
     std::cout << std::endl << "INFO :: game launched success : " << (launched == true ? "true" : "false") << " ticks : " << SDL_GetTicks() << " milisecond" << std::endl << std::endl;
 
     if (!load_settings_file("data\\options.csv")) return false;
+    SDL_GetWindowSize(_window, &window_w, &window_h);
 
     _zoom = window_w / 450;
     if (!load_save("data\\worlds\\menu_map.xml")) return false;
 
     test_light_source.update_size(200, 200);
-    
 
     std::cout << "INFO :: game initialization ended" << std::endl;
     return error;
@@ -148,14 +149,6 @@ void G::draw(void){
     blit_floor();
     blit_widgets();
     blit_top();
-
-    // test lightsource
-
-    if (test_light_source.is_on()){
-        GPU_Image* image = test_light_source.get_image();
-        GPU_Rect rect = {0, 0, image->w, image->h};
-        GPU_Blit(image, &rect, _target, 0, 0);
-    }
 
     for (ShadowCaster::Edge &e : shadow_layer.get_edges()){
         int ex = (e.sx * _zoom) - _x;// + light_image->base_w;
@@ -418,7 +411,6 @@ void Game::set_window_width(int w){
     SDL_GetWindowSize(_window, nullptr, &h);
     GPU_SetWindowResolution(w, h);
     window_w = w;
-    window_h = h;
 }
 
 void Game::set_window_height(int h){
@@ -429,7 +421,6 @@ void Game::set_window_height(int h){
     int w;
     SDL_GetWindowSize(_window, &w, nullptr);
     GPU_SetWindowResolution(w, h);
-    window_w = w;
     window_h = h;
 }
 
@@ -652,6 +643,8 @@ bool Game::load_menu(std::string path){
 
             if (is_equal(child->tag, "text")){
                 load_text_widget(child);
+            } else if (is_equal(child->tag, "rect") || is_equal(child->tag, "rectangle")){
+                load_rect_widget(child);
             } else {
                 WARN("cannot reconize \"" + std::string(child->tag) + "\" widget tag");
             }
@@ -668,10 +661,25 @@ bool Game::load_text_widget(XMLNode *node){
     std::shared_ptr<Text> text = std::make_shared<Text>();
     text->set_events(&events);
     text->set_ttf(&fonts);
+    text->set_window_size(&window_w, &window_h);
 
     if (text->load(node)){
         LOG("new text widget pushed");
         widgets.push_back(text);
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool Game::load_rect_widget(XMLNode *node){
+    std::shared_ptr<Rect> rect = std::make_shared<Rect>();
+    rect->set_events(&events);
+    rect->set_window_size(&window_w, &window_h);
+
+    if (rect->load(node)){
+        LOG("new rect widget pushed");
+        widgets.push_back(rect);
     } else {
         return false;
     }

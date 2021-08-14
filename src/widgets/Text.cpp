@@ -2,7 +2,7 @@
 #include "main.hpp"
 #include <sstream>
 
-Text::Text(){
+Text::Text() : Widget(){
     font = nullptr;
     image = nullptr;
     render_type = Font::RenderType_Solid;
@@ -106,19 +106,11 @@ bool Text::load(XMLNode *node){
         XMLAttribute attr = node->attributes.data[a];
 
         if (is_equal(attr.key, "x")){
-            try {
-                x(std::stof(attr.value));
-            } catch (std::exception &e){
-                ERR("standart exception : " + std::string(e.what()));
-                return false;
-            }
+            x(str_to_float(attr.value));
+
         } else if (is_equal(attr.key, "y")){
-            try {
-                y(std::stof(attr.value));
-            } catch (std::exception &e){
-                ERR("standart exception : " + std::string(e.what()));
-                return false;
-            }
+            y(str_to_float(attr.value));
+
         } else if (is_equal(attr.key, "bg")){
             bg = str_to_rgb(attr.value);
 

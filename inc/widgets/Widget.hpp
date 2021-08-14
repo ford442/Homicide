@@ -34,16 +34,22 @@
 
             void set_events(event::Handler *handler);
 
+            void set_window_size(int *w, int *h);
 
         private:
 
             float _x, _y;
             float _w, _h;
+            
+            int *window_w, *window_h;
 
         protected:
 
             bool is_mouse_over(void) const;
             event::Handler* events;
+
+            float str_to_float(std::string str);
+            float str_to_int(std::string str);
     };
 
 #endif

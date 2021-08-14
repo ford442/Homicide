@@ -1,3 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<text x="100" y="100" fg="FFFFFFFF" text="test" type="solide" scale="10" size="25" font="bombardier"/>
+<text x="200" y="100" fg="FFFFFFFF" text="Pause" type="solid" scale="3" size="25" font="bombardier"/>
+<rect x="w%50" y="h%50" w="w%100" h="h%100" fg="FFFFFF33"/>
