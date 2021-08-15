@@ -10,6 +10,7 @@
 #include "widgets/Rect.hpp"
 #include "widgets/Border.hpp"
 #include "widgets/TextButton.hpp"
+#include "widgets/BoolTextButton.hpp"
 
 using G = Game;
 
@@ -778,6 +779,21 @@ bool Game::load_border_widget(XMLNode *node){
 bool Game::load_textButton_widget(XMLNode *node){
     LOG("load text button widget");
     std::shared_ptr<TextButton> btn = std::make_shared<TextButton>();
+    btn->set_events(&events);
+    btn->set_ttf(&fonts);
+    btn->set_window_size(&window_w, &window_h);
+
+    if (btn->load(node)){
+        widgets.push_back(btn);
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool Game::load_boolTextButton_widget(XMLNode *node){
+    LOG("load text button widget");
+    std::shared_ptr<BoolTextButton> btn = std::make_shared<BoolTextButton>();
     btn->set_events(&events);
     btn->set_ttf(&fonts);
     btn->set_window_size(&window_w, &window_h);

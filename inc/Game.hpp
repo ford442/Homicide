@@ -74,6 +74,7 @@ class Game{
         bool load_rect_widget(XMLNode *node);
         bool load_border_widget(XMLNode *node);
         bool load_textButton_widget(XMLNode *node);
+        bool load_boolTextButton_widget(XMLNode *node);
 
         bool is_floor_loaded;
         bool is_top_loaded;

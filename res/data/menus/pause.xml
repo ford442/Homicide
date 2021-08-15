@@ -3,6 +3,6 @@
 <rect x="w%16" y="h%50" w="w%32" h="h%100" fg="77777755"/>
 <border x="w%16" y="h%50" w="w%31" h="h%99" fg="FFFFFFFF" border_width="5"/> 
 <text x="w%16" y="h%10" fg="FFFFFFFF" text="Pause" type="solid" scale="w%0.2" size="25" font="bombardier"/>
-<textButton x="w%16" y="h%60" fg="227722FF" text="Debug menu" type="solid" scale="w%0.2" size="17" font="bombardier" file_path="data\menus\debug.xml"/>
+<textButton x="w%16" y="h%60" fg="FFFFFFFF" text="Debug menu" type="solid" scale="w%0.2" size="17" font="bombardier" file_path="data\menus\debug.xml"/>
 <textButton x="w%16" y="h%70" fg="FFFFFFFF" text="resume" type="solid" scale="w%0.2" size="17" font="bombardier" file_path="data\menus\tools\clear.xml"/>
-<textButton x="w%16" y="h%80" fg="FF0000FF" text="quit" type="solid" scale="w%0.2" size="17" font="bombardier" file_path="data\menus\tools\quit.xml"/>
+<textButton x="w%16" y="h%80" fg="FFFFFFFF" text="quit" type="solid" scale="w%0.2" size="17" font="bombardier" file_path="data\menus\tools\quit.xml"/>
