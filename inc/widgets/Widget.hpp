@@ -38,8 +38,10 @@
 
             bool is_mouse_hover(void);
             virtual bool is_button(void) const;
+            virtual bool is_switch(void) const;
 
             virtual std::string get(void) const;
+            virtual void active(void);
 
         private:
 

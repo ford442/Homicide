@@ -51,6 +51,19 @@ std::string BoolTextButton::get_value_name(void) const{
     return value_name;
 }
 
-bool BoolTextButton::is_button(void) const{
+void BoolTextButton::active(void){
+    if (!value) return;
+
+    if (*value){
+        *value = false;
+    } else {
+        *value = true;
+    }
+
+    std::cout << (*value == true ? "true" : "false") << std::endl; 
+}
+
+
+bool BoolTextButton::is_switch(void) const{
     return true;
 }

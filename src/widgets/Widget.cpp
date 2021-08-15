@@ -203,3 +203,11 @@ bool Widget::is_button(void) const{
 std::string Widget::get(void) const{
     return "";
 }
+
+bool Widget::is_switch(void) const{
+    return false;
+}
+
+void Widget::active(void){
+    
+}

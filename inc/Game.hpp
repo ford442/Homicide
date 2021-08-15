@@ -157,6 +157,5 @@ class Game{
         // debug
         bool render_widget_border;
         bool render_hovered_widget_border;
-        bool hovered_widget_border;
         bool render_shadowCaster_borders;
 };

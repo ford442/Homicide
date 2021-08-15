@@ -13,7 +13,9 @@
             
             void OnDraw(GPU_Target *t) override;
             bool load(XMLNode *node) override;
-            bool is_button(void) const override;
+            bool is_switch(void) const override;
+            void active(void) override;
+            
 
             std::string get_value_name(void) const;
         private:

@@ -21,7 +21,9 @@ int InitSDL_SUB_Libs(void *ptr);
 G::Game(void){
     launched = false;
     _window = nullptr;
-    hovered_widget_border = false;
+    render_widget_border = false;
+    render_hovered_widget_border = false;
+    render_shadowCaster_borders = false;
 }
 
 G::~Game(){
@@ -235,7 +237,6 @@ void G::update(void){
     _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
 
     if (!is_menu_opened){
-        
         shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
         test_light_source.OnTick();
         // test_light_source.pos(events.mouse_x(), events.mouse_y());
@@ -647,28 +648,41 @@ void Game::update_widgets(void){
         w->OnTick(delta_tick);
     }
 
-    if (events.isButtonPush(event::Mouse_button_left))
+    if (events.isButtonPush(event::Mouse_button_left)){
         for (auto &w : widgets){
-            if (!w->is_button()) continue;
             
-            if (w->is_mouse_hover()){
-                LOG("load button path");
+            if (w->is_button()){
+                if (w->is_mouse_hover()){
+                    LOG("load button path");
 
-                load_menu(w->get());
-                break;
+                    load_menu(w->get());
+                    break;
+                }
+            } else if (w->is_switch()){
+                if (w->is_mouse_hover()){
+                    w->active();
+                }
             }
         }
+    }
 }
 
 void Game::blit_widgets(void){
     for (auto &w : widgets){
         w->OnDraw(_target);
 
-        if (hovered_widget_border && w->is_mouse_hover()){
+        if (render_widget_border){
             const int width = w->w() / 2;
             const int height = w->h() / 2;
 
             GPU_Rectangle(_target, w->x() - width+2, w->y() - height+2, w->x() + width-2, w->y() + height-2, {255, 0, 0, 255});
+        }
+
+        if (render_hovered_widget_border && w->is_mouse_hover()){
+            const int width = w->w() / 2;
+            const int height = w->h() / 2;
+
+            GPU_Rectangle(_target, w->x() - width+2, w->y() - height+2, w->x() + width-2, w->y() + height-2, {0, 255, 0, 255});
         }
     }
 }
