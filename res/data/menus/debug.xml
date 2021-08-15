@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rect x="w%84" y="h%50" w="w%32" h="h%100" fg="77777755"/>
+<border x="w%84" y="h%50" w="w%31" h="h%99" fg="FFFFFFFF" border_width="5"/>
+<text x="w%84" y="h%10" text="Debug menu" fg="FFFFFFFF" font="bombardier" size="25" scale="w%0.2"/>

@@ -12,6 +12,8 @@
 
             void OnDraw(GPU_Target *target) override;
             bool load(XMLNode *node) override;
+            bool is_button(void) const override;
+            std::string get(void) const override;
     };
 
 #endif

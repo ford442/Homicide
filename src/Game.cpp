@@ -20,7 +20,7 @@ int InitSDL_SUB_Libs(void *ptr);
 G::Game(void){
     launched = false;
     _window = nullptr;
-
+    hovered_widget_border = false;
 }
 
 G::~Game(){
@@ -129,6 +129,7 @@ void G::event(void){
                         _zoom = e.window.data1 / 450;
                         window_w = e.window.data1;
                         window_h = e.window.data2;
+                        load_menu(curr_menu);
                         break;
 
                     default:
@@ -149,7 +150,6 @@ void G::draw(void){
     
     // blur.active();
     blit_floor();
-    blit_widgets();
     blit_top();
 
     for (ShadowCaster::Edge &e : shadow_layer.get_edges()){
@@ -164,7 +164,7 @@ void G::draw(void){
         GPU_CircleFilled(_target, sx, sy, 3, {255, 0, 0, 255});
     }
 
-    blit_widgets_HUD();
+    blit_widgets();
     // blur.unactive();
 
     GPU_Flip(_target);
@@ -202,7 +202,7 @@ void G::update(void){
     }
 
     // pause menu
-    if (events.IsKeyRelease(pause_key)){
+    if (events.IsKeyPush(pause_key)){
         if (is_menu_opened){
             widgets.clear();
             is_menu_opened = false;
@@ -210,10 +210,19 @@ void G::update(void){
             load_menu(pause_menu_path);
             is_menu_opened = true;
         }
+    } else if (events.IsKeyPush(debug_key)){
+        if (is_menu_opened){
+            widgets.clear();
+            is_menu_opened = false;
+        } else {
+            load_menu(debug_menu_path);
+            is_menu_opened = true;
+        }
+    } else if (events.IsKeyPush(SDL_SCANCODE_F5)){
+        load_menu(curr_menu);
     }
 
     update_widgets();
-
     
     float x, y;
     _camera.get_pos(&x, &y);
@@ -383,6 +392,22 @@ bool Game::load_settings_file(std::string path){
             pause_key = key;
         } else {
             WARN("cannot reconize \"" + value + "\" key at \"pause_key\" declaration, set as escape");
+        }
+    }
+
+    debug_menu_path = doc.search("debug_path");
+    if (pause_menu_path.empty()){
+        ERR("cannot found the debug path");
+        return false;
+    }
+
+    value = doc.search("debug_key");
+    if (!value.empty()){
+        SDL_Scancode key = SDL_GetScancodeFromName(value.c_str());
+        if (key != SDL_SCANCODE_UNKNOWN){
+            debug_key = key;
+        } else {
+            WARN("cannot reconize \"" + value + "\" key at \"debug_key\" declaration, set as escape");
         }
     }
 
@@ -616,11 +641,30 @@ void Game::update_widgets(void){
     for (auto &w : widgets){
         w->OnTick(delta_tick);
     }
+
+    if (events.isButtonPush(event::Mouse_button_left))
+        for (auto &w : widgets){
+            if (!w->is_button()) continue;
+            
+            if (w->is_mouse_hover()){
+                LOG("load button path");
+
+                load_menu(w->get());
+                break;
+            }
+        }
 }
 
 void Game::blit_widgets(void){
     for (auto &w : widgets){
         w->OnDraw(_target);
+
+        if (hovered_widget_border && w->is_mouse_hover()){
+            const int width = w->w() / 2;
+            const int height = w->h() / 2;
+
+            GPU_Rectangle(_target, w->x() - width+2, w->y() - height+2, w->x() + width-2, w->y() + height-2, {255, 0, 0, 255});
+        }
     }
 }
 
@@ -632,12 +676,16 @@ void Game::blit_widgets_HUD(void){
 
 void Game::reset_keys(void){
     pause_key = SDL_SCANCODE_ESCAPE;
+    debug_key = SDL_SCANCODE_F11;
 }
 
 bool Game::load_menu(std::string path){
+    if (path.empty()) return false;
+    widgets.clear();
     const int start = SDL_GetTicks();
     if (path[1] != ':') path = RES + path;
     LOAD_LOG(path);
+    curr_menu = path;
 
     XMLDocument doc;
     if (XMLDocument_load(&doc, path.c_str())){

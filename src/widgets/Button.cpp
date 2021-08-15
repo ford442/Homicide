@@ -2,7 +2,7 @@
 #include "main.hpp"
 
 Button::Button(){
-    path = "unknown";
+    path = "";
 }
 
 Button::~Button(){

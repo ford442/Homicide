@@ -64,6 +64,9 @@ bool Text::update(void){
     }
 
     if (!image) return false;
+
+    w(image->w * _scale);
+    h(image->h * _scale);
     if (scale() > 1) GPU_SetImageFilter(image, GPU_FILTER_NEAREST);    
 
     return true;
@@ -163,16 +166,8 @@ bool Text::load(XMLNode *node){
             
         
         } else if (is_equal(attr.key, "scale")){
-
-            try {
-                scale(std::stof(attr.value));
-            } catch (std::exception &e){
-                ERR("standart exception : " + std::string(e.what()));
-                scale(1);
-            }
-
-        } else {
-            WARN("cannot reconize \"" + std::string(attr.key) + "\" text attribute");
+            std::cout << "set scale" << std::endl;
+            scale(str_to_float(attr.value));
         }
     }
     LOG("widget loaded, update the image");

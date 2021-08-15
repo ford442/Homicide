@@ -87,20 +87,23 @@ float Widget::str_to_float(std::string str){
     bool is_pourcent = false;
     bool pourcent_side = 0; // 0 = width, 1 = height
 
-    if (str[1] == '%'){
-        is_pourcent = true;
+    if (str.size() > 2){
+        if (str[1] == '%'){
+            is_pourcent = true;
 
-        if (str[0] == 'w' || str[0] == 'W'){
-            pourcent_side = 0;
-        } else if (str[0] == 'h' || str[0] == 'H'){
-            pourcent_side = 1;
-        } else {
-            WARN("cannot reconize \"" + str[0] + std::string("\" side"));
+            if (str[0] == 'w' || str[0] == 'W'){
+                pourcent_side = 0;
+            } else if (str[0] == 'h' || str[0] == 'H'){
+                pourcent_side = 1;
+            } else {
+                WARN("cannot reconize \"" + str[0] + std::string("\" side"));
+            }
         }
-
+        
         str.erase(1, 1);
         str.erase(0, 1);
     }
+    
     float value = 0.0f;
 
     try {
@@ -131,20 +134,23 @@ float Widget::str_to_int(std::string str){
     bool is_pourcent = false;
     bool pourcent_side = 0; // 0 = width, 1 = height
 
-    if (str[1] == '%'){
-        is_pourcent = true;
+    if (str.size() > 2){
+        if (str[1] == '%'){
+            is_pourcent = true;
 
-        if (str[0] == 'w' || str[0] == 'W'){
-            pourcent_side = 0;
-        } else if (str[0] == 'h' || str[0] == 'H'){
-            pourcent_side = 1;
-        } else {
-            WARN("cannot reconize \"" + str[0] + std::string("\" side"));
+            if (str[0] == 'w' || str[0] == 'W'){
+                pourcent_side = 0;
+            } else if (str[0] == 'h' || str[0] == 'H'){
+                pourcent_side = 1;
+            } else {
+                WARN("cannot reconize \"" + str[0] + std::string("\" side"));
+            }
         }
+        
+        str.erase(1, 1);
+        str.erase(0, 1);
     }
 
-    str.erase(1, 1);
-    str.erase(0, 1);
     int value = 0.0f;
 
     try {
@@ -188,4 +194,12 @@ bool Widget::is_mouse_hover(void){
             return true;
     
     return false;
+}
+
+bool Widget::is_button(void) const{
+    return false;
+}
+
+std::string Widget::get(void) const{
+    return "";
 }

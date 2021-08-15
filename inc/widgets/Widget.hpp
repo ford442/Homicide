@@ -37,6 +37,9 @@
             void set_window_size(int *w, int *h);
 
             bool is_mouse_hover(void);
+            virtual bool is_button(void) const;
+
+            virtual std::string get(void) const;
 
         private:
 

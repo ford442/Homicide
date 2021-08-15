@@ -139,10 +139,18 @@ class Game{
 
 
         // menus
+        std::string curr_menu;
         std::string pause_menu_path;
         SDL_Scancode pause_key;
+
+        std::string debug_menu_path;
+        SDL_Scancode debug_key;
 
         bool is_menu_opened;
 
         std::list<std::shared_ptr<Widget>> widgets;
+
+        // debug
+        bool widget_border;
+        bool hovered_widget_border;
 };
