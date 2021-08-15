@@ -95,6 +95,9 @@ class Game{
         void reset_keys(void);
         bool load_menu(std::string path);
 
+        bool *get_value(std::string value_name);
+        bool *get_value_widget(std::string value);
+        bool *get_value_shadowCaster(std::string value);
 
         // ticks
         int start_tick;
@@ -152,6 +155,8 @@ class Game{
         std::list<std::shared_ptr<Widget>> widgets;
 
         // debug
-        bool widget_border;
+        bool render_widget_border;
+        bool render_hovered_widget_border;
         bool hovered_widget_border;
+        bool render_shadowCaster_borders;
 };

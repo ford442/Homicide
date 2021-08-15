@@ -2,9 +2,9 @@
     #define __BOOLTEXTBUTTON_HPP__
 
     #include <iostream>
-    #include "widgets/TextButton.hpp"
+    #include "widgets/Text.hpp"
 
-    class BoolTextButton : public TextButton{
+    class BoolTextButton : public Text{
         public:
             BoolTextButton();
             ~BoolTextButton();
@@ -13,6 +13,7 @@
             
             void OnDraw(GPU_Target *t) override;
             bool load(XMLNode *node) override;
+            bool is_button(void) const override;
 
             std::string get_value_name(void) const;
         private:

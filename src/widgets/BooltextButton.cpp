@@ -1,7 +1,7 @@
 #include "widgets/BoolTextButton.hpp"
 #include "main.hpp"
 
-BoolTextButton::BoolTextButton() : TextButton(){
+BoolTextButton::BoolTextButton() : Text(){
     value = nullptr;
 }
 
@@ -14,7 +14,9 @@ void BoolTextButton::set_value(bool *value){
 }
 
 void BoolTextButton::OnDraw(GPU_Target *t){
-    TextButton::OnDraw(t);
+    Text::OnDraw(t);
+
+    std::cout << "ok" << std::endl;
     
     if (value){
         if (*value){
@@ -28,7 +30,7 @@ void BoolTextButton::OnDraw(GPU_Target *t){
 }
 
 bool BoolTextButton::load(XMLNode *node){
-    if (!TextButton::load(node)) return false;
+    if (!Text::load(node)) return false;
 
     for (int a=0; a<node->attributes.size; a++){
         XMLAttribute attr = node->attributes.data[a];
@@ -47,4 +49,8 @@ bool BoolTextButton::load(XMLNode *node){
 
 std::string BoolTextButton::get_value_name(void) const{
     return value_name;
+}
+
+bool BoolTextButton::is_button(void) const{
+    return true;
 }

@@ -153,16 +153,18 @@ void G::draw(void){
     blit_floor();
     blit_top();
 
-    for (ShadowCaster::Edge &e : shadow_layer.get_edges()){
-        int ex = (e.sx * _zoom) - _x;// + light_image->base_w;
-        int ey = (e.sy * _zoom) - _y;// + light_image->base_h;
-        int sx = (e.ex * _zoom) - _x;// + light_image->base_w;
-        int sy = (e.ey * _zoom) - _y;// + light_image->base_h;
+    if (render_shadowCaster_borders){
+        for (ShadowCaster::Edge &e : shadow_layer.get_edges()){
+            int ex = (e.sx * _zoom) - _x;// + light_image->base_w;
+            int ey = (e.sy * _zoom) - _y;// + light_image->base_h;
+            int sx = (e.ex * _zoom) - _x;// + light_image->base_w;
+            int sy = (e.ey * _zoom) - _y;// + light_image->base_h;
 
-        GPU_Line(_target, sx, sy, ex, ey, {255, 255, 255, 255});
+            GPU_Line(_target, sx, sy, ex, ey, {255, 255, 255, 255});
 
-        GPU_CircleFilled(_target, ex, ey, 3, {255, 0, 0, 255});
-        GPU_CircleFilled(_target, sx, sy, 3, {255, 0, 0, 255});
+            GPU_CircleFilled(_target, ex, ey, 3, {255, 0, 0, 255});
+            GPU_CircleFilled(_target, sx, sy, 3, {255, 0, 0, 255});
+        }
     }
 
     blit_widgets();
@@ -706,6 +708,9 @@ bool Game::load_menu(std::string path){
             } else if (is_equal(child->tag, "textButton")){
                 load_textButton_widget(child);
             
+            } else if (is_equal(child->tag, "boolTextButton")){
+                load_boolTextButton_widget(child);
+            
             } else if (is_equal(child->tag, "clear/") || is_equal(child->tag, "clear")){
                 is_menu_opened = false;
                 XMLDocument_free(&doc);
@@ -792,16 +797,67 @@ bool Game::load_textButton_widget(XMLNode *node){
 }
 
 bool Game::load_boolTextButton_widget(XMLNode *node){
-    LOG("load text button widget");
+    LOG("load bool text button widget");
     std::shared_ptr<BoolTextButton> btn = std::make_shared<BoolTextButton>();
     btn->set_events(&events);
     btn->set_ttf(&fonts);
     btn->set_window_size(&window_w, &window_h);
 
     if (btn->load(node)){
+        btn->set_value(get_value(btn->get_value_name()));
         widgets.push_back(btn);
     } else {
         return false;
     }
     return true;
+}
+
+inline static std::string get_value_category(std::string full_name){
+    std::size_t separator = full_name.find(".");
+    
+    if (separator == std::string::npos)
+        return "";
+
+    std::string category;
+    for (int c=0; c<separator; c++){
+        category += full_name[c];
+    }
+
+    return category;
+}
+
+bool *Game::get_value(std::string value_name){
+    std::string category = get_value_category(value_name);
+
+    if (category == "widget")
+        return get_value_widget(value_name);
+    
+    if (category == "shadowCaster")
+        return get_value_shadowCaster(value_name);
+
+    WARN("cannot reconize \"" + category + "\" value category in \"" + value_name + "\" value name");
+    return nullptr;
+}
+
+bool *Game::get_value_widget(std::string value){
+    if (value == "widget.render_border")
+        return &render_widget_border;
+
+    if (value == "widget.render_hovered_border")
+        return &render_hovered_widget_border;
+    
+
+    WARN("cannot reconize \"" + value + "\" in widget category");
+    return nullptr;
+}
+
+bool *Game::get_value_shadowCaster(std::string value){
+
+    if (value == "shadowCaster.render_borders")
+        return &render_shadowCaster_borders;
+    
+    // if (value == "shadowCaster")
+
+    WARN("cannot reconize \"" + value + "\" in shadowCaster category");
+    return nullptr;
 }
