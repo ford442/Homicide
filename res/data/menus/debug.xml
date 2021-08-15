@@ -3,3 +3,5 @@
 <rect x="w%84" y="h%50" w="w%32" h="h%100" fg="77777755"/>
 <border x="w%84" y="h%50" w="w%31" h="h%99" fg="FFFFFFFF" border_width="5"/>
 <text x="w%84" y="h%10" text="Debug menu" fg="FFFFFFFF" font="bombardier" size="25" scale="w%0.2"/>
+<textButton x="w%84" y="h%30" text="ShadowCaster" fg="FFFFFFFF" font="bombardier" size="17" scale="w%0.17" file_path="data\menus\debug_menu\shadowCaster.xml"/>
+<textButton x="w%84" y="h%35" text="widgets" fg="FFFFFFFF" font="bombardier" size="17" scale="w%0.17" file_path="data\menus\debug_menu\widgets.xml"/>
