@@ -206,17 +206,19 @@ void G::update(void){
         if (is_menu_opened){
             widgets.clear();
             is_menu_opened = false;
+            curr_menu.clear();
         } else {
-            load_menu(pause_menu_path);
             is_menu_opened = true;
+            load_menu(pause_menu_path);
         }
     } else if (events.IsKeyPush(debug_key)){
         if (is_menu_opened){
             widgets.clear();
             is_menu_opened = false;
+            curr_menu.clear();
         } else {
-            load_menu(debug_menu_path);
             is_menu_opened = true;
+            load_menu(debug_menu_path);
         }
     } else if (events.IsKeyPush(SDL_SCANCODE_F5)){
         load_menu(curr_menu);
@@ -685,7 +687,6 @@ bool Game::load_menu(std::string path){
     const int start = SDL_GetTicks();
     if (path[1] != ':') path = RES + path;
     LOAD_LOG(path);
-    curr_menu = path;
 
     XMLDocument doc;
     if (XMLDocument_load(&doc, path.c_str())){
@@ -703,6 +704,17 @@ bool Game::load_menu(std::string path){
             
             } else if (is_equal(child->tag, "textButton")){
                 load_textButton_widget(child);
+            
+            } else if (is_equal(child->tag, "clear/") || is_equal(child->tag, "clear")){
+                is_menu_opened = false;
+                XMLDocument_free(&doc);
+                return true;
+            
+            } else if (is_equal(child->tag, "quit/") || is_equal(child->tag, "quit")){
+                is_menu_opened = false;
+                launched = false;
+                XMLDocument_free(&doc);
+                return true;
 
             } else {
                 WARN("cannot reconize \"" + std::string(child->tag) + "\" widget tag");
@@ -711,6 +723,9 @@ bool Game::load_menu(std::string path){
     } else {
         return false;
     }
+
+    curr_menu = path;
+    is_menu_opened = true;
 
     LOG("widget xml file loaded with success, duration : " + std::to_string(SDL_GetTicks() - start));
     XMLDocument_free(&doc);
