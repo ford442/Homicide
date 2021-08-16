@@ -24,6 +24,11 @@ G::Game(void){
     render_widget_border = false;
     render_hovered_widget_border = false;
     render_shadowCaster_borders = false;
+    delta_tick = 0;
+    tzoom = 1;
+    tx = 0;
+    ty = 0;
+    reset_keys();
 }
 
 G::~Game(){
@@ -97,6 +102,7 @@ bool G::Init_libs(void){
     SDL_GetWindowSize(_window, &window_w, &window_h);
 
     _zoom = window_w / 450;
+    tzoom = window_w / 450;
     if (!load_save("data\\worlds\\menu_map.xml")) return false;
 
     test_light_source.update_size(200, 200);
@@ -179,13 +185,7 @@ void Game::shoot(int x, int y, int dir){
 
 }
 
-void G::update(void){
-
-    if (events.IsKeyDown(SDL_SCANCODE_O))
-        _zoom += 0.1;
-
-    if (events.IsKeyDown(SDL_SCANCODE_L))
-        _zoom -= 0.1;
+void Game::update(void){
     
     if (events.IsKeyPush(SDL_SCANCODE_F3))
         debug_mod = !debug_mod;
@@ -229,12 +229,14 @@ void G::update(void){
         load_menu(curr_menu);
     }
 
+    update_cam_events();
     update_widgets();
     
     float x, y;
     _camera.get_pos(&x, &y);
     _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
     _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
+    _camera.get_zoom(&_zoom);
 
     if (!is_menu_opened){
         shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
@@ -242,7 +244,8 @@ void G::update(void){
         // test_light_source.pos(events.mouse_x(), events.mouse_y());
 
         _camera.OnTick(delta_tick);
-        // _camera.go_to(events.mouse_x(), events.mouse_y());
+        _camera.go_to(tx, ty);
+        _camera.zoom(tzoom);
     }
 
     events.update();
@@ -348,6 +351,19 @@ bool to_bool(std::string var){
     return false;
 }
 
+static inline void load_key(std::string value, SDL_Scancode *_key){
+    if (!value.empty()){
+        SDL_Scancode key = SDL_GetScancodeFromName(value.c_str());
+        if (key != SDL_SCANCODE_UNKNOWN){
+            *_key = key;
+        } else {
+            WARN("cannot reconize \"" + value + "\" key as a key");
+        }
+    } else {
+        ERR("cannot found node");
+    }
+}
+
 bool Game::load_settings_file(std::string path){
     if (path[1] != ':') path = RES + path;
     CSV::Document doc;
@@ -407,15 +423,13 @@ bool Game::load_settings_file(std::string path){
         return false;
     }
 
-    value = doc.search("debug_key");
-    if (!value.empty()){
-        SDL_Scancode key = SDL_GetScancodeFromName(value.c_str());
-        if (key != SDL_SCANCODE_UNKNOWN){
-            debug_key = key;
-        } else {
-            WARN("cannot reconize \"" + value + "\" key at \"debug_key\" declaration, set as escape");
-        }
-    }
+    load_key(doc.search("camera_up_key"), &cam_up_key);
+    load_key(doc.search("camera_down_key"), &cam_down_key);
+    load_key(doc.search("camera_left_key"), &cam_left_key);
+    load_key(doc.search("camera_right_key"), &cam_right_key);
+    load_key(doc.search("camera_zoom_in_key"), &cam_zoom_in_key);
+    load_key(doc.search("camera_zoom_out_key"), &cam_zoom_out_key);
+    load_key(doc.search("debug_key"), &debug_key);
 
     if (!fonts.load_font_dir(doc.search("fonts"))) return false;
     if (!load_lights(doc.search("lights"))) return false;
@@ -696,6 +710,12 @@ void Game::blit_widgets_HUD(void){
 void Game::reset_keys(void){
     pause_key = SDL_SCANCODE_ESCAPE;
     debug_key = SDL_SCANCODE_F11;
+    cam_up_key = SDL_SCANCODE_UP;
+    cam_down_key = SDL_SCANCODE_DOWN;
+    cam_left_key = SDL_SCANCODE_LEFT;
+    cam_right_key = SDL_SCANCODE_RIGHT;
+    cam_zoom_in_key = SDL_SCANCODE_O;
+    cam_zoom_out_key = SDL_SCANCODE_L;
 }
 
 bool Game::load_menu(std::string path){
@@ -848,6 +868,9 @@ bool *Game::get_value(std::string value_name){
     
     if (category == "shadowCaster")
         return get_value_shadowCaster(value_name);
+    
+    if (category == "camera")
+        return get_value_camera(value_name);
 
     WARN("cannot reconize \"" + category + "\" value category in \"" + value_name + "\" value name");
     return nullptr;
@@ -874,4 +897,35 @@ bool *Game::get_value_shadowCaster(std::string value){
 
     WARN("cannot reconize \"" + value + "\" in shadowCaster category");
     return nullptr;
+}
+
+bool *Game::get_value_camera(std::string value){
+    if (value == "camera.free")
+        return &free_camera;
+    
+    WARN("cannot reconize \"" + value + "\" in camera category");
+    return nullptr;
+}
+
+
+void Game::update_cam_events(void){
+    if (free_camera){
+        if (events.IsKeyDown(cam_up_key))
+            ty -= 0.1 * delta_tick * _zoom;
+
+        if (events.IsKeyDown(cam_down_key))
+            ty += 0.1 * delta_tick * _zoom;
+        
+        if (events.IsKeyDown(cam_left_key))
+            tx -= 0.1 * delta_tick * _zoom;
+        
+        if (events.IsKeyDown(cam_right_key))
+            tx += 0.1 * delta_tick * _zoom;
+        
+        if (events.IsKeyDown(cam_zoom_in_key))
+            tzoom -= 0.1 * delta_tick;
+        
+        if (events.IsKeyDown(cam_zoom_out_key))
+            tzoom += 0.1 * delta_tick;
+    }
 }

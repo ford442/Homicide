@@ -17,8 +17,8 @@ namespace event{
             bool key(SDL_Scancode code);
 
         private:
-            bool _up[UINT8_MAX];
-            bool _down[UINT8_MAX];
-            bool _key[UINT8_MAX];
+            bool _up[SDL_NUM_SCANCODES];
+            bool _down[SDL_NUM_SCANCODES];
+            bool _key[SDL_NUM_SCANCODES];
     };
 }

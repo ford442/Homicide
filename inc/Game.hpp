@@ -90,14 +90,16 @@ class Game{
         void update_widgets(void);
         void blit_widgets(void);
         void blit_widgets_HUD(void);
-        bool load_save(std::string path);
+        void update_cam_events(void);
 
+        bool load_save(std::string path);
         void reset_keys(void);
         bool load_menu(std::string path);
 
         bool *get_value(std::string value_name);
         bool *get_value_widget(std::string value);
         bool *get_value_shadowCaster(std::string value);
+        bool *get_value_camera(std::string value);
 
         // ticks
         int start_tick;
@@ -109,8 +111,9 @@ class Game{
         int fps_tick;
 
         // display attributes
-        float _zoom;
+        float _zoom, tzoom;
         float _x, _y;
+        float tx, ty;
         int window_w, window_h;
         bool debug_mod;
 
@@ -128,6 +131,12 @@ class Game{
         // std::shared_ptr<entity::Player> _player;
 
         Camera _camera;
+        SDL_Scancode cam_up_key;
+        SDL_Scancode cam_down_key;
+        SDL_Scancode cam_left_key;
+        SDL_Scancode cam_right_key;
+        SDL_Scancode cam_zoom_in_key;
+        SDL_Scancode cam_zoom_out_key;
 
         world::Floor world_floor;
         world::Top world_top;
@@ -138,15 +147,12 @@ class Game{
         TTF fonts;
 
         // shader
-
         shader::Blur blur;
-
 
         // menus
         std::string curr_menu;
         std::string pause_menu_path;
         SDL_Scancode pause_key;
-
         std::string debug_menu_path;
         SDL_Scancode debug_key;
 
@@ -158,4 +164,5 @@ class Game{
         bool render_widget_border;
         bool render_hovered_widget_border;
         bool render_shadowCaster_borders;
+        bool free_camera;
 };

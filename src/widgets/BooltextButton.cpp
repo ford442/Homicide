@@ -15,8 +15,6 @@ void BoolTextButton::set_value(bool *value){
 
 void BoolTextButton::OnDraw(GPU_Target *t){
     Text::OnDraw(t);
-
-    std::cout << "ok" << std::endl;
     
     if (value){
         if (*value){
@@ -59,8 +57,6 @@ void BoolTextButton::active(void){
     } else {
         *value = true;
     }
-
-    std::cout << (*value == true ? "true" : "false") << std::endl; 
 }
 
 

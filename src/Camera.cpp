@@ -50,7 +50,7 @@ void C::OnTick(const int delta){
             case Camera_Linear:
                 _x = _prev_x + (_coef*2 * _dif_x);
                 _y = _prev_y + (_coef*2 * _dif_y);
-                _zoom = _prev_zoom + (_coef * _dif_zoom);
+                _zoom = _prev_zoom + (_coef*2 * _dif_zoom);
                 break;
             
             default:
@@ -83,13 +83,13 @@ void C::get_zoom(float *zoom){
 void C::update_dif(void){
     _dif_x = _target_x - _x;
     _dif_y = _target_y - _y;
-    _dif_zoom = _zoom = _target_zoom;
+    _dif_zoom = _zoom - _target_zoom;
     _ticks = 0;
     _moving = true;
 }
 
 bool C::should_move(void) const{
-    return _x != _target_x || _y != _target_y;
+    return _x != _target_x || _y != _target_y || _zoom != _target_zoom;
 }
 
 void C::zoom(float zoom){

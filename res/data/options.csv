@@ -12,3 +12,9 @@ pause_key : ESCAPE
 fonts : data\fonts\
 debug_path : data\menus\debug.xml
 debug_key : F11
+camera_left_key : LEFT
+camera_right_key : RIGHT
+camera_up_key : UP
+camera_down_key : DOWN
+camera_zoom_in_key : O
+camera_zoom_out_key : L
