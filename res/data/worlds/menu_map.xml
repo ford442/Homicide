@@ -6,30 +6,4 @@
 <collisions path="img\maps\menu_map\collisions.png"/>
 <Astar source="img\maps\menu_map\collisions.png" nodes_padding="20"/>
 
-<player>
-    <key>
-        <forward key="W"/>
-        <backward key="S"/>
-        <left key="A"/>
-        <right key="D"/>
-        <run key="Left Shift"/>
-    </key>
-    <light type="large projected"/>
-    <animations>
-        <legs_walk type="walk legs 1" ticks="35"/>
-        <legs_run type="walk legs 1" ticks="15"/>
-        <legs_idle type="idle legs 1" ticks="35"/>
-        <body_walk type="walk body 1" ticks="35"/>
-        <body_run type="walk body 1" ticks="15"/>
-        <body_idle type="idle body 1" ticks="35"/>
-    </animations>
-</player>
-
-<enemy>
-    <legs_walk type="walk legs 1" ticks="35"/>
-    <legs_run type="walk legs 1" ticks="15"/>
-    <legs_idle type="idle legs 1" ticks="35"/>
-    <body_walk type="walk body 1" ticks="35"/>
-    <body_run type="walk body 1" ticks="15"/>
-    <body_idle type="idle body 1" ticks="35"/>
-</enemy>
+<entity x="200" y="200" facing="0" direction="0"/>

@@ -159,6 +159,8 @@ void G::draw(void){
     
     // blur.active();
     blit_floor();
+    blit_entitys();
+
     blit_top();
 
     if (render_shadowCaster_borders){
@@ -234,18 +236,14 @@ void Game::update(void){
     
     float x, y;
     _camera.get_pos(&x, &y);
-    _x = x - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
-    _y = y - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
-    _camera.get_zoom(&_zoom);
+    _x = (x * _zoom) - window_w / 2 + (events.mouse_x() - (window_w / 2)) / 10;
+    _y = (y * _zoom) - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
 
     if (!is_menu_opened){
-        shadow_layer.calculate(0, 0, test_light_source.get_vibility_poly(), 200, 200);
-        test_light_source.OnTick();
-        // test_light_source.pos(events.mouse_x(), events.mouse_y());
+        update_entitys();
 
         _camera.OnTick(delta_tick);
         _camera.go_to(tx, ty);
-        _camera.zoom(tzoom);
     }
 
     events.update();
@@ -593,6 +591,19 @@ bool Game::load_save(std::string path){
                     err = true;
                     break;
                 }
+            
+            } else if (is_equal(child->tag, "entity")){
+                // temporary condition, will be supressed when npc will be finished
+                auto entity = std::make_shared<Entity>();
+                entity->set_collisions(&collisions);
+
+                if (entity->load(child)){
+                    entitys.push_back(entity);
+                } else {
+                    err = true;
+                    break;
+                }
+
             } else {
                 WARN("cannot reconize \"" + std::string(child->tag) + "\" world xml node");
             }
@@ -907,25 +918,36 @@ bool *Game::get_value_camera(std::string value){
     return nullptr;
 }
 
-
 void Game::update_cam_events(void){
     if (free_camera){
         if (events.IsKeyDown(cam_up_key))
-            ty -= 0.1 * delta_tick * _zoom;
+            ty -= 0.1 * delta_tick;
 
         if (events.IsKeyDown(cam_down_key))
-            ty += 0.1 * delta_tick * _zoom;
+            ty += 0.1 * delta_tick;
         
         if (events.IsKeyDown(cam_left_key))
-            tx -= 0.1 * delta_tick * _zoom;
+            tx -= 0.1 * delta_tick;
         
         if (events.IsKeyDown(cam_right_key))
-            tx += 0.1 * delta_tick * _zoom;
+            tx += 0.1 * delta_tick;
         
         if (events.IsKeyDown(cam_zoom_in_key))
-            tzoom -= 0.1 * delta_tick;
+            _zoom -= 0.01 * delta_tick;
         
         if (events.IsKeyDown(cam_zoom_out_key))
-            tzoom += 0.1 * delta_tick;
+            _zoom += 0.01 * delta_tick;
+    }
+}
+
+void Game::update_entitys(void){
+    for (auto &e : entitys){
+        e->OnTick(delta_tick);
+    }
+}
+
+void Game::blit_entitys(void){
+    for (auto &e : entitys){
+        e->OnDraw(_target, _x, _y, _zoom);
     }
 }

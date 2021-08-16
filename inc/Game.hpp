@@ -16,6 +16,7 @@
 #include "lights/LightSource.hpp"
 #include "widgets/Widget.hpp"
 #include "SDL/TTF.hpp"
+#include "entity/Entity.hpp"
 
 class Game{
     public:
@@ -91,6 +92,8 @@ class Game{
         void blit_widgets(void);
         void blit_widgets_HUD(void);
         void update_cam_events(void);
+        void update_entitys(void);
+        void blit_entitys(void);
 
         bool load_save(std::string path);
         void reset_keys(void);
@@ -119,16 +122,10 @@ class Game{
 
         event::Handler events;
 
-        // std::shared_ptr<world::World> _world;
-        // std::shared_ptr<sprite::Animations> _animations;
-        // std::shared_ptr<entity::EntityList> _entityList;
-        // std::shared_ptr<light::LightImageList> _lightImageList;
-        // std::shared_ptr<weapons::Weapon_list> _weapon_list;
-
         // std::list<std::shared_ptr<Projectile_type>> projectile_types;
         // std::list<std::shared_ptr<Projectile>> projectiles;
 
-        // std::shared_ptr<entity::Player> _player;
+        std::list<std::shared_ptr<Entity>> entitys;
 
         Camera _camera;
         SDL_Scancode cam_up_key;
