@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include "dir.hpp"
 #include "csv.hpp"
+#include "main.hpp"
 
 using S = sprite::SpriteSheet;
 
@@ -111,5 +112,32 @@ bool S::load_csv(std::string path){
     files_extension = doc.search("extension");
 
     if (!load(images_path, files_name, files_extension)) return false;
+
+    std::string filter_str = doc.search("filter");
+    GPU_FilterEnum filter = GPU_FILTER_LINEAR;
+
+    if (filter_str.empty()){
+        WARN("cannot found \"filter\" in \"" + path + "\" set as linear");
+    } else {
+        if (filter_str == "nearest"){
+            filter = GPU_FILTER_NEAREST;
+
+        } else if (filter_str == "linear"){
+            filter = GPU_FILTER_LINEAR;
+
+        } else if (filter_str == "linear_mipmap"){
+            filter = GPU_FILTER_LINEAR_MIPMAP;
+
+        } else {
+            WARN("cannot reconize \"" + filter_str + "\" filter, set as linear");
+        }
+    }
+
+    if (filter != GPU_FILTER_LINEAR){
+        for (int i=0; i<size(); i++){
+            GPU_SetImageFilter(_sprites[i], filter);
+        }
+    }
+
     return true;
 }

@@ -7,6 +7,7 @@
     #include "xml.hpp"
     #include "world/Collisions.hpp"
     #include "sprites/Sprite.hpp"
+    #include "sprites/SpriteSheet.hpp"
 
     class Entity : protected Sprite{
         public:
@@ -15,7 +16,7 @@
 
             virtual void OnTick(const int delta);
             virtual void OnDraw(GPU_Target *t, const float x, const float y, const float zoom);
-            virtual bool load(XMLNode *node);
+            virtual bool load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites);
 
             bool is_running(void);
             void run(void);

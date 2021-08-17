@@ -4,7 +4,7 @@
 #include "main.hpp"
 #include "dir.hpp"
 
-Entity::Entity(){
+Entity::Entity() : Sprite(){
     collisions = nullptr;
     pos(0.0f, 0.0f);
     facing(0.0f);
@@ -16,18 +16,30 @@ Entity::~Entity(){
 }
 
 void Entity::OnTick(const int delta){
-
+    Sprite::OnTick(delta);
+    Sprite::pos(x(), y());
+    Sprite::set_angle(facing());
 }
 
 void Entity::OnDraw(GPU_Target *t, const float x, const float y, const float zoom){
     GPU_Circle(t, _x * zoom - x , _y * zoom - y, 40 * zoom, {255, 0, 0, 255});
+    Sprite::OnDraw(t, x, y, zoom);
 }   
 
-bool Entity::load(XMLNode *node){
-    if (!load_xml_attribute(node)) return false;
+bool Entity::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites){
     if (!collisions){
         ERR("cannot load an entity whithout a valid collision");
         return false;
+    }
+    
+    if (!load_xml_attribute(node)) return false;
+    
+    for (int c=0; c<node->children.size; c++){
+        XMLNode *child = XMLNode_child(node, c);
+
+        if (is_equal(child->tag, "sprite"))
+            if (!Sprite::load(child, sprites)) return false;
+
     }
 
     return true;

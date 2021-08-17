@@ -3,6 +3,10 @@
 
 Sprite::Sprite(){
     spriteSheet = nullptr;
+    _scale = 1;
+    _id = 0;
+    _ticks = 0;
+    _pause = false;
 }
 
 Sprite::~Sprite(){
@@ -35,7 +39,7 @@ void Sprite::OnTick(const int delta){
         }
 
         if (spriteSheet != nullptr){
-            while (spriteSheet->size() < _id){
+            while (spriteSheet->size() <= _id){
                 _id -= spriteSheet->size();
             }
         }
@@ -45,9 +49,10 @@ void Sprite::OnTick(const int delta){
 void Sprite::OnDraw(GPU_Target* t, const float x, const float y, const float zoom){
     if (spriteSheet == nullptr) return;
 
+    std::cout << _id << std::endl;
     GPU_Image *image = spriteSheet->get_image(_id);
     if (!image) return;
-    GPU_BlitTransform(image, nullptr, t, _x * zoom + x, _y * zoom + y, _angle, _scale * zoom, _scale * zoom);
+    GPU_BlitTransform(image, nullptr, t, _x * zoom - x, _y * zoom - y, _angle, _scale * zoom, _scale * zoom);
 }
 
 std::shared_ptr<sprite::SpriteSheet> get_sprite(std::string value, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites){
@@ -66,6 +71,9 @@ bool Sprite::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>>
 
             if (spriteSheet != nullptr){
                 sprite_sheet_name = attr.value;
+            } else {
+                ERR("cannot found \"" + std::string(attr.value) + "\" spritesheet");
+                return false;
             }
         } else if (is_equal(attr.key, "delay")){
             try {

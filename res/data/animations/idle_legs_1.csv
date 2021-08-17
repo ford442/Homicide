@@ -2,3 +2,4 @@ name : idle legs 1
 path : img\sprites\entitys\soldier\legs\idle\
 file_name : soldier_legs_idle_
 extension : .png
+filter : nearest

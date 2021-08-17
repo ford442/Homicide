@@ -609,7 +609,7 @@ bool Game::load_save(std::string path){
                 auto entity = std::make_shared<Entity>();
                 entity->set_collisions(&collisions);
 
-                if (entity->load(child)){
+                if (entity->load(child, spriteSheets)){
                     entitys.push_back(entity);
                 } else {
                     err = true;
@@ -915,8 +915,6 @@ bool *Game::get_value_shadowCaster(std::string value){
 
     if (value == "shadowCaster.render_borders")
         return &render_shadowCaster_borders;
-    
-    // if (value == "shadowCaster")
 
     WARN("cannot reconize \"" + value + "\" in shadowCaster category");
     return nullptr;
