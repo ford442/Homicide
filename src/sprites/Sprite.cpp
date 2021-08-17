@@ -81,12 +81,26 @@ bool Sprite::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>>
             } catch (std::exception &e){
                 ERR("standart excpetion : "  + std::string(e.what()));
             }
+        } else if (is_equal(attr.key, "id")){
+            try {
+                _id = std::stoi(attr.value);
+            } catch (std::exception &e){
+                ERR("standart excpetion : "  + std::string(e.what()));
+            }
         } else {
             WARN("cannot reconize \"" + std::string(attr.key) + "\" sprite attribute");
         }
     }
 
-    return !sprite_sheet_name.empty();
+    if (sprite_sheet_name.empty()){
+        ERR("cannot load a sprite without a valid spriteSheet");
+        return false;
+    }
+
+    if (_id > spriteSheet->size())
+        _id = spriteSheet->size();
+    
+    return true;
 }
 
 void Sprite::pos(const float x, const float y){

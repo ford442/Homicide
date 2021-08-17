@@ -7,5 +7,5 @@
 <Astar source="img\maps\menu_map\collisions.png" nodes_padding="20"/>
 
 <entity x="200" y="200" facing="0" direction="0">
-    <sprite spriteSheet="walk body 1" delay="200"/>
+    <sprite spriteSheet="walk body 1" delay="200" id="1"/>
 </entity>

@@ -62,4 +62,5 @@
             const int str_to_int(std::string str);
             const float str_to_float(std::string str);
     };
+
 #endif
