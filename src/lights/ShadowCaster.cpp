@@ -267,6 +267,6 @@ void ShadowCaster::calculate(const int x, const int y, std::vector<Visibility_po
 }
 
 
-std::vector<ShadowCaster::Edge> ShadowCaster::get_edges(void) const{
-    return vecEdges;
+std::vector<ShadowCaster::Edge>* ShadowCaster::get_edges(void){
+    return &vecEdges;
 }

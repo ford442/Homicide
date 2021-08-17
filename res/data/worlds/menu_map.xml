@@ -8,4 +8,10 @@
 
 <entity x="200" y="200" facing="0" direction="0">
     <sprite spriteSheet="walk body 1" delay="200" id="1"/>
+    <shadow>
+        <n x="-9" y="0" left="true"/>
+        <n x="0" y="9" left="true"/>
+        <n x="9" y="0" left="true"/>
+        <n x="0" y="-9" left="true"/>
+    </shadow>
 </entity>

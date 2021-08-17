@@ -4,7 +4,7 @@
 #include "main.hpp"
 #include "dir.hpp"
 
-Entity::Entity() : Sprite(){
+Entity::Entity() : Sprite(), ShadowBlock(){
     collisions = nullptr;
     pos(0.0f, 0.0f);
     facing(0.0f);
@@ -16,9 +16,14 @@ Entity::~Entity(){
 }
 
 void Entity::OnTick(const int delta){
-    Sprite::OnTick(delta);
     Sprite::pos(x(), y());
+    ShadowBlock::pos(x(), y());
+
     Sprite::set_angle(facing());
+    ShadowBlock::angle(facing());
+
+    ShadowBlock::OnTick();
+    Sprite::OnTick(delta);
 }
 
 void Entity::OnDraw(GPU_Target *t, const float x, const float y, const float zoom){
@@ -26,7 +31,7 @@ void Entity::OnDraw(GPU_Target *t, const float x, const float y, const float zoo
     Sprite::OnDraw(t, x, y, zoom);
 }   
 
-bool Entity::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites){
+bool Entity::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites, ShadowCaster *shadowCaster){
     if (!collisions){
         ERR("cannot load an entity whithout a valid collision");
         return false;
@@ -37,8 +42,13 @@ bool Entity::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>>
     for (int c=0; c<node->children.size; c++){
         XMLNode *child = XMLNode_child(node, c);
 
-        if (is_equal(child->tag, "sprite"))
+        if (is_equal(child->tag, "sprite")){
             if (!Sprite::load(child, sprites)) return false;
+        
+        } else if (is_equal(child->tag, "shadow")){
+            if (!ShadowBlock::load(child, shadowCaster)) return false;
+
+        }
 
     }
 

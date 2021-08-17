@@ -164,7 +164,7 @@ void G::draw(void){
     blit_top();
 
     if (render_shadowCaster_borders){
-        for (ShadowCaster::Edge &e : shadow_layer.get_edges()){
+        for (ShadowCaster::Edge &e : *shadowCaster.get_edges()){
             int ex = (e.sx * _zoom) - _x;// + light_image->base_w;
             int ey = (e.sy * _zoom) - _y;// + light_image->base_h;
             int sx = (e.ex * _zoom) - _x;// + light_image->base_w;
@@ -581,7 +581,7 @@ bool Game::load_save(std::string path){
                 is_top_loaded = load_world_top(child);
             
             } else if (is_equal(child->tag, "shadowCaster")){
-                if (!shadow_layer.load(child)){
+                if (!shadowCaster.load(child)){
                     err = true;
                     break;
                 }
@@ -609,7 +609,7 @@ bool Game::load_save(std::string path){
                 auto entity = std::make_shared<Entity>();
                 entity->set_collisions(&collisions);
 
-                if (entity->load(child, spriteSheets)){
+                if (entity->load(child, spriteSheets, &shadowCaster)){
                     entitys.push_back(entity);
                 } else {
                     err = true;
@@ -690,8 +690,6 @@ void Game::update_widgets(void){
             
             if (w->is_button()){
                 if (w->is_mouse_hover()){
-                    LOG("load button path");
-
                     load_menu(w->get());
                     break;
                 }

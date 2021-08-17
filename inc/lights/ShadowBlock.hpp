@@ -28,6 +28,8 @@
 
             const int size(void) const;
 
+            void OnTick(void);
+
         private:
 
             float _x, _y;

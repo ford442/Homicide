@@ -8,15 +8,16 @@
     #include "world/Collisions.hpp"
     #include "sprites/Sprite.hpp"
     #include "sprites/SpriteSheet.hpp"
+    #include "lights/ShadowBlock.hpp"
 
-    class Entity : protected Sprite{
+    class Entity : protected Sprite, public ShadowBlock{
         public:
             Entity();
             ~Entity();
 
             virtual void OnTick(const int delta);
             virtual void OnDraw(GPU_Target *t, const float x, const float y, const float zoom);
-            virtual bool load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites);
+            virtual bool load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites, ShadowCaster *shadowCaster);
 
             bool is_running(void);
             void run(void);

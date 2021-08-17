@@ -77,9 +77,11 @@ bool ShadowBlock::load_edge(std::tuple<float, float, ShadowCaster::Edge*, std::a
 }
 
 bool ShadowBlock::load(XMLNode *node, ShadowCaster *shadowCaster){
+    LOG("load a shadow block");
+
     try{
-        edges = std::make_unique<std::tuple<float, float, ShadowCaster::Edge*, std::array<bool, 4>>[]>(node->children.size);
-        _size = node->children.size;
+        edges = std::make_unique<std::tuple<float, float, ShadowCaster::Edge*, std::array<bool, 4>>[]>(node->children.size + 1);
+        _size = node->children.size + 1;
     } catch (std::exception &e){
         ERR("standart exception : " + std::string(e.what()));
         return false;
@@ -90,13 +92,18 @@ bool ShadowBlock::load(XMLNode *node, ShadowCaster *shadowCaster){
         if (!load_edge(edges[c], child)) return false;
     }
 
-    auto edges_vec = shadowCaster->get_edges();
+    std::cout << shadowCaster->get_edges()->size() << std::endl;
 
-    for (int i=0; i<size(); i++){
+    for (int i=0; i<size()-1; i++){
         ShadowCaster::Edge edge;
-        edges_vec.push_back(edge);
-        edge_ptr(edges[i]) = &edges_vec.back();
+        shadowCaster->get_edges()->push_back(edge);
+        std::cout << shadowCaster->get_edges()->size() << std::endl; 
+        edge_ptr(edges[i]) = &shadowCaster->get_edges()->back();
     }
+
+    std::cout << shadowCaster->get_edges()->size() << std::endl;
+
+    OnTick();
 
     return true;
 }
@@ -137,4 +144,23 @@ void ShadowBlock::pos(const float x, const float y){
 
 const int ShadowBlock::size(void) const{
     return _size;
+}
+
+void ShadowBlock::OnTick(void){
+    const float angle = this->angle() * 180 / M_PI;
+
+    for (int i=0; i<size()-1; i++){
+        auto &edge = edges[i];
+        edge_ptr(edge)->sx = cos(angle + edge_angle(edge)) * edge_dist(edge) + _x;
+        edge_ptr(edge)->sy = sin(angle + edge_angle(edge)) * edge_dist(edge) + _y;
+
+        if (i < size()-2){
+            edge_ptr(edge)->ex = edge_ptr(edges[i+1])->sx;
+            edge_ptr(edge)->ey = edge_ptr(edges[i+1])->sy;
+        } else {
+            edge_ptr(edge)->ex = edge_ptr(edges[0])->sx;
+            edge_ptr(edge)->ey = edge_ptr(edges[0])->sy;
+        }
+    }
+    
 }

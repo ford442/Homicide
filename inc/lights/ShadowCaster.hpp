@@ -56,7 +56,7 @@
              * @brief get the vector of edges
              * @return std::vector<Edge> 
              */
-            std::vector<Edge> get_edges(void) const;
+            std::vector<Edge>* get_edges(void);
             
         private:
 

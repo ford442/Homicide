@@ -138,7 +138,7 @@ class Game{
         world::Top world_top;
         world::A_star Astar;
         world::Collisions collisions;
-        ShadowCaster shadow_layer;
+        ShadowCaster shadowCaster;
         Light light_layer;
         TTF fonts;
 
