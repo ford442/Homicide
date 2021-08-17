@@ -8,7 +8,7 @@ using N = CSV::Node;
 N *create_node_from_str(std::string str);
 
 Doc::Document(){
-
+    set_Debug(CSV_Debug_1);
 }
 
 Doc::Document(std::string path){

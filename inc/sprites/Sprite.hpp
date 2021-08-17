@@ -2,61 +2,54 @@
 
 #include <iostream>
 #include <memory>
+#include <list>
 #include <SDL2/SDL_gpu.h>
-
+#include "xml.hpp"
 #include "sprites/SpriteSheet.hpp"
-#include "sprites/Animations.hpp"
 
-namespace sprite{
-    class Sprite{
-        public:
-            Sprite(std::shared_ptr<sprite::Animations> animations);
-            ~Sprite();
+class Sprite{
+    public:
+        Sprite();
+        ~Sprite();
 
-            void set_delay(const int delay);
-            int get_delay(void) const;
-            int *get_delay_ptr(void);
+        void set_delay(const int delay);
+        int get_delay(void) const;
 
-            void set_id(const int id);
-            int get_id(void) const;
+        void set_id(const int id);
+        int get_id(void) const;
 
-            void OnTick(const int delta);
-            void OnDraw(GPU_Target* t);
+        void OnTick(const int delta);
+        void OnDraw(GPU_Target* t, const float x, const float y, const float zoom);
+        bool load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites);
 
-            void set_pos(const float x, const float y);
-            void set_x(const float x);
-            void set_y(const float y);
+        void pos(const float x, const float y);
+        void x(const float x);
+        void y(const float y);
 
-            void set_angle(const float angle);
+        const float x(void) const;
+        const float y(void) const;
+        void pos(float *x, float *y) const;
 
-            float *get_x_ptr(void);
-            float *get_y_ptr(void);
-            void get_pos_ptr(float *x, float *y);
-            float *get_angle_ptr(void);
+        void set_angle(const float angle);
 
-            void pause(void);
-            void play(void);
+        bool is_paused(void) const;
+        void pause(void);
+        void play(void);
 
-            void set_spriteSheet(std::shared_ptr<sprite::SpriteSheet> spriteSheet);
-            bool load_spriteSheet(std::string sprite_type);
-            std::shared_ptr<sprite::SpriteSheet> get_spriteSheet(void) const;
+        void set_spriteSheet(std::shared_ptr<sprite::SpriteSheet> spriteSheet);
+        std::shared_ptr<sprite::SpriteSheet> get_spriteSheet(void) const;
+    
+    private:
+        std::shared_ptr<sprite::SpriteSheet> spriteSheet;
+        std::string sprite_sheet_name;
 
+        int _ticks;
+        int _delay;
         
-        private:
+        int _id;
 
-            std::shared_ptr<sprite::SpriteSheet> _spriteSheet;
-
-            int _ticks;
-            int _delay;
-            
-            // add one to id when ticks is greater than delay and sub _delay to tick
-            int _id;
-
-            float _x, _y;
-            float _angle;
-
-            bool _pause;
-
-            std::shared_ptr<sprite::Animations> _animations;
-    };
-}
+        float _x, _y;
+        float _angle;
+        float _scale;
+        bool _pause;
+};

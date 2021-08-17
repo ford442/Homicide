@@ -6,8 +6,9 @@
     #include <SDL2/SDL_gpu.h>
     #include "xml.hpp"
     #include "world/Collisions.hpp"
+    #include "sprites/Sprite.hpp"
 
-    class Entity{
+    class Entity : protected Sprite{
         public:
             Entity();
             ~Entity();

@@ -65,54 +65,6 @@ bool S::load(std::string path, std::string files_name, std::string files_extensi
     return true;
 }
 
-bool S::draw(GPU_Target* t, GPU_Rect* src_rect, const SDL_FPoint pos, const int id){
-    if (!is_valid_id(id)) return false;
-    GPU_Rect rect;
-    if (!src_rect){
-        rect = {0, 0, float(_sprites[id]->w), float(_sprites[id]->h)};
-    } else {
-        rect = *src_rect;
-    }
-    GPU_Blit(_sprites[id], &rect, t, pos.x, pos.y);
-    return true;
-}
-
-bool S::drawScale(GPU_Target* t, GPU_Rect* src_rect, const SDL_FPoint pos, const SDL_FPoint scale, const int id){
-    if (!is_valid_id(id)) return false;
-    GPU_Rect rect;
-    if (!src_rect){
-        rect = {0, 0, float(_sprites[id]->w), float(_sprites[id]->h)};
-    } else {
-        rect = *src_rect;
-    }
-    GPU_BlitScale(_sprites[id], &rect,t, pos.x, pos.y, scale.x, scale.y);
-    return true;
-}
-
-bool S::drawRotate(GPU_Target* t, GPU_Rect* src_rect, const SDL_FPoint pos, const float angle, const int id){
-    if (!is_valid_id(id)) return false;
-    GPU_Rect rect;
-    if (!src_rect){
-        rect = {0, 0, float(_sprites[id]->w), float(_sprites[id]->h)};
-    } else {
-        rect = *src_rect;
-    }
-    GPU_BlitRotate(_sprites[id], &rect, t, pos.x, pos.y, angle);
-    return true;
-}
-
-bool S::drawTransforme(GPU_Target* t, GPU_Rect* src_rect, const SDL_FPoint pos, const float angle, const SDL_FPoint scale, const int id){
-    if (!is_valid_id(id)) return false;
-    GPU_Rect rect;
-    if (!src_rect){
-        rect = {0, 0, float(_sprites[id]->w), float(_sprites[id]->h)};
-    } else {
-        rect = *src_rect;
-    }
-    GPU_BlitTransform(_sprites[id], &rect, t, pos.x, pos.y, angle, scale.x, scale.y);
-    return true;
-}
-
 bool S::is_valid_id(const int id){
     return id < _sprites_len && _sprites[id] != nullptr;
 }
@@ -133,12 +85,12 @@ void S::id(const int id){
     _id = id;
 }
 
-int S::get_sprite_len(void) const{
+int S::size(void) const{
     return _sprites_len;
 }
 
 void S::secure_id(int *id) const{
-    if (*id > get_sprite_len()) *id = get_sprite_len();
+    if (*id > size()) *id = size();
 }
 
 GPU_Image* S::get_image(int id){

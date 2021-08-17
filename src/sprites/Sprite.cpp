@@ -1,117 +1,132 @@
 #include "sprites/Sprite.hpp"
+#include "main.hpp"
 
-using S = sprite::Sprite;
-
-S::Sprite(std::shared_ptr<sprite::Animations> animations) : _animations(animations){
-    std::cout << "INFO :: allocating a Sprite instance" << std::endl;
-    _id = 0;
-    _spriteSheet = nullptr;
-    _ticks = SDL_GetTicks();
+Sprite::Sprite(){
+    spriteSheet = nullptr;
 }
 
-S::~Sprite(){
-    std::cout << "INFO :: releasing memory from a Sprite instance" << std::endl;
-    _spriteSheet = nullptr;
-    _animations = nullptr;
+Sprite::~Sprite(){
+
 }
 
-void S::set_delay(const int delay){
+void Sprite::set_delay(const int delay){
     _delay = delay;
 }
 
-int S::get_delay(void) const{
+int Sprite::get_delay(void) const{
     return _delay;
 }
 
-int *S::get_delay_ptr(void){
-    return &_delay;
-}
-
-void S::set_id(const int id){
+void Sprite::set_id(const int id){
     _id = id;
 }
 
-int S::get_id(void) const{
+int Sprite::get_id(void) const{
     return _id;
 }
 
-void S::OnTick(const int delta){
-    if (!_pause){
-        if (_spriteSheet == nullptr) return;
-
+void Sprite::OnTick(const int delta){
+    if (!is_paused()){
         _ticks += delta;
 
-        while (_ticks > _delay){
-            _id ++;
+        while (_ticks >= _delay){
             _ticks -= _delay;
+            _id ++;
+        }
+
+        if (spriteSheet != nullptr){
+            while (spriteSheet->size() < _id){
+                _id -= spriteSheet->size();
+            }
         }
     }
 }
 
-void S::OnDraw(GPU_Target* t){
-    if (_spriteSheet == nullptr){
-        std::cerr << "WARNING :: cannot draw a onlinked sprite : src spritsheet : " << _spriteSheet << std::endl;
-        return;
-    }
+void Sprite::OnDraw(GPU_Target* t, const float x, const float y, const float zoom){
+    if (spriteSheet == nullptr) return;
 
-    if (_angle == 0){
-        _spriteSheet->draw(t, nullptr, {_x, _y}, _id);
-    } else {
-        _spriteSheet->drawRotate(t, nullptr, {_x, _y}, _angle, _id);
-    }
+    GPU_Image *image = spriteSheet->get_image(_id);
+    if (!image) return;
+    GPU_BlitTransform(image, nullptr, t, _x * zoom + x, _y * zoom + y, _angle, _scale * zoom, _scale * zoom);
 }
 
-void S::set_pos(const float x, const float y){
-    set_x(x);
-    set_y(y);
+std::shared_ptr<sprite::SpriteSheet> get_sprite(std::string value, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites){
+    for (auto &s : sprites){
+        if (s->name() == value) return s;
+    }
+    return nullptr;
 }
 
-void S::set_x(const float x){
+bool Sprite::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>> &sprites){
+    for (int a=0; a<node->attributes.size; a++){
+        XMLAttribute attr = node->attributes.data[a];
+
+        if (is_equal(attr.key, "spriteSheet")){
+            spriteSheet = get_sprite(attr.value, sprites);
+
+            if (spriteSheet != nullptr){
+                sprite_sheet_name = attr.value;
+            }
+        } else if (is_equal(attr.key, "delay")){
+            try {
+                _delay = std::stoi(attr.value);
+            } catch (std::exception &e){
+                ERR("standart excpetion : "  + std::string(e.what()));
+            }
+        } else {
+            WARN("cannot reconize \"" + std::string(attr.key) + "\" sprite attribute");
+        }
+    }
+
+    return !sprite_sheet_name.empty();
+}
+
+void Sprite::pos(const float x, const float y){
+    this->x(x);
+    this->y(y);
+}
+
+void Sprite::x(const float x){
     _x = x;
 }
 
-void S::set_y(const float y){
+void Sprite::y(const float y){
     _y = y;
 }
 
-void S::set_angle(const float angle){
+const float Sprite::x(void) const{
+    return _x;
+}
+
+const float Sprite::y(void) const{
+    return _y;
+}
+
+void Sprite::pos(float *x, float *y) const{
+    *x = this->x();
+    *y = this->y();
+}
+
+void Sprite::set_angle(const float angle){
     _angle = angle;
 }
 
-float *S::get_x_ptr(void){
-    return &_x;
+bool Sprite::is_paused(void) const{
+    return _pause;
 }
 
-float *S::get_y_ptr(void){
-    return &_y;
-}
-
-void S::get_pos_ptr(float *x, float *y){
-    x = get_x_ptr();
-    y = get_y_ptr();
-}
-
-float *S::get_angle_ptr(void){
-    return &_angle;
-}
-
-void S::pause(void){
+void Sprite::pause(void){
     _pause = true;
 }
 
-void S::play(void){
+void Sprite::play(void){
     _pause = false;
 }
 
-void S::set_spriteSheet(std::shared_ptr<sprite::SpriteSheet> spriteSheet){
-    _spriteSheet = spriteSheet;
+void Sprite::set_spriteSheet(std::shared_ptr<sprite::SpriteSheet> spriteSheet){
+    this->spriteSheet = spriteSheet;
 }
 
-bool S::load_spriteSheet(std::string sprite_type){
-    _spriteSheet = _animations->get_sprite(sprite_type);
-    return _spriteSheet != nullptr;
-}
-
-std::shared_ptr<sprite::SpriteSheet> S::get_spriteSheet(void) const{
-    return _spriteSheet;
+std::shared_ptr<sprite::SpriteSheet> Sprite::get_spriteSheet(void) const{
+    return spriteSheet;
 }

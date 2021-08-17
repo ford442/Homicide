@@ -432,8 +432,10 @@ bool Game::load_settings_file(std::string path){
     if (!fonts.load_font_dir(doc.search("fonts"))) return false;
     if (!load_lights(doc.search("lights"))) return false;
     if (!load_projectiles(doc.search("projectiles"))) return false;
-    if (!load_animations(doc.search("animations"))) return false;
+    if (!load_spriteSheets(doc.search("animations"))) return false;
     if (!load_weapons(doc.search("weapons"))) return false;
+
+    std::cout << std::endl << "settings file loaded" << std::endl << std::endl;
 
     return true;
 }
@@ -490,7 +492,6 @@ void Game::set_window_max_size(int w, int h){
 
 bool Game::load_lights(std::string dir_path){
     if (dir_path[1] != ':') dir_path = RES + dir_path;
-
     std::vector<std::string> dir_content = dir::content(dir_path);
 
     if (dir_content.empty()){
@@ -510,26 +511,37 @@ bool Game::load_lights(std::string dir_path){
     return true;
 }
 
-bool Game::load_animations(std::string dir_path){
+bool Game::load_spriteSheets(std::string dir_path){
     if (dir_path[1] != ':') dir_path = RES + dir_path;
-
     std::vector<std::string> dir_content = dir::content(dir_path);
 
     if (dir_content.empty()){
-        ERR("directory \"" + std::string(dir_path) + "\" not found or empty");
+        ERR("directory \"" + std::string(dir_path) + "\" not found");
         return false;
     }
 
     for (auto &f : dir_content){
         if (f == ".." || f == ".") continue;
-
-        // auto spriteSheet = std::make_shared<sprite::SpriteSheet>();
-
-        // if (spriteSheet->load_csv(dir_path + f)){
-        //     _animations->push(spriteSheet);
-        // }
+        load_spritesheet(dir_path + f);
     }
+
+    if (spriteSheets.empty()){
+        ERR("the given path for animation \"" + dir_path + "\" is empty and/or has non-valid animations");
+        return false;
+    }
+
     return true;
+}
+
+bool Game::load_spritesheet(std::string file){
+    auto sprite = std::make_shared<sprite::SpriteSheet>();
+
+    if (sprite->load_csv(file)){
+        spriteSheets.push_back(sprite);
+        return true;
+    }
+
+    return false;
 }
 
 bool Game::load_weapons(std::string dir_path){

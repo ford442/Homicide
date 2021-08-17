@@ -17,6 +17,7 @@
 #include "widgets/Widget.hpp"
 #include "SDL/TTF.hpp"
 #include "entity/Entity.hpp"
+#include "sprites/SpriteSheet.hpp"
 
 class Game{
     public:
@@ -67,7 +68,8 @@ class Game{
 
         bool load_lights(std::string dir_path);
         bool load_projectiles(std::string dir_path);
-        bool load_animations(std::string dir_path);
+        bool load_spriteSheets(std::string dir_path);
+        bool load_spritesheet(std::string file);
         bool load_weapons(std::string dir_path);
         bool load_world_floor(XMLNode *node);
         bool load_world_top(XMLNode *node);
@@ -119,12 +121,8 @@ class Game{
         float tx, ty;
         int window_w, window_h;
         bool debug_mod;
-
-        event::Handler events;
-
-        // std::list<std::shared_ptr<Projectile_type>> projectile_types;
-        // std::list<std::shared_ptr<Projectile>> projectiles;
-
+        
+        std::list<std::shared_ptr<sprite::SpriteSheet>> spriteSheets;
         std::list<std::shared_ptr<Entity>> entitys;
 
         Camera _camera;
@@ -134,7 +132,8 @@ class Game{
         SDL_Scancode cam_right_key;
         SDL_Scancode cam_zoom_in_key;
         SDL_Scancode cam_zoom_out_key;
-
+        
+        event::Handler events;
         world::Floor world_floor;
         world::Top world_top;
         world::A_star Astar;
