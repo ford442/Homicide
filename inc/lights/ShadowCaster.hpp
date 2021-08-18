@@ -4,8 +4,6 @@
     #include <iostream>
     #include <memory>
     #include <vector>
-    #include <SDL2/SDL.h>
-    #include <SDL2/SDL_gpu.h>
 
     #include "xml.hpp"
 
