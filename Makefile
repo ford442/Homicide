@@ -1,10 +1,10 @@
-CXX = g++
-EXEC = bin\Homicide
+CXX = em++
+EXEC = bin\homicide.js
 SRC = $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
 OBJ = $(addprefix obj/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 LIB = lib/
 INCLUDE = inc/
-FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_GPU -lSDL2_ttf -lSDL2_mixer
+FLAGS = -sUSE_SDL=2
 STD_VERSION = c++17
 
 
