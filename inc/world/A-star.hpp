@@ -8,8 +8,6 @@
     #include <tuple>
     #include <vector>
     #include <list>
-    #include <SDL2/SDL_gpu.h>
-    #include <SDL2/SDL_thread.h>
 
     #include "world/Collisions.hpp"
     #include "xml.hpp"
