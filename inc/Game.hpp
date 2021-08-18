@@ -3,7 +3,6 @@
 #include <iostream>
 #include <memory>
 #include <list>
-#include <SDL2/SDL_gpu.h>
 #include "events/Event_handler.hpp"
 #include "lights/ShadowCaster.hpp"
 #include "world/A-star.hpp"
@@ -15,7 +14,6 @@
 #include "lights/Light.hpp"
 #include "lights/LightSource.hpp"
 #include "widgets/Widget.hpp"
-#include "SDL/TTF.hpp"
 #include "entity/Entity.hpp"
 #include "sprites/SpriteSheet.hpp"
 
