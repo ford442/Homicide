@@ -96,6 +96,8 @@ class Game{
         void update_cam_events(void);
         void update_entitys(void);
         void blit_entitys(void);
+        void blit_lightSources_poly(void);
+        void blit_lightSource_poly(std::shared_ptr<light::LightSource> light);
 
         bool load_save(std::string path);
         void reset_keys(void);
@@ -122,6 +124,7 @@ class Game{
         int window_w, window_h;
         bool debug_mod;
         
+        std::list<std::shared_ptr<light::LightSource>> lightSources;
         std::list<std::shared_ptr<sprite::SpriteSheet>> spriteSheets;
         std::list<std::shared_ptr<Entity>> entitys;
 
@@ -160,5 +163,6 @@ class Game{
         bool render_widget_border;
         bool render_hovered_widget_border;
         bool render_shadowCaster_borders;
+        bool render_shadowCaster_polygones;
         bool free_camera;
 };

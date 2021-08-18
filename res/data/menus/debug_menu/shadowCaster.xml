@@ -5,3 +5,4 @@
 <text x="w%84" y="h%10" text="shadow caster" fg="FFFFFFFF" font="bombardier" size="25" scale="w%0.2"/>
 <textButton x="w%84" y="h%20" text="back" fg="FFFFFFFF" font="bombardier" size="17" scale="w%0.17" file_path="data\menus\debug.xml"/>
 <boolTextButton x="w%84" y="h%30" text="render border" fg="FFFFFFFF" font="bombardier" size="17" scale="w%0.17" value_name="shadowCaster.render_borders"/>
+<boolTextButton x="w%84" y="h%35" text="render polygones" fg="FFFFFFFF" font="bombardier" size="17" scale="w%0.17" value_name="shadowCaster.render_light_poly"/>

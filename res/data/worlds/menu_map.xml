@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<floor path="img\maps\menu_map\floor.png"/>
-<top path="img\maps\menu_map\top.png"/>
+<floor path="img\maps\menu_map\floor.png" scale="1"/>
+<top path="img\maps\menu_map\top.png" scale="1"/>
 <shadowCaster path="img\maps\menu_map\light_collisions.png"/>
 <collisions path="img\maps\menu_map\collisions.png"/>
 <Astar source="img\maps\menu_map\collisions.png" nodes_padding="20"/>
 
 <entity x="200" y="200" facing="0" direction="0">
-    <sprite spriteSheet="walk body 1" delay="200" id="1"/>
+    <sprite spriteSheet="walk body 1" delay="200" id="0" scale="1"/>
     <shadow>
-        <n x="-9" y="0" left="true"/>
-        <n x="0" y="9" left="true"/>
-        <n x="9" y="0" left="true"/>
-        <n x="0" y="-9" left="true"/>
+        <n x="11" y="9"/>
+        <n x="11" y="-10"/>
+        <n x="6" y="-14"/>
+        <n x="0" y="-14"/>
+        <n x="-5" y="0"/>
+        <n x="0" y="14"/>
+        <n x="6" y="14"/>
     </shadow>
 </entity>

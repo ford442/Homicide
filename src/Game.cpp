@@ -14,8 +14,6 @@
 
 using G = Game;
 
-light::LightSource test_light_source;
-
 int InitSDL_SUB_Libs(void *ptr);
 
 G::Game(void){
@@ -105,8 +103,6 @@ bool G::Init_libs(void){
     tzoom = window_w / 450;
     if (!load_save("data\\worlds\\menu_map.xml")) return false;
 
-    test_light_source.update_size(200, 200);
-
     std::cout << "INFO :: game initialization ended" << std::endl;
     return error;
 }
@@ -163,12 +159,13 @@ void G::draw(void){
 
     blit_top();
 
+    blit_lightSources_poly();
     if (render_shadowCaster_borders){
         for (ShadowCaster::Edge &e : *shadowCaster.get_edges()){
-            int ex = (e.sx * _zoom) - _x;// + light_image->base_w;
-            int ey = (e.sy * _zoom) - _y;// + light_image->base_h;
-            int sx = (e.ex * _zoom) - _x;// + light_image->base_w;
-            int sy = (e.ey * _zoom) - _y;// + light_image->base_h;
+            int ex = (e.sx * _zoom) - _x;
+            int ey = (e.sy * _zoom) - _y;
+            int sx = (e.ex * _zoom) - _x;
+            int sy = (e.ey * _zoom) - _y;
 
             GPU_Line(_target, sx, sy, ex, ey, {255, 255, 255, 255});
 
@@ -188,25 +185,6 @@ void Game::shoot(int x, int y, int dir){
 }
 
 void Game::update(void){
-    
-    if (events.IsKeyPush(SDL_SCANCODE_F3))
-        debug_mod = !debug_mod;
-
-    if (events.IsKeyRelease(SDL_SCANCODE_K)){
-        if (test_light_source.is_locked()){
-            test_light_source.unlock();
-        } else {
-            test_light_source.lock();
-        }
-    }
-
-    if (events.IsKeyRelease(SDL_SCANCODE_J)){
-        if (test_light_source.is_on()){
-            test_light_source.off();
-        } else {
-            test_light_source.on();
-        }
-    }
 
     // pause menu
     if (events.IsKeyPush(pause_key)){
@@ -231,6 +209,8 @@ void Game::update(void){
         load_menu(curr_menu);
     }
 
+    
+
     update_cam_events();
     update_widgets();
     
@@ -240,6 +220,15 @@ void Game::update(void){
     _y = (y * _zoom) - window_h / 2 + (events.mouse_y() - (window_h / 2)) / 10;
 
     if (!is_menu_opened){
+        
+        if (events.isButtonPush(event::Mouse_button_left)){
+            auto l = std::make_shared<light::LightSource>();
+            l->pos(events.mouse_x(), events.mouse_y());
+            l->update_size(200, 200);
+            l->on();
+            lightSources.push_back(l);
+        }
+
         update_entitys();
 
         _camera.OnTick(delta_tick);
@@ -566,6 +555,8 @@ bool Game::load_save(std::string path){
     LOAD_LOG(path);
 
     bool err = false;
+    is_menu_opened = false;
+    entitys.clear();
 
     GPU_Clear(_target);
 
@@ -629,7 +620,9 @@ bool Game::load_save(std::string path){
     }
 
     XMLDocument_free(&doc);
-    return !err;
+    if (err) return false;
+    update();
+    return true;
 }
 
 bool Game::load_world_floor(XMLNode *node){
@@ -640,6 +633,7 @@ bool Game::load_world_floor(XMLNode *node){
         return false;
     }
 
+    world_floor.scale(get_attr("scale", node));
     return world_floor.load(path);
 }
 
@@ -651,6 +645,8 @@ bool Game::load_world_top(XMLNode *node){
         return false;
     }
 
+    
+    world_top.scale(get_attr("scale", node));
     return world_top.load(path);
 }
 
@@ -662,8 +658,8 @@ bool Game::blit_floor(void){
     GPU_Image *image = world_floor.image();
     if (!image) return false;
 
-    image->base_w = image->w * _zoom;
-    image->base_h = image->h * _zoom;
+    image->base_w = image->w * _zoom * world_floor.scale();
+    image->base_h = image->h * _zoom * world_floor.scale();
     GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
     GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
     return true;
@@ -673,8 +669,8 @@ bool Game::blit_top(void){
     GPU_Image *image = world_top.image();
     if (!image) return false;
 
-    image->base_w = image->w * _zoom;
-    image->base_h = image->h * _zoom;
+    image->base_w = image->w * _zoom * world_top.scale();
+    image->base_h = image->h * _zoom * world_top.scale();
     GPU_Rect src = {0, 0, float(image->base_w), float(image->base_h)};
     GPU_Blit(image, &src, _target, -_x + (image->w * _zoom) / 2, -_y + (image->h * _zoom) / 2);
     return true;
@@ -774,6 +770,11 @@ bool Game::load_menu(std::string path){
             } else if (is_equal(child->tag, "quit/") || is_equal(child->tag, "quit")){
                 is_menu_opened = false;
                 launched = false;
+                XMLDocument_free(&doc);
+                return true;
+            
+            }  else if (is_equal(child->tag, "menu/") || is_equal(child->tag, "menu")){
+                load_save("data\\worlds\\menu_map.xml");
                 XMLDocument_free(&doc);
                 return true;
 
@@ -913,6 +914,9 @@ bool *Game::get_value_shadowCaster(std::string value){
 
     if (value == "shadowCaster.render_borders")
         return &render_shadowCaster_borders;
+    
+    if (value == "shadowCaster.render_light_poly")
+        return &render_shadowCaster_polygones;
 
     WARN("cannot reconize \"" + value + "\" in shadowCaster category");
     return nullptr;
@@ -958,4 +962,20 @@ void Game::blit_entitys(void){
     for (auto &e : entitys){
         e->OnDraw(_target, _x, _y, _zoom);
     }
+}
+
+void Game::blit_lightSources_poly(void){
+    if (render_shadowCaster_polygones){
+        for (auto &l : lightSources){
+            blit_lightSource_poly(l);
+        }
+    }
+}
+
+void Game::blit_lightSource_poly(std::shared_ptr<light::LightSource> light){
+    for (auto &p : light->get_vibility_poly()){
+        GPU_Line(_target, light->x() * _zoom - _x, light->y() * _zoom - _y, p.x, p.y, {255, 0, 0, 255});
+        GPU_Rectangle(_target, (p.x - 5) * _zoom - _x, (p.y - 5) * _zoom - _y, (p.x + 5) * _zoom - _x, (p.y + 5) * _zoom - _y, {255, 0, 0, 255});
+    }
+    GPU_Circle(_target, light->x() * _zoom - _x, light->y() * _zoom - _y, 10 * _zoom, {255, 0, 0, 255});
 }

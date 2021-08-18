@@ -8,6 +8,7 @@ using F = world::Floor;
 F::Floor(){
     CONSTRUCT();
     _image = nullptr;
+    scale(1);
 }
 
 F::~Floor(){
@@ -39,4 +40,20 @@ bool F::load(std::string path){
 
 GPU_Image *F::image(void) const{
     return _image;
+}
+
+const float F::scale(void) const{
+    return _scale;
+}
+
+void F::scale(const float value){
+    _scale = value;
+}
+
+void F::scale(std::string str){
+    try {
+        scale(std::stof(str));
+    } catch (std::exception &e){
+        ERR("standart exception : " + std::string(e.what()));
+    }
 }

@@ -14,9 +14,13 @@ namespace world{
             bool load(std::string path);
             GPU_Image *image(void) const;
 
+            const float scale(void) const;
+            void scale(const float value);
+            void scale(std::string str);
+
         private:
             GPU_Image* _image;
-
+            float _scale;
             
     };
 }

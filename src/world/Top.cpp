@@ -8,6 +8,7 @@ using T = world::Top;
 T::Top(){
     CONSTRUCT();
     _image = nullptr;
+    scale(1);
 }
 
 T::~Top(){
@@ -39,4 +40,20 @@ bool T::load(std::string path){
 
 GPU_Image *T::image(void) const{
     return _image;
+}
+
+const float T::scale(void) const{
+    return _scale;
+}
+
+void T::scale(const float value){
+    _scale = value;
+}
+
+void T::scale(std::string str){
+    try {
+        scale(std::stof(str));
+    } catch (std::exception &e){
+        ERR("standart exception : " + std::string(e.what()));
+    }
 }

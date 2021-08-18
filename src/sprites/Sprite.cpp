@@ -7,6 +7,7 @@ Sprite::Sprite(){
     _id = 0;
     _ticks = 0;
     _pause = false;
+    _delay = 1;
 }
 
 Sprite::~Sprite(){
@@ -81,12 +82,30 @@ bool Sprite::load(XMLNode *node, std::list<std::shared_ptr<sprite::SpriteSheet>>
             } catch (std::exception &e){
                 ERR("standart excpetion : "  + std::string(e.what()));
             }
+
+            if (_delay <= 0){
+                WARN("cannot set the delay at a negativ or nul value : " + std::to_string(_delay) + " <= 0");
+                _delay = 1;
+            }
+            
         } else if (is_equal(attr.key, "id")){
             try {
                 _id = std::stoi(attr.value);
             } catch (std::exception &e){
                 ERR("standart excpetion : "  + std::string(e.what()));
             }
+        } else if (is_equal(attr.key, "scale")){
+            try {
+                _scale = std::stof(attr.value);
+            } catch (std::exception &e){
+                ERR("standart excpetion : "  + std::string(e.what()));
+            }
+
+            if (_scale < 0){
+                WARN("cannot set the scale of the sprite at a negativ value : " + std::to_string(_scale) + " < 0");
+                _scale = 0.1;
+            }
+
         } else {
             WARN("cannot reconize \"" + std::string(attr.key) + "\" sprite attribute");
         }
