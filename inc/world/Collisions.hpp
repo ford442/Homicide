@@ -3,8 +3,6 @@
 #include <iostream>
 #include <memory>
 #include "xml.hpp"
-#include <SDL2/SDL_gpu.h>
-#include <SDL2/SDL.h>
 
 #if !defined(RAY_MAX_DIST)
     #define RAY_MAX_DIST 1000
